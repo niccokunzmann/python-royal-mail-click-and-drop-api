@@ -20,4 +20,4 @@ stubs:
 		--git-host https://github.com \
 		--git-user-id niccokunzmann \
 		--git-repo-id python-royal-mail-click-and-drop-api
-
+	chown -R $(id -u):$(id -g) .
