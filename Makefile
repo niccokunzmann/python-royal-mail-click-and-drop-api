@@ -12,7 +12,7 @@ api-definition:
 #
 stubs:
 	docker pull openapitools/openapi-generator-cli
-	docker run --rm -v "${PWD}:/local" openapitools/openapi-generator-cli generate \
+	docker run --rm -v "$${PWD}:/local" -u $$(id -u):$$(id -g) openapitools/openapi-generator-cli generate \
 		-i /local/click-and-drop-api-v1.yaml \
 		-g python \
 		-o /local/ \
@@ -20,4 +20,4 @@ stubs:
 		--git-host https://github.com \
 		--git-user-id niccokunzmann \
 		--git-repo-id python-royal-mail-click-and-drop-api
-	chown -R $(id -u):$(id -g) .
+# 	sudo chown -R $(id -u):$(id -g) .
