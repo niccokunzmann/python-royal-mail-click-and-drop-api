@@ -35,9 +35,7 @@ stubs-help: image
 	python3 -m venv .venv
 	.venv/bin/pip install -r requirements.txt -r docs-requirements.txt
 
-.PHONY: html livehtml
-
-.PHONY: fix-stubs
+.PHONY: html livehtml fix-stubs github-pages
 
 fix-stubs:
 	for f in docs/*.md; do \
@@ -55,3 +53,6 @@ html: .venv
 
 livehtml: .venv
 	.venv/bin/mkdocs serve
+
+github-pages: .venv
+	.venv/bin/mkdocs gh-deploy --force
