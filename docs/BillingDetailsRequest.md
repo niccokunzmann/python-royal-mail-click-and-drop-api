@@ -13,7 +13,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```python
-from openapi_client.models.billing_details_request import BillingDetailsRequest
+from click_and_drop_api.models.billing_details_request import BillingDetailsRequest
 
 # TODO update the JSON string below
 json = "{}"

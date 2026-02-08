@@ -1,4 +1,4 @@
-# openapi_client.LabelsApi
+# click_and_drop_api.LabelsApi
 
 All URIs are relative to */api/v1*
 
@@ -25,13 +25,13 @@ used in a separate call to print missing documents.
 * Api Key Authentication (Bearer):
 
 ```python
-import openapi_client
-from openapi_client.rest import ApiException
+import click_and_drop_api
+from click_and_drop_api.rest import ApiException
 from pprint import pprint
 
 # Defining the host is optional and defaults to /api/v1
 # See configuration.py for a list of all supported configuration parameters.
-configuration = openapi_client.Configuration(
+configuration = click_and_drop_api.Configuration(
     host = "/api/v1"
 )
 
@@ -47,9 +47,9 @@ configuration.api_key['Bearer'] = os.environ["API_KEY"]
 # configuration.api_key_prefix['Bearer'] = 'Bearer'
 
 # Enter a context with an instance of the API client
-with openapi_client.ApiClient(configuration) as api_client:
+with click_and_drop_api.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = openapi_client.LabelsApi(api_client)
+    api_instance = click_and_drop_api.LabelsApi(api_client)
     order_identifiers = 'order_identifiers_example' # str | One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/
     document_type = 'document_type_example' # str | Document generation mode. When documentType is set to \"postageLabel\" the additional parameters below must be used. These additional parameters will be ignored when documentType is not set to \"postageLabel\"
     include_returns_label = True # bool | Include returns label. Required when documentType is set to 'postageLabel' (optional)

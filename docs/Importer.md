@@ -23,7 +23,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```python
-from openapi_client.models.importer import Importer
+from click_and_drop_api.models.importer import Importer
 
 # TODO update the JSON string below
 json = "{}"

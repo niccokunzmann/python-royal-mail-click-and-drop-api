@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```python
-from openapi_client.models.manifest_errors_response import ManifestErrorsResponse
+from click_and_drop_api.models.manifest_errors_response import ManifestErrorsResponse
 
 # TODO update the JSON string below
 json = "{}"

@@ -1,4 +1,4 @@
-# openapi_client.OrdersApi
+# click_and_drop_api.OrdersApi
 
 All URIs are relative to */api/v1*
 
@@ -23,15 +23,15 @@ Create orders
 * Api Key Authentication (Bearer):
 
 ```python
-import openapi_client
-from openapi_client.models.create_orders_request import CreateOrdersRequest
-from openapi_client.models.create_orders_response import CreateOrdersResponse
-from openapi_client.rest import ApiException
+import click_and_drop_api
+from click_and_drop_api.models.create_orders_request import CreateOrdersRequest
+from click_and_drop_api.models.create_orders_response import CreateOrdersResponse
+from click_and_drop_api.rest import ApiException
 from pprint import pprint
 
 # Defining the host is optional and defaults to /api/v1
 # See configuration.py for a list of all supported configuration parameters.
-configuration = openapi_client.Configuration(
+configuration = click_and_drop_api.Configuration(
     host = "/api/v1"
 )
 
@@ -47,10 +47,10 @@ configuration.api_key['Bearer'] = os.environ["API_KEY"]
 # configuration.api_key_prefix['Bearer'] = 'Bearer'
 
 # Enter a context with an instance of the API client
-with openapi_client.ApiClient(configuration) as api_client:
+with click_and_drop_api.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = openapi_client.OrdersApi(api_client)
-    request = openapi_client.CreateOrdersRequest() # CreateOrdersRequest | 
+    api_instance = click_and_drop_api.OrdersApi(api_client)
+    request = click_and_drop_api.CreateOrdersRequest() # CreateOrdersRequest | 
 
     try:
         # Create orders
@@ -111,14 +111,14 @@ and an additional handling fee applied.
 * Api Key Authentication (Bearer):
 
 ```python
-import openapi_client
-from openapi_client.models.delete_orders_resource import DeleteOrdersResource
-from openapi_client.rest import ApiException
+import click_and_drop_api
+from click_and_drop_api.models.delete_orders_resource import DeleteOrdersResource
+from click_and_drop_api.rest import ApiException
 from pprint import pprint
 
 # Defining the host is optional and defaults to /api/v1
 # See configuration.py for a list of all supported configuration parameters.
-configuration = openapi_client.Configuration(
+configuration = click_and_drop_api.Configuration(
     host = "/api/v1"
 )
 
@@ -134,9 +134,9 @@ configuration.api_key['Bearer'] = os.environ["API_KEY"]
 # configuration.api_key_prefix['Bearer'] = 'Bearer'
 
 # Enter a context with an instance of the API client
-with openapi_client.ApiClient(configuration) as api_client:
+with click_and_drop_api.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = openapi_client.OrdersApi(api_client)
+    api_instance = click_and_drop_api.OrdersApi(api_client)
     order_identifiers = 'order_identifiers_example' # str | One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/
 
     try:
@@ -193,14 +193,14 @@ Retrieve pageable list of orders
 * Api Key Authentication (Bearer):
 
 ```python
-import openapi_client
-from openapi_client.models.get_orders_response import GetOrdersResponse
-from openapi_client.rest import ApiException
+import click_and_drop_api
+from click_and_drop_api.models.get_orders_response import GetOrdersResponse
+from click_and_drop_api.rest import ApiException
 from pprint import pprint
 
 # Defining the host is optional and defaults to /api/v1
 # See configuration.py for a list of all supported configuration parameters.
-configuration = openapi_client.Configuration(
+configuration = click_and_drop_api.Configuration(
     host = "/api/v1"
 )
 
@@ -216,9 +216,9 @@ configuration.api_key['Bearer'] = os.environ["API_KEY"]
 # configuration.api_key_prefix['Bearer'] = 'Bearer'
 
 # Enter a context with an instance of the API client
-with openapi_client.ApiClient(configuration) as api_client:
+with click_and_drop_api.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = openapi_client.OrdersApi(api_client)
+    api_instance = click_and_drop_api.OrdersApi(api_client)
     page_size = 25 # int | The number of items to return (optional) (default to 25)
     start_date_time = '2013-10-20T19:20:30+01:00' # datetime | Date and time lower bound for items filtering (optional)
     end_date_time = '2013-10-20T19:20:30+01:00' # datetime | Date and time upper bound for items filtering (optional)
@@ -282,14 +282,14 @@ Retrieve pageable list of orders with details
 * Api Key Authentication (Bearer):
 
 ```python
-import openapi_client
-from openapi_client.models.get_orders_details_response import GetOrdersDetailsResponse
-from openapi_client.rest import ApiException
+import click_and_drop_api
+from click_and_drop_api.models.get_orders_details_response import GetOrdersDetailsResponse
+from click_and_drop_api.rest import ApiException
 from pprint import pprint
 
 # Defining the host is optional and defaults to /api/v1
 # See configuration.py for a list of all supported configuration parameters.
-configuration = openapi_client.Configuration(
+configuration = click_and_drop_api.Configuration(
     host = "/api/v1"
 )
 
@@ -305,9 +305,9 @@ configuration.api_key['Bearer'] = os.environ["API_KEY"]
 # configuration.api_key_prefix['Bearer'] = 'Bearer'
 
 # Enter a context with an instance of the API client
-with openapi_client.ApiClient(configuration) as api_client:
+with click_and_drop_api.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = openapi_client.OrdersApi(api_client)
+    api_instance = click_and_drop_api.OrdersApi(api_client)
     page_size = 25 # int | The number of items to return (optional) (default to 25)
     start_date_time = '2013-10-20T19:20:30+01:00' # datetime | Date and time lower bound for items filtering (optional)
     end_date_time = '2013-10-20T19:20:30+01:00' # datetime | Date and time upper bound for items filtering (optional)
@@ -370,14 +370,14 @@ Retrieve specific orders
 * Api Key Authentication (Bearer):
 
 ```python
-import openapi_client
-from openapi_client.models.get_order_info_resource import GetOrderInfoResource
-from openapi_client.rest import ApiException
+import click_and_drop_api
+from click_and_drop_api.models.get_order_info_resource import GetOrderInfoResource
+from click_and_drop_api.rest import ApiException
 from pprint import pprint
 
 # Defining the host is optional and defaults to /api/v1
 # See configuration.py for a list of all supported configuration parameters.
-configuration = openapi_client.Configuration(
+configuration = click_and_drop_api.Configuration(
     host = "/api/v1"
 )
 
@@ -393,9 +393,9 @@ configuration.api_key['Bearer'] = os.environ["API_KEY"]
 # configuration.api_key_prefix['Bearer'] = 'Bearer'
 
 # Enter a context with an instance of the API client
-with openapi_client.ApiClient(configuration) as api_client:
+with click_and_drop_api.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = openapi_client.OrdersApi(api_client)
+    api_instance = click_and_drop_api.OrdersApi(api_client)
     order_identifiers = 'order_identifiers_example' # str | One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/
 
     try:
@@ -453,14 +453,14 @@ Retrieve details of the specific orders
 * Api Key Authentication (Bearer):
 
 ```python
-import openapi_client
-from openapi_client.models.get_order_details_resource import GetOrderDetailsResource
-from openapi_client.rest import ApiException
+import click_and_drop_api
+from click_and_drop_api.models.get_order_details_resource import GetOrderDetailsResource
+from click_and_drop_api.rest import ApiException
 from pprint import pprint
 
 # Defining the host is optional and defaults to /api/v1
 # See configuration.py for a list of all supported configuration parameters.
-configuration = openapi_client.Configuration(
+configuration = click_and_drop_api.Configuration(
     host = "/api/v1"
 )
 
@@ -476,9 +476,9 @@ configuration.api_key['Bearer'] = os.environ["API_KEY"]
 # configuration.api_key_prefix['Bearer'] = 'Bearer'
 
 # Enter a context with an instance of the API client
-with openapi_client.ApiClient(configuration) as api_client:
+with click_and_drop_api.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = openapi_client.OrdersApi(api_client)
+    api_instance = click_and_drop_api.OrdersApi(api_client)
     order_identifiers = 'order_identifiers_example' # str | One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/
 
     try:
@@ -535,15 +535,15 @@ Set order status
 * Api Key Authentication (Bearer):
 
 ```python
-import openapi_client
-from openapi_client.models.update_order_status_response import UpdateOrderStatusResponse
-from openapi_client.models.update_orders_status_request import UpdateOrdersStatusRequest
-from openapi_client.rest import ApiException
+import click_and_drop_api
+from click_and_drop_api.models.update_order_status_response import UpdateOrderStatusResponse
+from click_and_drop_api.models.update_orders_status_request import UpdateOrdersStatusRequest
+from click_and_drop_api.rest import ApiException
 from pprint import pprint
 
 # Defining the host is optional and defaults to /api/v1
 # See configuration.py for a list of all supported configuration parameters.
-configuration = openapi_client.Configuration(
+configuration = click_and_drop_api.Configuration(
     host = "/api/v1"
 )
 
@@ -559,10 +559,10 @@ configuration.api_key['Bearer'] = os.environ["API_KEY"]
 # configuration.api_key_prefix['Bearer'] = 'Bearer'
 
 # Enter a context with an instance of the API client
-with openapi_client.ApiClient(configuration) as api_client:
+with click_and_drop_api.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = openapi_client.OrdersApi(api_client)
-    request = openapi_client.UpdateOrdersStatusRequest() # UpdateOrdersStatusRequest | At least one of 'orderIdentifier' and 'orderReference' is required. Providing both is disallowed to avoid ambiguity.  When the status is set to 'despatchedByOtherCourier', if the optional parameter 'trackingNumber' is provided then the parameters 'despatchDate', 'shippingCarrier' and 'shippingService' are also required. The maximum collection length is 100. 
+    api_instance = click_and_drop_api.OrdersApi(api_client)
+    request = click_and_drop_api.UpdateOrdersStatusRequest() # UpdateOrdersStatusRequest | At least one of 'orderIdentifier' and 'orderReference' is required. Providing both is disallowed to avoid ambiguity.  When the status is set to 'despatchedByOtherCourier', if the optional parameter 'trackingNumber' is provided then the parameters 'despatchDate', 'shippingCarrier' and 'shippingService' are also required. The maximum collection length is 100. 
 
     try:
         # Set order status

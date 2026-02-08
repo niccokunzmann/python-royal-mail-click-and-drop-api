@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```python
-from openapi_client.models.manifest_eligible_orders_request import ManifestEligibleOrdersRequest
+from click_and_drop_api.models.manifest_eligible_orders_request import ManifestEligibleOrdersRequest
 
 # TODO update the JSON string below
 json = "{}"

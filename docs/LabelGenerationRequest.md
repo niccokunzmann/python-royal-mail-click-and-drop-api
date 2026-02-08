@@ -13,7 +13,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```python
-from openapi_client.models.label_generation_request import LabelGenerationRequest
+from click_and_drop_api.models.label_generation_request import LabelGenerationRequest
 
 # TODO update the JSON string below
 json = "{}"

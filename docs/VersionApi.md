@@ -1,4 +1,4 @@
-# openapi_client.VersionApi
+# click_and_drop_api.VersionApi
 
 All URIs are relative to */api/v1*
 
@@ -16,22 +16,22 @@ Get API version details.
 
 
 ```python
-import openapi_client
-from openapi_client.models.get_version_resource import GetVersionResource
-from openapi_client.rest import ApiException
+import click_and_drop_api
+from click_and_drop_api.models.get_version_resource import GetVersionResource
+from click_and_drop_api.rest import ApiException
 from pprint import pprint
 
 # Defining the host is optional and defaults to /api/v1
 # See configuration.py for a list of all supported configuration parameters.
-configuration = openapi_client.Configuration(
+configuration = click_and_drop_api.Configuration(
     host = "/api/v1"
 )
 
 
 # Enter a context with an instance of the API client
-with openapi_client.ApiClient(configuration) as api_client:
+with click_and_drop_api.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = openapi_client.VersionApi(api_client)
+    api_instance = click_and_drop_api.VersionApi(api_client)
 
     try:
         # Get API version details.

@@ -1,5 +1,5 @@
 [project]
-name = "openapi_client"
+name = "click_and_drop_api"
 version = "1.0.0"
 description = "ChannelShipper & Royal Mail Public API"
 authors = [
@@ -17,7 +17,7 @@ dependencies = [
 ]
 
 [project.urls]
-Repository = "https://github.com/GIT_USER_ID/GIT_REPO_ID"
+Repository = "https://https://github.com/niccokunzmann/python-royal-mail-click-and-drop-api"
 
 [tool.poetry]
 requires-poetry = ">=2.0"
@@ -40,7 +40,7 @@ extension-pkg-whitelist = "pydantic"
 
 [tool.mypy]
 files = [
-  "openapi_client",
+  "click_and_drop_api",
   #"test",  # auto-generated tests
   "tests", # hand-written tests
 ]
@@ -78,7 +78,7 @@ disallow_any_generics = true
 
 [[tool.mypy.overrides]]
 module = [
-  "openapi_client.configuration",
+  "click_and_drop_api.configuration",
 ]
 warn_unused_ignores = true
 strict_equality = true

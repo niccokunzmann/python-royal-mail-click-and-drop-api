@@ -21,7 +21,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```python
-from openapi_client.models.create_order_response import CreateOrderResponse
+from click_and_drop_api.models.create_order_response import CreateOrderResponse
 
 # TODO update the JSON string below
 json = "{}"

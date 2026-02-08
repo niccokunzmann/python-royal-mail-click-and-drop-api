@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```python
-from openapi_client.models.tag_request import TagRequest
+from click_and_drop_api.models.tag_request import TagRequest
 
 # TODO update the JSON string below
 json = "{}"

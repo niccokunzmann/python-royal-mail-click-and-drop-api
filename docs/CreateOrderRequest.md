@@ -33,7 +33,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```python
-from openapi_client.models.create_order_request import CreateOrderRequest
+from click_and_drop_api.models.create_order_request import CreateOrderRequest
 
 # TODO update the JSON string below
 json = "{}"

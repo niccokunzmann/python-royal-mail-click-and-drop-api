@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```python
-from openapi_client.models.delete_orders_resource import DeleteOrdersResource
+from click_and_drop_api.models.delete_orders_resource import DeleteOrdersResource
 
 # TODO update the JSON string below
 json = "{}"

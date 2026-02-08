@@ -12,7 +12,7 @@ Name | Type | Description | Notes
 ## Example
 
 ```python
-from openapi_client.models.error_response import ErrorResponse
+from click_and_drop_api.models.error_response import ErrorResponse
 
 # TODO update the JSON string below
 json = "{}"

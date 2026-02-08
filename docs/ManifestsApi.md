@@ -1,4 +1,4 @@
-# openapi_client.ManifestsApi
+# click_and_drop_api.ManifestsApi
 
 All URIs are relative to */api/v1*
 
@@ -21,14 +21,14 @@ Retrieve manifest paperwork for a previously successful ‘Manifest eligible ord
 * Api Key Authentication (Bearer):
 
 ```python
-import openapi_client
-from openapi_client.models.manifest_details_response import ManifestDetailsResponse
-from openapi_client.rest import ApiException
+import click_and_drop_api
+from click_and_drop_api.models.manifest_details_response import ManifestDetailsResponse
+from click_and_drop_api.rest import ApiException
 from pprint import pprint
 
 # Defining the host is optional and defaults to /api/v1
 # See configuration.py for a list of all supported configuration parameters.
-configuration = openapi_client.Configuration(
+configuration = click_and_drop_api.Configuration(
     host = "/api/v1"
 )
 
@@ -44,9 +44,9 @@ configuration.api_key['Bearer'] = os.environ["API_KEY"]
 # configuration.api_key_prefix['Bearer'] = 'Bearer'
 
 # Enter a context with an instance of the API client
-with openapi_client.ApiClient(configuration) as api_client:
+with click_and_drop_api.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = openapi_client.ManifestsApi(api_client)
+    api_instance = click_and_drop_api.ManifestsApi(api_client)
     manifest_identifier = 56 # int | The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call. E.g. 12345
 
     try:
@@ -106,15 +106,15 @@ Manifest all orders in 'Label Generated' and 'Despatched' statuses and return ma
 * Api Key Authentication (Bearer):
 
 ```python
-import openapi_client
-from openapi_client.models.manifest_eligible_orders_request import ManifestEligibleOrdersRequest
-from openapi_client.models.manifest_orders_response import ManifestOrdersResponse
-from openapi_client.rest import ApiException
+import click_and_drop_api
+from click_and_drop_api.models.manifest_eligible_orders_request import ManifestEligibleOrdersRequest
+from click_and_drop_api.models.manifest_orders_response import ManifestOrdersResponse
+from click_and_drop_api.rest import ApiException
 from pprint import pprint
 
 # Defining the host is optional and defaults to /api/v1
 # See configuration.py for a list of all supported configuration parameters.
-configuration = openapi_client.Configuration(
+configuration = click_and_drop_api.Configuration(
     host = "/api/v1"
 )
 
@@ -130,10 +130,10 @@ configuration.api_key['Bearer'] = os.environ["API_KEY"]
 # configuration.api_key_prefix['Bearer'] = 'Bearer'
 
 # Enter a context with an instance of the API client
-with openapi_client.ApiClient(configuration) as api_client:
+with click_and_drop_api.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = openapi_client.ManifestsApi(api_client)
-    request = openapi_client.ManifestEligibleOrdersRequest() # ManifestEligibleOrdersRequest |  (optional)
+    api_instance = click_and_drop_api.ManifestsApi(api_client)
+    request = click_and_drop_api.ManifestEligibleOrdersRequest() # ManifestEligibleOrdersRequest |  (optional)
 
     try:
         # Manifest eligible orders
@@ -193,14 +193,14 @@ Retry a manifest operation if the eligible orders were not able to be successful
 * Api Key Authentication (Bearer):
 
 ```python
-import openapi_client
-from openapi_client.models.manifest_orders_response import ManifestOrdersResponse
-from openapi_client.rest import ApiException
+import click_and_drop_api
+from click_and_drop_api.models.manifest_orders_response import ManifestOrdersResponse
+from click_and_drop_api.rest import ApiException
 from pprint import pprint
 
 # Defining the host is optional and defaults to /api/v1
 # See configuration.py for a list of all supported configuration parameters.
-configuration = openapi_client.Configuration(
+configuration = click_and_drop_api.Configuration(
     host = "/api/v1"
 )
 
@@ -216,9 +216,9 @@ configuration.api_key['Bearer'] = os.environ["API_KEY"]
 # configuration.api_key_prefix['Bearer'] = 'Bearer'
 
 # Enter a context with an instance of the API client
-with openapi_client.ApiClient(configuration) as api_client:
+with click_and_drop_api.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = openapi_client.ManifestsApi(api_client)
+    api_instance = click_and_drop_api.ManifestsApi(api_client)
     manifest_identifier = 56 # int | The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call. E.g. 12345
 
     try:
