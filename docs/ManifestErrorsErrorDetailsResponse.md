@@ -2,7 +2,6 @@
 
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **code** | **str** |  | [optional] 
@@ -18,7 +17,7 @@ json = "{}"
 # create an instance of ManifestErrorsErrorDetailsResponse from a JSON string
 manifest_errors_error_details_response_instance = ManifestErrorsErrorDetailsResponse.from_json(json)
 # print the JSON string representation of the object
-print(ManifestErrorsErrorDetailsResponse.to_json())
+print ManifestErrorsErrorDetailsResponse.to_json()
 
 # convert the object into a dict
 manifest_errors_error_details_response_dict = manifest_errors_error_details_response_instance.to_dict()

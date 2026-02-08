@@ -4,6 +4,7 @@ info:
   description: Import your orders, retrieve your orders and generate labels.
   version: 1.0.0
 
+host: api.parcel.royalmail.com
 basePath: /api/v1
 produces:
   - application/json

@@ -2,7 +2,6 @@
 
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **manifest_number** | **float** |  | 
@@ -19,7 +18,7 @@ json = "{}"
 # create an instance of ManifestDetailsResponse from a JSON string
 manifest_details_response_instance = ManifestDetailsResponse.from_json(json)
 # print the JSON string representation of the object
-print(ManifestDetailsResponse.to_json())
+print ManifestDetailsResponse.to_json()
 
 # convert the object into a dict
 manifest_details_response_dict = manifest_details_response_instance.to_dict()

@@ -2,7 +2,6 @@
 
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **address** | [**AddressRequest**](AddressRequest.md) |  | [optional] 
@@ -20,7 +19,7 @@ json = "{}"
 # create an instance of RecipientDetailsRequest from a JSON string
 recipient_details_request_instance = RecipientDetailsRequest.from_json(json)
 # print the JSON string representation of the object
-print(RecipientDetailsRequest.to_json())
+print RecipientDetailsRequest.to_json()
 
 # convert the object into a dict
 recipient_details_request_dict = recipient_details_request_instance.to_dict()

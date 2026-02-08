@@ -17,13 +17,14 @@ image:
 stubs: image
 	docker run --rm -v "$${PWD}:/local" -u $$(id -u):$$(id -g) openapitools/openapi-generator-cli generate \
 		-i /local/click-and-drop-api-v1.yaml \
-		-g python \
+		-g python-pydantic-v1 \
 		-o /local/ \
 		--package-name click_and_drop_api \
 		--git-host https://github.com \
 		--git-user-id niccokunzmann \
 		--git-repo-id python-royal-mail-click-and-drop-api \
-		--minimal-update
+		--minimal-update \
+		--server-variables "host=api.parcel.royalmail.com"
 # 	sudo chown -R $(id -u):$(id -g) .
 
 stubs-help: image

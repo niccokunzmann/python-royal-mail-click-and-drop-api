@@ -2,7 +2,6 @@
 
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **field_name** | **str** |  | [optional] 
@@ -18,7 +17,7 @@ json = "{}"
 # create an instance of OrderFieldResponse from a JSON string
 order_field_response_instance = OrderFieldResponse.from_json(json)
 # print the JSON string representation of the object
-print(OrderFieldResponse.to_json())
+print OrderFieldResponse.to_json()
 
 # convert the object into a dict
 order_field_response_dict = order_field_response_instance.to_dict()

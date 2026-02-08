@@ -3,7 +3,6 @@
 <b>Billing</b> along with <b>billing.address</b> objects are required in specific case when 'Use shipping address for billing address' setting is set to 'false' and 'Recipient.AddressBookReference' is provided.
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **address** | [**AddressRequest**](AddressRequest.md) |  | [optional] 
@@ -20,7 +19,7 @@ json = "{}"
 # create an instance of BillingDetailsRequest from a JSON string
 billing_details_request_instance = BillingDetailsRequest.from_json(json)
 # print the JSON string representation of the object
-print(BillingDetailsRequest.to_json())
+print BillingDetailsRequest.to_json()
 
 # convert the object into a dict
 billing_details_request_dict = billing_details_request_instance.to_dict()

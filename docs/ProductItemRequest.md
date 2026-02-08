@@ -2,7 +2,6 @@
 
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **name** | **str** |  | [optional] 
@@ -32,7 +31,7 @@ json = "{}"
 # create an instance of ProductItemRequest from a JSON string
 product_item_request_instance = ProductItemRequest.from_json(json)
 # print the JSON string representation of the object
-print(ProductItemRequest.to_json())
+print ProductItemRequest.to_json()
 
 # convert the object into a dict
 product_item_request_dict = product_item_request_instance.to_dict()

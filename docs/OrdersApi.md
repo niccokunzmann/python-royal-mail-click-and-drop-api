@@ -1,6 +1,6 @@
 # click_and_drop_api.OrdersApi
 
-All URIs are relative to */api/v1*
+All URIs are relative to *http://api.parcel.royalmail.com/api/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
@@ -18,21 +18,24 @@ Method | HTTP request | Description
 
 Create orders
 
+
+
 ### Example
 
 * Api Key Authentication (Bearer):
-
 ```python
+import time
+import os
 import click_and_drop_api
 from click_and_drop_api.models.create_orders_request import CreateOrdersRequest
 from click_and_drop_api.models.create_orders_response import CreateOrdersResponse
 from click_and_drop_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to /api/v1
+# Defining the host is optional and defaults to http://api.parcel.royalmail.com/api/v1
 # See configuration.py for a list of all supported configuration parameters.
 configuration = click_and_drop_api.Configuration(
-    host = "/api/v1"
+    host = "http://api.parcel.royalmail.com/api/v1"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -65,7 +68,6 @@ with click_and_drop_api.ApiClient(configuration) as api_client:
 
 ### Parameters
 
-
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **request** | [**CreateOrdersRequest**](CreateOrdersRequest.md)|  | 
@@ -84,7 +86,6 @@ Name | Type | Description  | Notes
  - **Accept**: application/json
 
 ### HTTP response details
-
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **200** | Request Processed Successfully |  -  |
@@ -109,17 +110,18 @@ and an additional handling fee applied.
 ### Example
 
 * Api Key Authentication (Bearer):
-
 ```python
+import time
+import os
 import click_and_drop_api
 from click_and_drop_api.models.delete_orders_resource import DeleteOrdersResource
 from click_and_drop_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to /api/v1
+# Defining the host is optional and defaults to http://api.parcel.royalmail.com/api/v1
 # See configuration.py for a list of all supported configuration parameters.
 configuration = click_and_drop_api.Configuration(
-    host = "/api/v1"
+    host = "http://api.parcel.royalmail.com/api/v1"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -152,7 +154,6 @@ with click_and_drop_api.ApiClient(configuration) as api_client:
 
 ### Parameters
 
-
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **order_identifiers** | **str**| One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\&quot;ref\&quot;;1001;\&quot;Reference%3BWith%3BSpecial%3BSymbols!\&quot;;2345/ | 
@@ -171,7 +172,6 @@ Name | Type | Description  | Notes
  - **Accept**: application/json
 
 ### HTTP response details
-
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **200** | Provides a list of deleted orders references and ids and errors for orders that failed to delete |  -  |
@@ -188,20 +188,23 @@ Name | Type | Description  | Notes
 
 Retrieve pageable list of orders
 
+
+
 ### Example
 
 * Api Key Authentication (Bearer):
-
 ```python
+import time
+import os
 import click_and_drop_api
 from click_and_drop_api.models.get_orders_response import GetOrdersResponse
 from click_and_drop_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to /api/v1
+# Defining the host is optional and defaults to http://api.parcel.royalmail.com/api/v1
 # See configuration.py for a list of all supported configuration parameters.
 configuration = click_and_drop_api.Configuration(
-    host = "/api/v1"
+    host = "http://api.parcel.royalmail.com/api/v1"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -237,7 +240,6 @@ with click_and_drop_api.ApiClient(configuration) as api_client:
 
 ### Parameters
 
-
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **page_size** | **int**| The number of items to return | [optional] [default to 25]
@@ -259,7 +261,6 @@ Name | Type | Description  | Notes
  - **Accept**: application/json
 
 ### HTTP response details
-
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **200** | Return pageable list of orders |  -  |
@@ -280,17 +281,18 @@ Retrieve pageable list of orders with details
 ### Example
 
 * Api Key Authentication (Bearer):
-
 ```python
+import time
+import os
 import click_and_drop_api
 from click_and_drop_api.models.get_orders_details_response import GetOrdersDetailsResponse
 from click_and_drop_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to /api/v1
+# Defining the host is optional and defaults to http://api.parcel.royalmail.com/api/v1
 # See configuration.py for a list of all supported configuration parameters.
 configuration = click_and_drop_api.Configuration(
-    host = "/api/v1"
+    host = "http://api.parcel.royalmail.com/api/v1"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -326,7 +328,6 @@ with click_and_drop_api.ApiClient(configuration) as api_client:
 
 ### Parameters
 
-
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **page_size** | **int**| The number of items to return | [optional] [default to 25]
@@ -348,7 +349,6 @@ Name | Type | Description  | Notes
  - **Accept**: application/json
 
 ### HTTP response details
-
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **200** | Return a pageable list of orders with details |  -  |
@@ -365,20 +365,23 @@ Name | Type | Description  | Notes
 
 Retrieve specific orders
 
+
+
 ### Example
 
 * Api Key Authentication (Bearer):
-
 ```python
+import time
+import os
 import click_and_drop_api
 from click_and_drop_api.models.get_order_info_resource import GetOrderInfoResource
 from click_and_drop_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to /api/v1
+# Defining the host is optional and defaults to http://api.parcel.royalmail.com/api/v1
 # See configuration.py for a list of all supported configuration parameters.
 configuration = click_and_drop_api.Configuration(
-    host = "/api/v1"
+    host = "http://api.parcel.royalmail.com/api/v1"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -411,7 +414,6 @@ with click_and_drop_api.ApiClient(configuration) as api_client:
 
 ### Parameters
 
-
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **order_identifiers** | **str**| One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\&quot;ref\&quot;;1001;\&quot;Reference%3BWith%3BSpecial%3BSymbols!\&quot;;2345/ | 
@@ -430,7 +432,6 @@ Name | Type | Description  | Notes
  - **Accept**: application/json
 
 ### HTTP response details
-
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **200** | Return list of specific orders |  -  |
@@ -451,17 +452,18 @@ Retrieve details of the specific orders
 ### Example
 
 * Api Key Authentication (Bearer):
-
 ```python
+import time
+import os
 import click_and_drop_api
 from click_and_drop_api.models.get_order_details_resource import GetOrderDetailsResource
 from click_and_drop_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to /api/v1
+# Defining the host is optional and defaults to http://api.parcel.royalmail.com/api/v1
 # See configuration.py for a list of all supported configuration parameters.
 configuration = click_and_drop_api.Configuration(
-    host = "/api/v1"
+    host = "http://api.parcel.royalmail.com/api/v1"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -494,7 +496,6 @@ with click_and_drop_api.ApiClient(configuration) as api_client:
 
 ### Parameters
 
-
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **order_identifiers** | **str**| One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\&quot;ref\&quot;;1001;\&quot;Reference%3BWith%3BSpecial%3BSymbols!\&quot;;2345/ | 
@@ -513,7 +514,6 @@ Name | Type | Description  | Notes
  - **Accept**: application/json
 
 ### HTTP response details
-
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **200** | Return detailed information about the orders |  -  |
@@ -530,21 +530,24 @@ Name | Type | Description  | Notes
 
 Set order status
 
+
+
 ### Example
 
 * Api Key Authentication (Bearer):
-
 ```python
+import time
+import os
 import click_and_drop_api
 from click_and_drop_api.models.update_order_status_response import UpdateOrderStatusResponse
 from click_and_drop_api.models.update_orders_status_request import UpdateOrdersStatusRequest
 from click_and_drop_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to /api/v1
+# Defining the host is optional and defaults to http://api.parcel.royalmail.com/api/v1
 # See configuration.py for a list of all supported configuration parameters.
 configuration = click_and_drop_api.Configuration(
-    host = "/api/v1"
+    host = "http://api.parcel.royalmail.com/api/v1"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -577,7 +580,6 @@ with click_and_drop_api.ApiClient(configuration) as api_client:
 
 ### Parameters
 
-
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **request** | [**UpdateOrdersStatusRequest**](UpdateOrdersStatusRequest.md)| At least one of &#39;orderIdentifier&#39; and &#39;orderReference&#39; is required. Providing both is disallowed to avoid ambiguity.  When the status is set to &#39;despatchedByOtherCourier&#39;, if the optional parameter &#39;trackingNumber&#39; is provided then the parameters &#39;despatchDate&#39;, &#39;shippingCarrier&#39; and &#39;shippingService&#39; are also required. The maximum collection length is 100.  | 
@@ -596,7 +598,6 @@ Name | Type | Description  | Notes
  - **Accept**: application/json
 
 ### HTTP response details
-
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **200** | Provides a list of orders |  -  |

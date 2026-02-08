@@ -22,12 +22,12 @@ from setuptools import setup, find_packages  # noqa: H301
 # http://pypi.python.org/pypi/setuptools
 NAME = "click-and-drop-api"
 VERSION = "1.0.0"
-PYTHON_REQUIRES = ">= 3.9"
+PYTHON_REQUIRES = ">=3.7"
 REQUIRES = [
-    "urllib3 >= 2.1.0, < 3.0.0",
-    "python-dateutil >= 2.8.2",
-    "pydantic >= 2",
-    "typing-extensions >= 4.7.1",
+    "urllib3 >= 1.25.3, < 3.0.0",
+    "python-dateutil",
+    "pydantic >= 1.10.5, < 2",
+    "aenum"
 ]
 
 setup(

@@ -2,7 +2,6 @@
 
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **order_identifier** | **int** |  | [optional] 
@@ -19,7 +18,7 @@ json = "{}"
 # create an instance of DeletedOrderInfo from a JSON string
 deleted_order_info_instance = DeletedOrderInfo.from_json(json)
 # print the JSON string representation of the object
-print(DeletedOrderInfo.to_json())
+print DeletedOrderInfo.to_json()
 
 # convert the object into a dict
 deleted_order_info_dict = deleted_order_info_instance.to_dict()

@@ -18,15 +18,13 @@ import re  # noqa: F401
 import json
 
 from datetime import datetime
-from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr, field_validator
-from typing import Any, ClassVar, Dict, List, Optional
-from typing import Optional, Set
-from typing_extensions import Self
+from typing import Optional
+from pydantic import BaseModel, Field, StrictInt, StrictStr, validator
 
 class UpdateOrderStatusRequest(BaseModel):
     """
     UpdateOrderStatusRequest
-    """ # noqa: E501
+    """
     order_identifier: Optional[StrictInt] = Field(default=None, alias="orderIdentifier")
     order_reference: Optional[StrictStr] = Field(default=None, alias="orderReference")
     status: Optional[StrictStr] = Field(default=None, description="<br/> \"<i>despatchedByOtherCourier</i> \": <b>Reserved for ChannelShipper customers only - please visit <a href=\"https://channelshipper.com/\" target=\"_self\">ChannelShipper.com</a> for more information</b>  \"<i>new</i> \": This will remove the order from its batch. Order information will not be lost during this process.  Please be aware labels generated on orders which are then set to \"new\" (reset) are no longer valid and must be destroyed. If the order is required to be despatched after setting to \"new\" status, a new label must be generated to attach to the item.  Cancelled label information is automatically shared with Royal Mail Revenue Protection, and should a cancelled label be identified on an item in the Royal Mail Network, you will be charged on your account and an additional handling fee applied. ")
@@ -34,76 +32,61 @@ class UpdateOrderStatusRequest(BaseModel):
     despatch_date: Optional[datetime] = Field(default=None, alias="despatchDate")
     shipping_carrier: Optional[StrictStr] = Field(default=None, alias="shippingCarrier")
     shipping_service: Optional[StrictStr] = Field(default=None, alias="shippingService")
-    __properties: ClassVar[List[str]] = ["orderIdentifier", "orderReference", "status", "trackingNumber", "despatchDate", "shippingCarrier", "shippingService"]
+    __properties = ["orderIdentifier", "orderReference", "status", "trackingNumber", "despatchDate", "shippingCarrier", "shippingService"]
 
-    @field_validator('status')
+    @validator('status')
     def status_validate_enum(cls, value):
         """Validates the enum"""
         if value is None:
             return value
 
-        if value not in set(['new', 'despatchedByOtherCourier', 'despatched']):
+        if value not in ('new', 'despatchedByOtherCourier', 'despatched',):
             raise ValueError("must be one of enum values ('new', 'despatchedByOtherCourier', 'despatched')")
         return value
 
-    model_config = ConfigDict(
-        populate_by_name=True,
-        validate_assignment=True,
-        protected_namespaces=(),
-    )
-
+    class Config:
+        """Pydantic configuration"""
+        allow_population_by_field_name = True
+        validate_assignment = True
 
     def to_str(self) -> str:
         """Returns the string representation of the model using alias"""
-        return pprint.pformat(self.model_dump(by_alias=True))
+        return pprint.pformat(self.dict(by_alias=True))
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> UpdateOrderStatusRequest:
         """Create an instance of UpdateOrderStatusRequest from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
-    def to_dict(self) -> Dict[str, Any]:
-        """Return the dictionary representation of the model using alias.
-
-        This has the following differences from calling pydantic's
-        `self.model_dump(by_alias=True)`:
-
-        * `None` is only added to the output dict for nullable fields that
-          were set at model initialization. Other fields with value `None`
-          are ignored.
-        """
-        excluded_fields: Set[str] = set([
-        ])
-
-        _dict = self.model_dump(
-            by_alias=True,
-            exclude=excluded_fields,
-            exclude_none=True,
-        )
+    def to_dict(self):
+        """Returns the dictionary representation of the model using alias"""
+        _dict = self.dict(by_alias=True,
+                          exclude={
+                          },
+                          exclude_none=True)
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: dict) -> UpdateOrderStatusRequest:
         """Create an instance of UpdateOrderStatusRequest from a dict"""
         if obj is None:
             return None
 
         if not isinstance(obj, dict):
-            return cls.model_validate(obj)
+            return UpdateOrderStatusRequest.parse_obj(obj)
 
-        _obj = cls.model_validate({
-            "orderIdentifier": obj.get("orderIdentifier"),
-            "orderReference": obj.get("orderReference"),
+        _obj = UpdateOrderStatusRequest.parse_obj({
+            "order_identifier": obj.get("orderIdentifier"),
+            "order_reference": obj.get("orderReference"),
             "status": obj.get("status"),
-            "trackingNumber": obj.get("trackingNumber"),
-            "despatchDate": obj.get("despatchDate"),
-            "shippingCarrier": obj.get("shippingCarrier"),
-            "shippingService": obj.get("shippingService")
+            "tracking_number": obj.get("trackingNumber"),
+            "despatch_date": obj.get("despatchDate"),
+            "shipping_carrier": obj.get("shippingCarrier"),
+            "shipping_service": obj.get("shippingService")
         })
         return _obj
 

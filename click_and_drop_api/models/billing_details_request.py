@@ -17,79 +17,62 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field
-from typing import Any, ClassVar, Dict, List, Optional
-from typing_extensions import Annotated
+
+from typing import Optional
+from pydantic import BaseModel, Field, constr
 from click_and_drop_api.models.address_request import AddressRequest
-from typing import Optional, Set
-from typing_extensions import Self
 
 class BillingDetailsRequest(BaseModel):
     """
-    <b>Billing</b> along with <b>billing.address</b> objects are required in specific case when 'Use shipping address for billing address' setting is set to 'false' and 'Recipient.AddressBookReference' is provided.
-    """ # noqa: E501
+    <b>Billing</b> along with <b>billing.address</b> objects are required in specific case when 'Use shipping address for billing address' setting is set to 'false' and 'Recipient.AddressBookReference' is provided.  # noqa: E501
+    """
     address: Optional[AddressRequest] = None
-    phone_number: Optional[Annotated[str, Field(strict=True, max_length=25)]] = Field(default=None, alias="phoneNumber")
-    email_address: Optional[Annotated[str, Field(strict=True, max_length=254)]] = Field(default=None, alias="emailAddress")
-    __properties: ClassVar[List[str]] = ["address", "phoneNumber", "emailAddress"]
+    phone_number: Optional[constr(strict=True, max_length=25)] = Field(default=None, alias="phoneNumber")
+    email_address: Optional[constr(strict=True, max_length=254)] = Field(default=None, alias="emailAddress")
+    __properties = ["address", "phoneNumber", "emailAddress"]
 
-    model_config = ConfigDict(
-        populate_by_name=True,
-        validate_assignment=True,
-        protected_namespaces=(),
-    )
-
+    class Config:
+        """Pydantic configuration"""
+        allow_population_by_field_name = True
+        validate_assignment = True
 
     def to_str(self) -> str:
         """Returns the string representation of the model using alias"""
-        return pprint.pformat(self.model_dump(by_alias=True))
+        return pprint.pformat(self.dict(by_alias=True))
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> BillingDetailsRequest:
         """Create an instance of BillingDetailsRequest from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
-    def to_dict(self) -> Dict[str, Any]:
-        """Return the dictionary representation of the model using alias.
-
-        This has the following differences from calling pydantic's
-        `self.model_dump(by_alias=True)`:
-
-        * `None` is only added to the output dict for nullable fields that
-          were set at model initialization. Other fields with value `None`
-          are ignored.
-        """
-        excluded_fields: Set[str] = set([
-        ])
-
-        _dict = self.model_dump(
-            by_alias=True,
-            exclude=excluded_fields,
-            exclude_none=True,
-        )
+    def to_dict(self):
+        """Returns the dictionary representation of the model using alias"""
+        _dict = self.dict(by_alias=True,
+                          exclude={
+                          },
+                          exclude_none=True)
         # override the default output from pydantic by calling `to_dict()` of address
         if self.address:
             _dict['address'] = self.address.to_dict()
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: dict) -> BillingDetailsRequest:
         """Create an instance of BillingDetailsRequest from a dict"""
         if obj is None:
             return None
 
         if not isinstance(obj, dict):
-            return cls.model_validate(obj)
+            return BillingDetailsRequest.parse_obj(obj)
 
-        _obj = cls.model_validate({
-            "address": AddressRequest.from_dict(obj["address"]) if obj.get("address") is not None else None,
-            "phoneNumber": obj.get("phoneNumber"),
-            "emailAddress": obj.get("emailAddress")
+        _obj = BillingDetailsRequest.parse_obj({
+            "address": AddressRequest.from_dict(obj.get("address")) if obj.get("address") is not None else None,
+            "phone_number": obj.get("phoneNumber"),
+            "email_address": obj.get("emailAddress")
         })
         return _obj
 

@@ -1,6 +1,6 @@
 # click_and_drop_api.ManifestsApi
 
-All URIs are relative to */api/v1*
+All URIs are relative to *http://api.parcel.royalmail.com/api/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
@@ -19,17 +19,18 @@ Retrieve manifest paperwork for a previously successful ‘Manifest eligible ord
 ### Example
 
 * Api Key Authentication (Bearer):
-
 ```python
+import time
+import os
 import click_and_drop_api
 from click_and_drop_api.models.manifest_details_response import ManifestDetailsResponse
 from click_and_drop_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to /api/v1
+# Defining the host is optional and defaults to http://api.parcel.royalmail.com/api/v1
 # See configuration.py for a list of all supported configuration parameters.
 configuration = click_and_drop_api.Configuration(
-    host = "/api/v1"
+    host = "http://api.parcel.royalmail.com/api/v1"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -62,7 +63,6 @@ with click_and_drop_api.ApiClient(configuration) as api_client:
 
 ### Parameters
 
-
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **manifest_identifier** | **int**| The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call. E.g. 12345 | 
@@ -81,7 +81,6 @@ Name | Type | Description  | Notes
  - **Accept**: application/json
 
 ### HTTP response details
-
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **200** | The Get Manifest request was successfully processed. The manifest details were retrieved, but the Printable PDF Manifest may or may not be available at this time. Please try the Get Manifest endpoint. If it is not available after a reasonable period, please &lt;a href&#x3D;&#39;https://help.parcel.royalmail.com/hc/en-gb/articles/115003806094-Contact-Support&#39; target&#x3D;&#39;_self&#39;&gt;contact support&lt;/a&gt; for assistance.  |  -  |
@@ -104,18 +103,19 @@ Manifest all orders in 'Label Generated' and 'Despatched' statuses and return ma
 ### Example
 
 * Api Key Authentication (Bearer):
-
 ```python
+import time
+import os
 import click_and_drop_api
 from click_and_drop_api.models.manifest_eligible_orders_request import ManifestEligibleOrdersRequest
 from click_and_drop_api.models.manifest_orders_response import ManifestOrdersResponse
 from click_and_drop_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to /api/v1
+# Defining the host is optional and defaults to http://api.parcel.royalmail.com/api/v1
 # See configuration.py for a list of all supported configuration parameters.
 configuration = click_and_drop_api.Configuration(
-    host = "/api/v1"
+    host = "http://api.parcel.royalmail.com/api/v1"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -148,7 +148,6 @@ with click_and_drop_api.ApiClient(configuration) as api_client:
 
 ### Parameters
 
-
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **request** | [**ManifestEligibleOrdersRequest**](ManifestEligibleOrdersRequest.md)|  | [optional] 
@@ -167,7 +166,6 @@ Name | Type | Description  | Notes
  - **Accept**: application/json
 
 ### HTTP response details
-
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **201** | The Manifest all eligible orders request was successful, and a manifest has been created. The Printable PDF manifest is available for download.  |  -  |
@@ -191,17 +189,18 @@ Retry a manifest operation if the eligible orders were not able to be successful
 ### Example
 
 * Api Key Authentication (Bearer):
-
 ```python
+import time
+import os
 import click_and_drop_api
 from click_and_drop_api.models.manifest_orders_response import ManifestOrdersResponse
 from click_and_drop_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to /api/v1
+# Defining the host is optional and defaults to http://api.parcel.royalmail.com/api/v1
 # See configuration.py for a list of all supported configuration parameters.
 configuration = click_and_drop_api.Configuration(
-    host = "/api/v1"
+    host = "http://api.parcel.royalmail.com/api/v1"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -234,7 +233,6 @@ with click_and_drop_api.ApiClient(configuration) as api_client:
 
 ### Parameters
 
-
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **manifest_identifier** | **int**| The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call. E.g. 12345 | 
@@ -253,7 +251,6 @@ Name | Type | Description  | Notes
  - **Accept**: application/json
 
 ### HTTP response details
-
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **201** | The Retry Manifest request was successful, and a manifest has been created. The printable manifest PDF is available for download. |  -  |

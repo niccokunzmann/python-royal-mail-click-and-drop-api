@@ -18,20 +18,17 @@ import re  # noqa: F401
 import json
 
 from datetime import datetime
-from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictFloat, StrictInt, StrictStr
-from typing import Any, ClassVar, Dict, List, Optional, Union
-from typing_extensions import Annotated
+from typing import List, Optional, Union
+from pydantic import BaseModel, Field, StrictBool, StrictFloat, StrictInt, StrictStr, conlist, constr
 from click_and_drop_api.models.get_order_line_result import GetOrderLineResult
 from click_and_drop_api.models.get_postal_details_result import GetPostalDetailsResult
 from click_and_drop_api.models.get_shipping_details_result import GetShippingDetailsResult
 from click_and_drop_api.models.get_tag_details_result import GetTagDetailsResult
-from typing import Optional, Set
-from typing_extensions import Self
 
 class GetOrderDetailsResource(BaseModel):
     """
     GetOrderDetailsResource
-    """ # noqa: E501
+    """
     order_identifier: Optional[StrictInt] = Field(default=None, alias="orderIdentifier")
     order_status: Optional[StrictStr] = Field(default=None, alias="orderStatus")
     created_on: Optional[datetime] = Field(default=None, alias="createdOn")
@@ -53,60 +50,45 @@ class GetOrderDetailsResource(BaseModel):
     channel_shipping_method: Optional[StrictStr] = Field(default=None, alias="channelShippingMethod")
     special_instructions: Optional[StrictStr] = Field(default=None, alias="specialInstructions")
     picker_special_instructions: Optional[StrictStr] = Field(default=None, alias="pickerSpecialInstructions")
-    subtotal: Union[StrictFloat, StrictInt] = Field(description="The total value of all the goods in the order, excluding tax")
-    shipping_cost_charged: Union[StrictFloat, StrictInt] = Field(description="The shipping costs you charged to your customer", alias="shippingCostCharged")
-    order_discount: Union[StrictFloat, StrictInt] = Field(alias="orderDiscount")
-    total: Union[StrictFloat, StrictInt] = Field(description="The sum of order subtotal, tax and retail shipping costs")
-    weight_in_grams: StrictInt = Field(alias="weightInGrams")
+    subtotal: Union[StrictFloat, StrictInt] = Field(default=..., description="The total value of all the goods in the order, excluding tax")
+    shipping_cost_charged: Union[StrictFloat, StrictInt] = Field(default=..., alias="shippingCostCharged", description="The shipping costs you charged to your customer")
+    order_discount: Union[StrictFloat, StrictInt] = Field(default=..., alias="orderDiscount")
+    total: Union[StrictFloat, StrictInt] = Field(default=..., description="The sum of order subtotal, tax and retail shipping costs")
+    weight_in_grams: StrictInt = Field(default=..., alias="weightInGrams")
     package_size: Optional[StrictStr] = Field(default=None, alias="packageSize")
     account_batch_number: Optional[StrictStr] = Field(default=None, alias="accountBatchNumber")
-    currency_code: Optional[Annotated[str, Field(strict=True, max_length=3)]] = Field(default=None, alias="currencyCode")
-    shipping_details: GetShippingDetailsResult = Field(alias="shippingDetails")
-    shipping_info: GetPostalDetailsResult = Field(alias="shippingInfo")
-    billing_info: GetPostalDetailsResult = Field(alias="billingInfo")
-    order_lines: List[GetOrderLineResult] = Field(alias="orderLines")
-    tags: Optional[List[GetTagDetailsResult]] = None
-    __properties: ClassVar[List[str]] = ["orderIdentifier", "orderStatus", "createdOn", "printedOn", "shippedOn", "postageAppliedOn", "manifestedOn", "orderDate", "despatchedByOtherCourierOn", "tradingName", "channel", "marketplaceTypeName", "department", "AIRNumber", "requiresExportLicense", "commercialInvoiceNumber", "commercialInvoiceDate", "orderReference", "channelShippingMethod", "specialInstructions", "pickerSpecialInstructions", "subtotal", "shippingCostCharged", "orderDiscount", "total", "weightInGrams", "packageSize", "accountBatchNumber", "currencyCode", "shippingDetails", "shippingInfo", "billingInfo", "orderLines", "tags"]
+    currency_code: Optional[constr(strict=True, max_length=3)] = Field(default=None, alias="currencyCode")
+    shipping_details: GetShippingDetailsResult = Field(default=..., alias="shippingDetails")
+    shipping_info: GetPostalDetailsResult = Field(default=..., alias="shippingInfo")
+    billing_info: GetPostalDetailsResult = Field(default=..., alias="billingInfo")
+    order_lines: conlist(GetOrderLineResult) = Field(default=..., alias="orderLines")
+    tags: Optional[conlist(GetTagDetailsResult)] = None
+    __properties = ["orderIdentifier", "orderStatus", "createdOn", "printedOn", "shippedOn", "postageAppliedOn", "manifestedOn", "orderDate", "despatchedByOtherCourierOn", "tradingName", "channel", "marketplaceTypeName", "department", "AIRNumber", "requiresExportLicense", "commercialInvoiceNumber", "commercialInvoiceDate", "orderReference", "channelShippingMethod", "specialInstructions", "pickerSpecialInstructions", "subtotal", "shippingCostCharged", "orderDiscount", "total", "weightInGrams", "packageSize", "accountBatchNumber", "currencyCode", "shippingDetails", "shippingInfo", "billingInfo", "orderLines", "tags"]
 
-    model_config = ConfigDict(
-        populate_by_name=True,
-        validate_assignment=True,
-        protected_namespaces=(),
-    )
-
+    class Config:
+        """Pydantic configuration"""
+        allow_population_by_field_name = True
+        validate_assignment = True
 
     def to_str(self) -> str:
         """Returns the string representation of the model using alias"""
-        return pprint.pformat(self.model_dump(by_alias=True))
+        return pprint.pformat(self.dict(by_alias=True))
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> GetOrderDetailsResource:
         """Create an instance of GetOrderDetailsResource from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
-    def to_dict(self) -> Dict[str, Any]:
-        """Return the dictionary representation of the model using alias.
-
-        This has the following differences from calling pydantic's
-        `self.model_dump(by_alias=True)`:
-
-        * `None` is only added to the output dict for nullable fields that
-          were set at model initialization. Other fields with value `None`
-          are ignored.
-        """
-        excluded_fields: Set[str] = set([
-        ])
-
-        _dict = self.model_dump(
-            by_alias=True,
-            exclude=excluded_fields,
-            exclude_none=True,
-        )
+    def to_dict(self):
+        """Returns the dictionary representation of the model using alias"""
+        _dict = self.dict(by_alias=True,
+                          exclude={
+                          },
+                          exclude_none=True)
         # override the default output from pydantic by calling `to_dict()` of shipping_details
         if self.shipping_details:
             _dict['shippingDetails'] = self.shipping_details.to_dict()
@@ -119,63 +101,63 @@ class GetOrderDetailsResource(BaseModel):
         # override the default output from pydantic by calling `to_dict()` of each item in order_lines (list)
         _items = []
         if self.order_lines:
-            for _item_order_lines in self.order_lines:
-                if _item_order_lines:
-                    _items.append(_item_order_lines.to_dict())
+            for _item in self.order_lines:
+                if _item:
+                    _items.append(_item.to_dict())
             _dict['orderLines'] = _items
         # override the default output from pydantic by calling `to_dict()` of each item in tags (list)
         _items = []
         if self.tags:
-            for _item_tags in self.tags:
-                if _item_tags:
-                    _items.append(_item_tags.to_dict())
+            for _item in self.tags:
+                if _item:
+                    _items.append(_item.to_dict())
             _dict['tags'] = _items
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: dict) -> GetOrderDetailsResource:
         """Create an instance of GetOrderDetailsResource from a dict"""
         if obj is None:
             return None
 
         if not isinstance(obj, dict):
-            return cls.model_validate(obj)
+            return GetOrderDetailsResource.parse_obj(obj)
 
-        _obj = cls.model_validate({
-            "orderIdentifier": obj.get("orderIdentifier"),
-            "orderStatus": obj.get("orderStatus"),
-            "createdOn": obj.get("createdOn"),
-            "printedOn": obj.get("printedOn"),
-            "shippedOn": obj.get("shippedOn"),
-            "postageAppliedOn": obj.get("postageAppliedOn"),
-            "manifestedOn": obj.get("manifestedOn"),
-            "orderDate": obj.get("orderDate"),
-            "despatchedByOtherCourierOn": obj.get("despatchedByOtherCourierOn"),
-            "tradingName": obj.get("tradingName"),
+        _obj = GetOrderDetailsResource.parse_obj({
+            "order_identifier": obj.get("orderIdentifier"),
+            "order_status": obj.get("orderStatus"),
+            "created_on": obj.get("createdOn"),
+            "printed_on": obj.get("printedOn"),
+            "shipped_on": obj.get("shippedOn"),
+            "postage_applied_on": obj.get("postageAppliedOn"),
+            "manifested_on": obj.get("manifestedOn"),
+            "order_date": obj.get("orderDate"),
+            "despatched_by_other_courier_on": obj.get("despatchedByOtherCourierOn"),
+            "trading_name": obj.get("tradingName"),
             "channel": obj.get("channel"),
-            "marketplaceTypeName": obj.get("marketplaceTypeName"),
+            "marketplace_type_name": obj.get("marketplaceTypeName"),
             "department": obj.get("department"),
-            "AIRNumber": obj.get("AIRNumber"),
-            "requiresExportLicense": obj.get("requiresExportLicense"),
-            "commercialInvoiceNumber": obj.get("commercialInvoiceNumber"),
-            "commercialInvoiceDate": obj.get("commercialInvoiceDate"),
-            "orderReference": obj.get("orderReference"),
-            "channelShippingMethod": obj.get("channelShippingMethod"),
-            "specialInstructions": obj.get("specialInstructions"),
-            "pickerSpecialInstructions": obj.get("pickerSpecialInstructions"),
+            "air_number": obj.get("AIRNumber"),
+            "requires_export_license": obj.get("requiresExportLicense"),
+            "commercial_invoice_number": obj.get("commercialInvoiceNumber"),
+            "commercial_invoice_date": obj.get("commercialInvoiceDate"),
+            "order_reference": obj.get("orderReference"),
+            "channel_shipping_method": obj.get("channelShippingMethod"),
+            "special_instructions": obj.get("specialInstructions"),
+            "picker_special_instructions": obj.get("pickerSpecialInstructions"),
             "subtotal": obj.get("subtotal"),
-            "shippingCostCharged": obj.get("shippingCostCharged"),
-            "orderDiscount": obj.get("orderDiscount"),
+            "shipping_cost_charged": obj.get("shippingCostCharged"),
+            "order_discount": obj.get("orderDiscount"),
             "total": obj.get("total"),
-            "weightInGrams": obj.get("weightInGrams"),
-            "packageSize": obj.get("packageSize"),
-            "accountBatchNumber": obj.get("accountBatchNumber"),
-            "currencyCode": obj.get("currencyCode"),
-            "shippingDetails": GetShippingDetailsResult.from_dict(obj["shippingDetails"]) if obj.get("shippingDetails") is not None else None,
-            "shippingInfo": GetPostalDetailsResult.from_dict(obj["shippingInfo"]) if obj.get("shippingInfo") is not None else None,
-            "billingInfo": GetPostalDetailsResult.from_dict(obj["billingInfo"]) if obj.get("billingInfo") is not None else None,
-            "orderLines": [GetOrderLineResult.from_dict(_item) for _item in obj["orderLines"]] if obj.get("orderLines") is not None else None,
-            "tags": [GetTagDetailsResult.from_dict(_item) for _item in obj["tags"]] if obj.get("tags") is not None else None
+            "weight_in_grams": obj.get("weightInGrams"),
+            "package_size": obj.get("packageSize"),
+            "account_batch_number": obj.get("accountBatchNumber"),
+            "currency_code": obj.get("currencyCode"),
+            "shipping_details": GetShippingDetailsResult.from_dict(obj.get("shippingDetails")) if obj.get("shippingDetails") is not None else None,
+            "shipping_info": GetPostalDetailsResult.from_dict(obj.get("shippingInfo")) if obj.get("shippingInfo") is not None else None,
+            "billing_info": GetPostalDetailsResult.from_dict(obj.get("billingInfo")) if obj.get("billingInfo") is not None else None,
+            "order_lines": [GetOrderLineResult.from_dict(_item) for _item in obj.get("orderLines")] if obj.get("orderLines") is not None else None,
+            "tags": [GetTagDetailsResult.from_dict(_item) for _item in obj.get("tags")] if obj.get("tags") is not None else None
         })
         return _obj
 

@@ -17,97 +17,80 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field
-from typing import Any, ClassVar, Dict, List, Optional
-from typing_extensions import Annotated
-from typing import Optional, Set
-from typing_extensions import Self
+
+from typing import Optional
+from pydantic import BaseModel, Field, constr
 
 class Importer(BaseModel):
     """
     Importer
-    """ # noqa: E501
-    company_name: Optional[Annotated[str, Field(strict=True, max_length=100)]] = Field(default=None, alias="companyName")
-    address_line1: Optional[Annotated[str, Field(strict=True, max_length=100)]] = Field(default=None, alias="addressLine1")
-    address_line2: Optional[Annotated[str, Field(strict=True, max_length=100)]] = Field(default=None, alias="addressLine2")
-    address_line3: Optional[Annotated[str, Field(strict=True, max_length=100)]] = Field(default=None, alias="addressLine3")
-    city: Optional[Annotated[str, Field(strict=True, max_length=100)]] = None
-    postcode: Optional[Annotated[str, Field(strict=True, max_length=20)]] = None
-    country: Optional[Annotated[str, Field(strict=True, max_length=100)]] = None
-    business_name: Optional[Annotated[str, Field(strict=True, max_length=100)]] = Field(default=None, alias="businessName")
-    contact_name: Optional[Annotated[str, Field(strict=True, max_length=100)]] = Field(default=None, alias="contactName")
-    phone_number: Optional[Annotated[str, Field(strict=True, max_length=25)]] = Field(default=None, alias="phoneNumber")
-    email_address: Optional[Annotated[str, Field(strict=True, max_length=254)]] = Field(default=None, alias="emailAddress")
-    vat_number: Optional[Annotated[str, Field(strict=True, max_length=15)]] = Field(default=None, alias="vatNumber")
-    tax_code: Optional[Annotated[str, Field(strict=True, max_length=25)]] = Field(default=None, alias="taxCode")
-    eori_number: Optional[Annotated[str, Field(strict=True, max_length=18)]] = Field(default=None, alias="eoriNumber")
-    __properties: ClassVar[List[str]] = ["companyName", "addressLine1", "addressLine2", "addressLine3", "city", "postcode", "country", "businessName", "contactName", "phoneNumber", "emailAddress", "vatNumber", "taxCode", "eoriNumber"]
+    """
+    company_name: Optional[constr(strict=True, max_length=100)] = Field(default=None, alias="companyName")
+    address_line1: Optional[constr(strict=True, max_length=100)] = Field(default=None, alias="addressLine1")
+    address_line2: Optional[constr(strict=True, max_length=100)] = Field(default=None, alias="addressLine2")
+    address_line3: Optional[constr(strict=True, max_length=100)] = Field(default=None, alias="addressLine3")
+    city: Optional[constr(strict=True, max_length=100)] = None
+    postcode: Optional[constr(strict=True, max_length=20)] = None
+    country: Optional[constr(strict=True, max_length=100)] = None
+    business_name: Optional[constr(strict=True, max_length=100)] = Field(default=None, alias="businessName")
+    contact_name: Optional[constr(strict=True, max_length=100)] = Field(default=None, alias="contactName")
+    phone_number: Optional[constr(strict=True, max_length=25)] = Field(default=None, alias="phoneNumber")
+    email_address: Optional[constr(strict=True, max_length=254)] = Field(default=None, alias="emailAddress")
+    vat_number: Optional[constr(strict=True, max_length=15)] = Field(default=None, alias="vatNumber")
+    tax_code: Optional[constr(strict=True, max_length=25)] = Field(default=None, alias="taxCode")
+    eori_number: Optional[constr(strict=True, max_length=18)] = Field(default=None, alias="eoriNumber")
+    __properties = ["companyName", "addressLine1", "addressLine2", "addressLine3", "city", "postcode", "country", "businessName", "contactName", "phoneNumber", "emailAddress", "vatNumber", "taxCode", "eoriNumber"]
 
-    model_config = ConfigDict(
-        populate_by_name=True,
-        validate_assignment=True,
-        protected_namespaces=(),
-    )
-
+    class Config:
+        """Pydantic configuration"""
+        allow_population_by_field_name = True
+        validate_assignment = True
 
     def to_str(self) -> str:
         """Returns the string representation of the model using alias"""
-        return pprint.pformat(self.model_dump(by_alias=True))
+        return pprint.pformat(self.dict(by_alias=True))
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> Importer:
         """Create an instance of Importer from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
-    def to_dict(self) -> Dict[str, Any]:
-        """Return the dictionary representation of the model using alias.
-
-        This has the following differences from calling pydantic's
-        `self.model_dump(by_alias=True)`:
-
-        * `None` is only added to the output dict for nullable fields that
-          were set at model initialization. Other fields with value `None`
-          are ignored.
-        """
-        excluded_fields: Set[str] = set([
-        ])
-
-        _dict = self.model_dump(
-            by_alias=True,
-            exclude=excluded_fields,
-            exclude_none=True,
-        )
+    def to_dict(self):
+        """Returns the dictionary representation of the model using alias"""
+        _dict = self.dict(by_alias=True,
+                          exclude={
+                          },
+                          exclude_none=True)
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: dict) -> Importer:
         """Create an instance of Importer from a dict"""
         if obj is None:
             return None
 
         if not isinstance(obj, dict):
-            return cls.model_validate(obj)
+            return Importer.parse_obj(obj)
 
-        _obj = cls.model_validate({
-            "companyName": obj.get("companyName"),
-            "addressLine1": obj.get("addressLine1"),
-            "addressLine2": obj.get("addressLine2"),
-            "addressLine3": obj.get("addressLine3"),
+        _obj = Importer.parse_obj({
+            "company_name": obj.get("companyName"),
+            "address_line1": obj.get("addressLine1"),
+            "address_line2": obj.get("addressLine2"),
+            "address_line3": obj.get("addressLine3"),
             "city": obj.get("city"),
             "postcode": obj.get("postcode"),
             "country": obj.get("country"),
-            "businessName": obj.get("businessName"),
-            "contactName": obj.get("contactName"),
-            "phoneNumber": obj.get("phoneNumber"),
-            "emailAddress": obj.get("emailAddress"),
-            "vatNumber": obj.get("vatNumber"),
-            "taxCode": obj.get("taxCode"),
-            "eoriNumber": obj.get("eoriNumber")
+            "business_name": obj.get("businessName"),
+            "contact_name": obj.get("contactName"),
+            "phone_number": obj.get("phoneNumber"),
+            "email_address": obj.get("emailAddress"),
+            "vat_number": obj.get("vatNumber"),
+            "tax_code": obj.get("taxCode"),
+            "eori_number": obj.get("eoriNumber")
         })
         return _obj
 

@@ -2,7 +2,6 @@
 
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **orders** | [**List[GetOrderDetailsResource]**](GetOrderDetailsResource.md) |  | [optional] 
@@ -18,7 +17,7 @@ json = "{}"
 # create an instance of GetOrdersDetailsResponse from a JSON string
 get_orders_details_response_instance = GetOrdersDetailsResponse.from_json(json)
 # print the JSON string representation of the object
-print(GetOrdersDetailsResponse.to_json())
+print GetOrdersDetailsResponse.to_json()
 
 # convert the object into a dict
 get_orders_details_response_dict = get_orders_details_response_instance.to_dict()

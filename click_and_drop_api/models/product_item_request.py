@@ -17,111 +17,94 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr, field_validator
-from typing import Any, ClassVar, Dict, List, Optional, Union
-from typing_extensions import Annotated
-from typing import Optional, Set
-from typing_extensions import Self
+
+from typing import Optional, Union
+from pydantic import BaseModel, Field, StrictBool, StrictStr, confloat, conint, constr, validator
 
 class ProductItemRequest(BaseModel):
     """
     ProductItemRequest
-    """ # noqa: E501
-    name: Optional[Annotated[str, Field(strict=True, max_length=800)]] = None
-    sku: Optional[Annotated[str, Field(strict=True, max_length=100)]] = Field(default=None, description="The presence or not of field <b>SKU</b> and other fields in the request body will determine which of the following behaviours occur:- <br>1) A minimum of <b>SKU</b>, <b>unitValue</b>, <b>unitWeightInGrams</b> and <b>quantity</b> provided - In addition to the provided product fields being used for the order creation, an existing account Product with matching SKU will be overwritten with all provided product parameters. If no existing account Product with matching SKU can be found then a new product will be created with the provided SKU and product parameters.<br>2) <b>SKU</b>, <b>quantity</b> provided and <b>no other fields</b> provided - An account Product with the provided SKU will be used for the order if it exists.<br>3) <b>SKU not provided</b> and a minimum of <b>unitValue</b>, <b>unitWeightInGrams</b> and <b>quantity</b> provided - All provided product fields will be used for the order creation.<br>4) All other scenarios will result in a validation error.", alias="SKU")
-    quantity: Annotated[int, Field(le=999999, strict=True, ge=1)] = Field(description="The number of units in a given line")
-    unit_value: Optional[Union[Annotated[float, Field(multiple_of=0.01, le=999999, strict=True, ge=0)], Annotated[int, Field(le=999999, strict=True, ge=0)]]] = Field(default=None, description="The price of a single unit excluding tax", alias="unitValue")
-    unit_weight_in_grams: Optional[Annotated[int, Field(le=999999, strict=True, ge=0)]] = Field(default=None, alias="unitWeightInGrams")
-    customs_description: Optional[Annotated[str, Field(strict=True, max_length=50)]] = Field(default=None, alias="customsDescription")
-    extended_customs_description: Optional[Annotated[str, Field(strict=True, max_length=300)]] = Field(default=None, alias="extendedCustomsDescription")
-    customs_code: Optional[Annotated[str, Field(strict=True, max_length=10)]] = Field(default=None, alias="customsCode")
-    origin_country_code: Optional[Annotated[str, Field(strict=True, max_length=3)]] = Field(default=None, alias="originCountryCode")
+    """
+    name: Optional[constr(strict=True, max_length=800)] = None
+    sku: Optional[constr(strict=True, max_length=100)] = Field(default=None, alias="SKU", description="The presence or not of field <b>SKU</b> and other fields in the request body will determine which of the following behaviours occur:- <br>1) A minimum of <b>SKU</b>, <b>unitValue</b>, <b>unitWeightInGrams</b> and <b>quantity</b> provided - In addition to the provided product fields being used for the order creation, an existing account Product with matching SKU will be overwritten with all provided product parameters. If no existing account Product with matching SKU can be found then a new product will be created with the provided SKU and product parameters.<br>2) <b>SKU</b>, <b>quantity</b> provided and <b>no other fields</b> provided - An account Product with the provided SKU will be used for the order if it exists.<br>3) <b>SKU not provided</b> and a minimum of <b>unitValue</b>, <b>unitWeightInGrams</b> and <b>quantity</b> provided - All provided product fields will be used for the order creation.<br>4) All other scenarios will result in a validation error.")
+    quantity: conint(strict=True, le=999999, ge=1) = Field(default=..., description="The number of units in a given line")
+    unit_value: Optional[Union[confloat(le=999999, ge=0, multiple_of=0.01, strict=True), conint(le=999999, ge=0, strict=True)]] = Field(default=None, alias="unitValue", description="The price of a single unit excluding tax")
+    unit_weight_in_grams: Optional[conint(strict=True, le=999999, ge=0)] = Field(default=None, alias="unitWeightInGrams")
+    customs_description: Optional[constr(strict=True, max_length=50)] = Field(default=None, alias="customsDescription")
+    extended_customs_description: Optional[constr(strict=True, max_length=300)] = Field(default=None, alias="extendedCustomsDescription")
+    customs_code: Optional[constr(strict=True, max_length=10)] = Field(default=None, alias="customsCode")
+    origin_country_code: Optional[constr(strict=True, max_length=3)] = Field(default=None, alias="originCountryCode")
     customs_declaration_category: Optional[StrictStr] = Field(default=None, alias="customsDeclarationCategory")
     requires_export_licence: Optional[StrictBool] = Field(default=None, alias="requiresExportLicence")
-    stock_location: Optional[Annotated[str, Field(strict=True, max_length=50)]] = Field(default=None, alias="stockLocation")
+    stock_location: Optional[constr(strict=True, max_length=50)] = Field(default=None, alias="stockLocation")
     use_origin_preference: Optional[StrictBool] = Field(default=None, alias="useOriginPreference")
-    supplementary_units: Optional[Annotated[str, Field(strict=True, max_length=17)]] = Field(default=None, alias="supplementaryUnits")
-    license_number: Optional[Annotated[str, Field(strict=True, max_length=41)]] = Field(default=None, alias="licenseNumber")
-    certificate_number: Optional[Annotated[str, Field(strict=True, max_length=41)]] = Field(default=None, alias="certificateNumber")
-    __properties: ClassVar[List[str]] = ["name", "SKU", "quantity", "unitValue", "unitWeightInGrams", "customsDescription", "extendedCustomsDescription", "customsCode", "originCountryCode", "customsDeclarationCategory", "requiresExportLicence", "stockLocation", "useOriginPreference", "supplementaryUnits", "licenseNumber", "certificateNumber"]
+    supplementary_units: Optional[constr(strict=True, max_length=17)] = Field(default=None, alias="supplementaryUnits")
+    license_number: Optional[constr(strict=True, max_length=41)] = Field(default=None, alias="licenseNumber")
+    certificate_number: Optional[constr(strict=True, max_length=41)] = Field(default=None, alias="certificateNumber")
+    __properties = ["name", "SKU", "quantity", "unitValue", "unitWeightInGrams", "customsDescription", "extendedCustomsDescription", "customsCode", "originCountryCode", "customsDeclarationCategory", "requiresExportLicence", "stockLocation", "useOriginPreference", "supplementaryUnits", "licenseNumber", "certificateNumber"]
 
-    @field_validator('customs_declaration_category')
+    @validator('customs_declaration_category')
     def customs_declaration_category_validate_enum(cls, value):
         """Validates the enum"""
         if value is None:
             return value
 
-        if value not in set(['none', 'gift', 'commercialSample', 'documents', 'other', 'returnedGoods', 'saleOfGoods', 'mixedContent']):
+        if value not in ('none', 'gift', 'commercialSample', 'documents', 'other', 'returnedGoods', 'saleOfGoods', 'mixedContent',):
             raise ValueError("must be one of enum values ('none', 'gift', 'commercialSample', 'documents', 'other', 'returnedGoods', 'saleOfGoods', 'mixedContent')")
         return value
 
-    model_config = ConfigDict(
-        populate_by_name=True,
-        validate_assignment=True,
-        protected_namespaces=(),
-    )
-
+    class Config:
+        """Pydantic configuration"""
+        allow_population_by_field_name = True
+        validate_assignment = True
 
     def to_str(self) -> str:
         """Returns the string representation of the model using alias"""
-        return pprint.pformat(self.model_dump(by_alias=True))
+        return pprint.pformat(self.dict(by_alias=True))
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> ProductItemRequest:
         """Create an instance of ProductItemRequest from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
-    def to_dict(self) -> Dict[str, Any]:
-        """Return the dictionary representation of the model using alias.
-
-        This has the following differences from calling pydantic's
-        `self.model_dump(by_alias=True)`:
-
-        * `None` is only added to the output dict for nullable fields that
-          were set at model initialization. Other fields with value `None`
-          are ignored.
-        """
-        excluded_fields: Set[str] = set([
-        ])
-
-        _dict = self.model_dump(
-            by_alias=True,
-            exclude=excluded_fields,
-            exclude_none=True,
-        )
+    def to_dict(self):
+        """Returns the dictionary representation of the model using alias"""
+        _dict = self.dict(by_alias=True,
+                          exclude={
+                          },
+                          exclude_none=True)
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: dict) -> ProductItemRequest:
         """Create an instance of ProductItemRequest from a dict"""
         if obj is None:
             return None
 
         if not isinstance(obj, dict):
-            return cls.model_validate(obj)
+            return ProductItemRequest.parse_obj(obj)
 
-        _obj = cls.model_validate({
+        _obj = ProductItemRequest.parse_obj({
             "name": obj.get("name"),
-            "SKU": obj.get("SKU"),
+            "sku": obj.get("SKU"),
             "quantity": obj.get("quantity"),
-            "unitValue": obj.get("unitValue"),
-            "unitWeightInGrams": obj.get("unitWeightInGrams"),
-            "customsDescription": obj.get("customsDescription"),
-            "extendedCustomsDescription": obj.get("extendedCustomsDescription"),
-            "customsCode": obj.get("customsCode"),
-            "originCountryCode": obj.get("originCountryCode"),
-            "customsDeclarationCategory": obj.get("customsDeclarationCategory"),
-            "requiresExportLicence": obj.get("requiresExportLicence"),
-            "stockLocation": obj.get("stockLocation"),
-            "useOriginPreference": obj.get("useOriginPreference"),
-            "supplementaryUnits": obj.get("supplementaryUnits"),
-            "licenseNumber": obj.get("licenseNumber"),
-            "certificateNumber": obj.get("certificateNumber")
+            "unit_value": obj.get("unitValue"),
+            "unit_weight_in_grams": obj.get("unitWeightInGrams"),
+            "customs_description": obj.get("customsDescription"),
+            "extended_customs_description": obj.get("extendedCustomsDescription"),
+            "customs_code": obj.get("customsCode"),
+            "origin_country_code": obj.get("originCountryCode"),
+            "customs_declaration_category": obj.get("customsDeclarationCategory"),
+            "requires_export_licence": obj.get("requiresExportLicence"),
+            "stock_location": obj.get("stockLocation"),
+            "use_origin_preference": obj.get("useOriginPreference"),
+            "supplementary_units": obj.get("supplementaryUnits"),
+            "license_number": obj.get("licenseNumber"),
+            "certificate_number": obj.get("certificateNumber")
         })
         return _obj
 

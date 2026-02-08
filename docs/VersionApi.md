@@ -1,6 +1,6 @@
 # click_and_drop_api.VersionApi
 
-All URIs are relative to */api/v1*
+All URIs are relative to *http://api.parcel.royalmail.com/api/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
@@ -12,19 +12,22 @@ Method | HTTP request | Description
 
 Get API version details.
 
+
+
 ### Example
 
-
 ```python
+import time
+import os
 import click_and_drop_api
 from click_and_drop_api.models.get_version_resource import GetVersionResource
 from click_and_drop_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to /api/v1
+# Defining the host is optional and defaults to http://api.parcel.royalmail.com/api/v1
 # See configuration.py for a list of all supported configuration parameters.
 configuration = click_and_drop_api.Configuration(
-    host = "/api/v1"
+    host = "http://api.parcel.royalmail.com/api/v1"
 )
 
 
@@ -45,7 +48,6 @@ with click_and_drop_api.ApiClient(configuration) as api_client:
 
 
 ### Parameters
-
 This endpoint does not need any parameter.
 
 ### Return type
@@ -62,7 +64,6 @@ No authorization required
  - **Accept**: application/json
 
 ### HTTP response details
-
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **200** | Returns details about the API version |  -  |

@@ -2,7 +2,6 @@
 
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **sku** | **str** |  | [optional] 
@@ -22,7 +21,7 @@ json = "{}"
 # create an instance of GetOrderLineResult from a JSON string
 get_order_line_result_instance = GetOrderLineResult.from_json(json)
 # print the JSON string representation of the object
-print(GetOrderLineResult.to_json())
+print GetOrderLineResult.to_json()
 
 # convert the object into a dict
 get_order_line_result_dict = get_order_line_result_instance.to_dict()

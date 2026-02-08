@@ -2,7 +2,6 @@
 
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **order** | [**CreateOrderRequest**](CreateOrderRequest.md) |  | [optional] 
@@ -18,7 +17,7 @@ json = "{}"
 # create an instance of FailedOrderResponse from a JSON string
 failed_order_response_instance = FailedOrderResponse.from_json(json)
 # print the JSON string representation of the object
-print(FailedOrderResponse.to_json())
+print FailedOrderResponse.to_json()
 
 # convert the object into a dict
 failed_order_response_dict = failed_order_response_instance.to_dict()

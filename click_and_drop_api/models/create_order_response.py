@@ -18,108 +18,91 @@ import re  # noqa: F401
 import json
 
 from datetime import datetime
-from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr
-from typing import Any, ClassVar, Dict, List, Optional
+from typing import List, Optional
+from pydantic import BaseModel, Field, StrictInt, StrictStr, conlist
 from click_and_drop_api.models.create_order_label_error_response import CreateOrderLabelErrorResponse
 from click_and_drop_api.models.create_packages_response import CreatePackagesResponse
-from typing import Optional, Set
-from typing_extensions import Self
 
 class CreateOrderResponse(BaseModel):
     """
     CreateOrderResponse
-    """ # noqa: E501
-    order_identifier: StrictInt = Field(alias="orderIdentifier")
+    """
+    order_identifier: StrictInt = Field(default=..., alias="orderIdentifier")
     order_reference: Optional[StrictStr] = Field(default=None, alias="orderReference")
-    created_on: datetime = Field(alias="createdOn")
+    created_on: datetime = Field(default=..., alias="createdOn")
     order_date: Optional[datetime] = Field(default=None, alias="orderDate")
     printed_on: Optional[datetime] = Field(default=None, alias="printedOn")
     manifested_on: Optional[datetime] = Field(default=None, alias="manifestedOn")
     shipped_on: Optional[datetime] = Field(default=None, alias="shippedOn")
     tracking_number: Optional[StrictStr] = Field(default=None, alias="trackingNumber")
-    packages: Optional[List[CreatePackagesResponse]] = None
+    packages: Optional[conlist(CreatePackagesResponse)] = None
     label: Optional[StrictStr] = Field(default=None, description="label in format base64 string")
-    label_errors: Optional[List[CreateOrderLabelErrorResponse]] = Field(default=None, alias="labelErrors")
-    generated_documents: Optional[List[StrictStr]] = Field(default=None, alias="generatedDocuments")
-    __properties: ClassVar[List[str]] = ["orderIdentifier", "orderReference", "createdOn", "orderDate", "printedOn", "manifestedOn", "shippedOn", "trackingNumber", "packages", "label", "labelErrors", "generatedDocuments"]
+    label_errors: Optional[conlist(CreateOrderLabelErrorResponse)] = Field(default=None, alias="labelErrors")
+    generated_documents: Optional[conlist(StrictStr)] = Field(default=None, alias="generatedDocuments")
+    __properties = ["orderIdentifier", "orderReference", "createdOn", "orderDate", "printedOn", "manifestedOn", "shippedOn", "trackingNumber", "packages", "label", "labelErrors", "generatedDocuments"]
 
-    model_config = ConfigDict(
-        populate_by_name=True,
-        validate_assignment=True,
-        protected_namespaces=(),
-    )
-
+    class Config:
+        """Pydantic configuration"""
+        allow_population_by_field_name = True
+        validate_assignment = True
 
     def to_str(self) -> str:
         """Returns the string representation of the model using alias"""
-        return pprint.pformat(self.model_dump(by_alias=True))
+        return pprint.pformat(self.dict(by_alias=True))
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> CreateOrderResponse:
         """Create an instance of CreateOrderResponse from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
-    def to_dict(self) -> Dict[str, Any]:
-        """Return the dictionary representation of the model using alias.
-
-        This has the following differences from calling pydantic's
-        `self.model_dump(by_alias=True)`:
-
-        * `None` is only added to the output dict for nullable fields that
-          were set at model initialization. Other fields with value `None`
-          are ignored.
-        """
-        excluded_fields: Set[str] = set([
-        ])
-
-        _dict = self.model_dump(
-            by_alias=True,
-            exclude=excluded_fields,
-            exclude_none=True,
-        )
+    def to_dict(self):
+        """Returns the dictionary representation of the model using alias"""
+        _dict = self.dict(by_alias=True,
+                          exclude={
+                          },
+                          exclude_none=True)
         # override the default output from pydantic by calling `to_dict()` of each item in packages (list)
         _items = []
         if self.packages:
-            for _item_packages in self.packages:
-                if _item_packages:
-                    _items.append(_item_packages.to_dict())
+            for _item in self.packages:
+                if _item:
+                    _items.append(_item.to_dict())
             _dict['packages'] = _items
         # override the default output from pydantic by calling `to_dict()` of each item in label_errors (list)
         _items = []
         if self.label_errors:
-            for _item_label_errors in self.label_errors:
-                if _item_label_errors:
-                    _items.append(_item_label_errors.to_dict())
+            for _item in self.label_errors:
+                if _item:
+                    _items.append(_item.to_dict())
             _dict['labelErrors'] = _items
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: dict) -> CreateOrderResponse:
         """Create an instance of CreateOrderResponse from a dict"""
         if obj is None:
             return None
 
         if not isinstance(obj, dict):
-            return cls.model_validate(obj)
+            return CreateOrderResponse.parse_obj(obj)
 
-        _obj = cls.model_validate({
-            "orderIdentifier": obj.get("orderIdentifier"),
-            "orderReference": obj.get("orderReference"),
-            "createdOn": obj.get("createdOn"),
-            "orderDate": obj.get("orderDate"),
-            "printedOn": obj.get("printedOn"),
-            "manifestedOn": obj.get("manifestedOn"),
-            "shippedOn": obj.get("shippedOn"),
-            "trackingNumber": obj.get("trackingNumber"),
-            "packages": [CreatePackagesResponse.from_dict(_item) for _item in obj["packages"]] if obj.get("packages") is not None else None,
+        _obj = CreateOrderResponse.parse_obj({
+            "order_identifier": obj.get("orderIdentifier"),
+            "order_reference": obj.get("orderReference"),
+            "created_on": obj.get("createdOn"),
+            "order_date": obj.get("orderDate"),
+            "printed_on": obj.get("printedOn"),
+            "manifested_on": obj.get("manifestedOn"),
+            "shipped_on": obj.get("shippedOn"),
+            "tracking_number": obj.get("trackingNumber"),
+            "packages": [CreatePackagesResponse.from_dict(_item) for _item in obj.get("packages")] if obj.get("packages") is not None else None,
             "label": obj.get("label"),
-            "labelErrors": [CreateOrderLabelErrorResponse.from_dict(_item) for _item in obj["labelErrors"]] if obj.get("labelErrors") is not None else None,
-            "generatedDocuments": obj.get("generatedDocuments")
+            "label_errors": [CreateOrderLabelErrorResponse.from_dict(_item) for _item in obj.get("labelErrors")] if obj.get("labelErrors") is not None else None,
+            "generated_documents": obj.get("generatedDocuments")
         })
         return _obj
 

@@ -2,7 +2,6 @@
 
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **send_notifications_to** | **str** |  | [optional] 
@@ -34,7 +33,7 @@ json = "{}"
 # create an instance of PostageDetailsRequest from a JSON string
 postage_details_request_instance = PostageDetailsRequest.from_json(json)
 # print the JSON string representation of the object
-print(PostageDetailsRequest.to_json())
+print PostageDetailsRequest.to_json()
 
 # convert the object into a dict
 postage_details_request_dict = postage_details_request_instance.to_dict()

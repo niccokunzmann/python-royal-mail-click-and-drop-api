@@ -17,80 +17,64 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictStr
-from typing import Any, ClassVar, Dict, List, Optional
+
+from typing import List, Optional
+from pydantic import BaseModel, Field, StrictStr, conlist
 from click_and_drop_api.models.get_order_info_resource import GetOrderInfoResource
-from typing import Optional, Set
-from typing_extensions import Self
 
 class GetOrdersResponse(BaseModel):
     """
     GetOrdersResponse
-    """ # noqa: E501
-    orders: Optional[List[GetOrderInfoResource]] = None
+    """
+    orders: Optional[conlist(GetOrderInfoResource)] = None
     continuation_token: Optional[StrictStr] = Field(default=None, alias="continuationToken")
-    __properties: ClassVar[List[str]] = ["orders", "continuationToken"]
+    __properties = ["orders", "continuationToken"]
 
-    model_config = ConfigDict(
-        populate_by_name=True,
-        validate_assignment=True,
-        protected_namespaces=(),
-    )
-
+    class Config:
+        """Pydantic configuration"""
+        allow_population_by_field_name = True
+        validate_assignment = True
 
     def to_str(self) -> str:
         """Returns the string representation of the model using alias"""
-        return pprint.pformat(self.model_dump(by_alias=True))
+        return pprint.pformat(self.dict(by_alias=True))
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> Optional[Self]:
+    def from_json(cls, json_str: str) -> GetOrdersResponse:
         """Create an instance of GetOrdersResponse from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
-    def to_dict(self) -> Dict[str, Any]:
-        """Return the dictionary representation of the model using alias.
-
-        This has the following differences from calling pydantic's
-        `self.model_dump(by_alias=True)`:
-
-        * `None` is only added to the output dict for nullable fields that
-          were set at model initialization. Other fields with value `None`
-          are ignored.
-        """
-        excluded_fields: Set[str] = set([
-        ])
-
-        _dict = self.model_dump(
-            by_alias=True,
-            exclude=excluded_fields,
-            exclude_none=True,
-        )
+    def to_dict(self):
+        """Returns the dictionary representation of the model using alias"""
+        _dict = self.dict(by_alias=True,
+                          exclude={
+                          },
+                          exclude_none=True)
         # override the default output from pydantic by calling `to_dict()` of each item in orders (list)
         _items = []
         if self.orders:
-            for _item_orders in self.orders:
-                if _item_orders:
-                    _items.append(_item_orders.to_dict())
+            for _item in self.orders:
+                if _item:
+                    _items.append(_item.to_dict())
             _dict['orders'] = _items
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
+    def from_dict(cls, obj: dict) -> GetOrdersResponse:
         """Create an instance of GetOrdersResponse from a dict"""
         if obj is None:
             return None
 
         if not isinstance(obj, dict):
-            return cls.model_validate(obj)
+            return GetOrdersResponse.parse_obj(obj)
 
-        _obj = cls.model_validate({
-            "orders": [GetOrderInfoResource.from_dict(_item) for _item in obj["orders"]] if obj.get("orders") is not None else None,
-            "continuationToken": obj.get("continuationToken")
+        _obj = GetOrdersResponse.parse_obj({
+            "orders": [GetOrderInfoResource.from_dict(_item) for _item in obj.get("orders")] if obj.get("orders") is not None else None,
+            "continuation_token": obj.get("continuationToken")
         })
         return _obj
 

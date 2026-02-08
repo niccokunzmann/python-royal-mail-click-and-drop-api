@@ -1,6 +1,6 @@
 # click_and_drop_api.LabelsApi
 
-All URIs are relative to */api/v1*
+All URIs are relative to *http://api.parcel.royalmail.com/api/v1*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
@@ -23,16 +23,17 @@ used in a separate call to print missing documents.
 ### Example
 
 * Api Key Authentication (Bearer):
-
 ```python
+import time
+import os
 import click_and_drop_api
 from click_and_drop_api.rest import ApiException
 from pprint import pprint
 
-# Defining the host is optional and defaults to /api/v1
+# Defining the host is optional and defaults to http://api.parcel.royalmail.com/api/v1
 # See configuration.py for a list of all supported configuration parameters.
 configuration = click_and_drop_api.Configuration(
-    host = "/api/v1"
+    host = "http://api.parcel.royalmail.com/api/v1"
 )
 
 # The client must configure the authentication and authorization parameters
@@ -68,7 +69,6 @@ with click_and_drop_api.ApiClient(configuration) as api_client:
 
 ### Parameters
 
-
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **order_identifiers** | **str**| One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\&quot;ref\&quot;;1001;\&quot;Reference%3BWith%3BSpecial%3BSymbols!\&quot;;2345/ | 
@@ -90,7 +90,6 @@ Name | Type | Description  | Notes
  - **Accept**: application/pdf, application/json
 
 ### HTTP response details
-
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **200** | Return the PDF file with labels |  -  |

@@ -2,7 +2,6 @@
 
 
 ## Properties
-
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **order_identifier** | **int** |  | 
@@ -25,7 +24,7 @@ json = "{}"
 # create an instance of GetOrderInfoResource from a JSON string
 get_order_info_resource_instance = GetOrderInfoResource.from_json(json)
 # print the JSON string representation of the object
-print(GetOrderInfoResource.to_json())
+print GetOrderInfoResource.to_json()
 
 # convert the object into a dict
 get_order_info_resource_dict = get_order_info_resource_instance.to_dict()
