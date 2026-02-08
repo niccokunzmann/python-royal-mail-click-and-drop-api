@@ -47,6 +47,6 @@ create_order_request_dict = create_order_request_instance.to_dict()
 # create an instance of CreateOrderRequest from a dict
 create_order_request_from_dict = CreateOrderRequest.from_dict(create_order_request_dict)
 ```
-[[Back to Model list]](./#documentation-for-models) [[Back to API list]](./#documentation-for-api-endpoints) [[Back to README]](./)
+[[Back to Model list]](api.md#documentation-for-models) [[Back to API list]](api.md#documentation-for-api-endpoints) [[Back to README]](api.md)
 
 

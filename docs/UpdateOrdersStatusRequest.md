@@ -24,6 +24,6 @@ update_orders_status_request_dict = update_orders_status_request_instance.to_dic
 # create an instance of UpdateOrdersStatusRequest from a dict
 update_orders_status_request_from_dict = UpdateOrdersStatusRequest.from_dict(update_orders_status_request_dict)
 ```
-[[Back to Model list]](./#documentation-for-models) [[Back to API list]](./#documentation-for-api-endpoints) [[Back to README]](./)
+[[Back to Model list]](api.md#documentation-for-models) [[Back to API list]](api.md#documentation-for-api-endpoints) [[Back to README]](api.md)
 
 

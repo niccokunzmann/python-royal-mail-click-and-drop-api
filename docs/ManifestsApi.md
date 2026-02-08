@@ -73,7 +73,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[Bearer](./#Bearer)
+[Bearer](api.md#Bearer)
 
 ### HTTP request headers
 
@@ -91,7 +91,7 @@ Name | Type | Description  | Notes
 **404** | Not Found |  -  |
 **500** | Internal Server Error |  -  |
 
-[[Back to top]](#) [[Back to API list]](./#documentation-for-api-endpoints) [[Back to Model list]](./#documentation-for-models) [[Back to README]](./)
+[[Back to top]](#) [[Back to API list]](api.md#documentation-for-api-endpoints) [[Back to Model list]](api.md#documentation-for-models) [[Back to README]](api.md)
 
 # **manifest_eligible_async**
 > ManifestOrdersResponse manifest_eligible_async(request=request)
@@ -159,7 +159,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[Bearer](./#Bearer)
+[Bearer](api.md#Bearer)
 
 ### HTTP request headers
 
@@ -178,7 +178,7 @@ Name | Type | Description  | Notes
 **404** | Not Found |  -  |
 **500** | Internal Server Error |  -  |
 
-[[Back to top]](#) [[Back to API list]](./#documentation-for-api-endpoints) [[Back to Model list]](./#documentation-for-models) [[Back to README]](./)
+[[Back to top]](#) [[Back to API list]](api.md#documentation-for-api-endpoints) [[Back to Model list]](api.md#documentation-for-models) [[Back to README]](api.md)
 
 # **retry_manifest_async**
 > ManifestOrdersResponse retry_manifest_async(manifest_identifier)
@@ -245,7 +245,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[Bearer](./#Bearer)
+[Bearer](api.md#Bearer)
 
 ### HTTP request headers
 
@@ -264,5 +264,5 @@ Name | Type | Description  | Notes
 **404** | Not Found |  -  |
 **500** | Internal Server Error |  -  |
 
-[[Back to top]](#) [[Back to API list]](./#documentation-for-api-endpoints) [[Back to Model list]](./#documentation-for-models) [[Back to README]](./)
+[[Back to top]](#) [[Back to API list]](api.md#documentation-for-api-endpoints) [[Back to Model list]](api.md#documentation-for-models) [[Back to README]](api.md)
 

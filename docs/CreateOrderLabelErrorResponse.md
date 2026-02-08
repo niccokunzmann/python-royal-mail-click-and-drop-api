@@ -25,6 +25,6 @@ create_order_label_error_response_dict = create_order_label_error_response_insta
 # create an instance of CreateOrderLabelErrorResponse from a dict
 create_order_label_error_response_from_dict = CreateOrderLabelErrorResponse.from_dict(create_order_label_error_response_dict)
 ```
-[[Back to Model list]](./#documentation-for-models) [[Back to API list]](./#documentation-for-api-endpoints) [[Back to README]](./)
+[[Back to Model list]](api.md#documentation-for-models) [[Back to API list]](api.md#documentation-for-api-endpoints) [[Back to README]](api.md)
 
 

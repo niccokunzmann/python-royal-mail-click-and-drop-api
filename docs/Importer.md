@@ -37,6 +37,6 @@ importer_dict = importer_instance.to_dict()
 # create an instance of Importer from a dict
 importer_from_dict = Importer.from_dict(importer_dict)
 ```
-[[Back to Model list]](./#documentation-for-models) [[Back to API list]](./#documentation-for-api-endpoints) [[Back to README]](./)
+[[Back to Model list]](api.md#documentation-for-models) [[Back to API list]](api.md#documentation-for-api-endpoints) [[Back to README]](api.md)
 
 

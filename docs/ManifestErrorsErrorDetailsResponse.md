@@ -25,6 +25,6 @@ manifest_errors_error_details_response_dict = manifest_errors_error_details_resp
 # create an instance of ManifestErrorsErrorDetailsResponse from a dict
 manifest_errors_error_details_response_from_dict = ManifestErrorsErrorDetailsResponse.from_dict(manifest_errors_error_details_response_dict)
 ```
-[[Back to Model list]](./#documentation-for-models) [[Back to API list]](./#documentation-for-api-endpoints) [[Back to README]](./)
+[[Back to Model list]](api.md#documentation-for-models) [[Back to API list]](api.md#documentation-for-api-endpoints) [[Back to README]](api.md)
 
 

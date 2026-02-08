@@ -25,6 +25,6 @@ create_packages_response_dict = create_packages_response_instance.to_dict()
 # create an instance of CreatePackagesResponse from a dict
 create_packages_response_from_dict = CreatePackagesResponse.from_dict(create_packages_response_dict)
 ```
-[[Back to Model list]](./#documentation-for-models) [[Back to API list]](./#documentation-for-api-endpoints) [[Back to README]](./)
+[[Back to Model list]](api.md#documentation-for-models) [[Back to API list]](api.md#documentation-for-api-endpoints) [[Back to README]](api.md)
 
 

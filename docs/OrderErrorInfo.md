@@ -27,6 +27,6 @@ order_error_info_dict = order_error_info_instance.to_dict()
 # create an instance of OrderErrorInfo from a dict
 order_error_info_from_dict = OrderErrorInfo.from_dict(order_error_info_dict)
 ```
-[[Back to Model list]](./#documentation-for-models) [[Back to API list]](./#documentation-for-api-endpoints) [[Back to README]](./)
+[[Back to Model list]](api.md#documentation-for-models) [[Back to API list]](api.md#documentation-for-api-endpoints) [[Back to README]](api.md)
 
 

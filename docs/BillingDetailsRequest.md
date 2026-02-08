@@ -27,6 +27,6 @@ billing_details_request_dict = billing_details_request_instance.to_dict()
 # create an instance of BillingDetailsRequest from a dict
 billing_details_request_from_dict = BillingDetailsRequest.from_dict(billing_details_request_dict)
 ```
-[[Back to Model list]](./#documentation-for-models) [[Back to API list]](./#documentation-for-api-endpoints) [[Back to README]](./)
+[[Back to Model list]](api.md#documentation-for-models) [[Back to API list]](api.md#documentation-for-api-endpoints) [[Back to README]](api.md)
 
 

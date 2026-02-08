@@ -25,6 +25,6 @@ get_orders_details_response_dict = get_orders_details_response_instance.to_dict(
 # create an instance of GetOrdersDetailsResponse from a dict
 get_orders_details_response_from_dict = GetOrdersDetailsResponse.from_dict(get_orders_details_response_dict)
 ```
-[[Back to Model list]](./#documentation-for-models) [[Back to API list]](./#documentation-for-api-endpoints) [[Back to README]](./)
+[[Back to Model list]](api.md#documentation-for-models) [[Back to API list]](api.md#documentation-for-api-endpoints) [[Back to README]](api.md)
 
 

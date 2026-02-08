@@ -76,7 +76,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[Bearer](./#Bearer)
+[Bearer](api.md#Bearer)
 
 ### HTTP request headers
 
@@ -92,7 +92,7 @@ Name | Type | Description  | Notes
 **401** | Unauthorized |  -  |
 **500** | Internal Server Error |  -  |
 
-[[Back to top]](#) [[Back to API list]](./#documentation-for-api-endpoints) [[Back to Model list]](./#documentation-for-models) [[Back to README]](./)
+[[Back to top]](#) [[Back to API list]](api.md#documentation-for-api-endpoints) [[Back to Model list]](api.md#documentation-for-models) [[Back to README]](api.md)
 
 # **delete_orders_async**
 > DeleteOrdersResource delete_orders_async(order_identifiers)
@@ -163,7 +163,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[Bearer](./#Bearer)
+[Bearer](api.md#Bearer)
 
 ### HTTP request headers
 
@@ -181,7 +181,7 @@ Name | Type | Description  | Notes
 **404** | Not Found |  -  |
 **500** | Internal Server Error |  -  |
 
-[[Back to top]](#) [[Back to API list]](./#documentation-for-api-endpoints) [[Back to Model list]](./#documentation-for-models) [[Back to README]](./)
+[[Back to top]](#) [[Back to API list]](api.md#documentation-for-api-endpoints) [[Back to Model list]](api.md#documentation-for-models) [[Back to README]](api.md)
 
 # **get_orders_async**
 > GetOrdersResponse get_orders_async(page_size=page_size, start_date_time=start_date_time, end_date_time=end_date_time, continuation_token=continuation_token)
@@ -240,7 +240,7 @@ with click_and_drop_api.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **page_size** | **int**| The number of items to return | [optional] [default to 25]
+ **page_size** | **int**| The number of items to return | [optional] default to 25
  **start_date_time** | **datetime**| Date and time lower bound for items filtering | [optional] 
  **end_date_time** | **datetime**| Date and time upper bound for items filtering | [optional] 
  **continuation_token** | **str**| The token for retrieving the next page of items | [optional] 
@@ -251,7 +251,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[Bearer](./#Bearer)
+[Bearer](api.md#Bearer)
 
 ### HTTP request headers
 
@@ -268,7 +268,7 @@ Name | Type | Description  | Notes
 **404** | Not Found |  -  |
 **500** | Internal Server Error |  -  |
 
-[[Back to top]](#) [[Back to API list]](./#documentation-for-api-endpoints) [[Back to Model list]](./#documentation-for-models) [[Back to README]](./)
+[[Back to top]](#) [[Back to API list]](api.md#documentation-for-api-endpoints) [[Back to Model list]](api.md#documentation-for-models) [[Back to README]](api.md)
 
 # **get_orders_with_details_async**
 > GetOrdersDetailsResponse get_orders_with_details_async(page_size=page_size, start_date_time=start_date_time, end_date_time=end_date_time, continuation_token=continuation_token)
@@ -329,7 +329,7 @@ with click_and_drop_api.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **page_size** | **int**| The number of items to return | [optional] [default to 25]
+ **page_size** | **int**| The number of items to return | [optional] default to 25
  **start_date_time** | **datetime**| Date and time lower bound for items filtering | [optional] 
  **end_date_time** | **datetime**| Date and time upper bound for items filtering | [optional] 
  **continuation_token** | **str**| The token for retrieving the next page of items | [optional] 
@@ -340,7 +340,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[Bearer](./#Bearer)
+[Bearer](api.md#Bearer)
 
 ### HTTP request headers
 
@@ -358,7 +358,7 @@ Name | Type | Description  | Notes
 **404** | Not Found |  -  |
 **500** | Internal Server Error |  -  |
 
-[[Back to top]](#) [[Back to API list]](./#documentation-for-api-endpoints) [[Back to Model list]](./#documentation-for-models) [[Back to README]](./)
+[[Back to top]](#) [[Back to API list]](api.md#documentation-for-api-endpoints) [[Back to Model list]](api.md#documentation-for-models) [[Back to README]](api.md)
 
 # **get_specific_orders_async**
 > List[GetOrderInfoResource] get_specific_orders_async(order_identifiers)
@@ -422,7 +422,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[Bearer](./#Bearer)
+[Bearer](api.md#Bearer)
 
 ### HTTP request headers
 
@@ -439,7 +439,7 @@ Name | Type | Description  | Notes
 **404** | Not Found |  -  |
 **500** | Internal Server Error |  -  |
 
-[[Back to top]](#) [[Back to API list]](./#documentation-for-api-endpoints) [[Back to Model list]](./#documentation-for-models) [[Back to README]](./)
+[[Back to top]](#) [[Back to API list]](api.md#documentation-for-api-endpoints) [[Back to Model list]](api.md#documentation-for-models) [[Back to README]](api.md)
 
 # **get_specific_orders_with_details_async**
 > List[GetOrderDetailsResource] get_specific_orders_with_details_async(order_identifiers)
@@ -505,7 +505,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[Bearer](./#Bearer)
+[Bearer](api.md#Bearer)
 
 ### HTTP request headers
 
@@ -523,7 +523,7 @@ Name | Type | Description  | Notes
 **404** | Not Found |  -  |
 **500** | Internal Server Error |  -  |
 
-[[Back to top]](#) [[Back to API list]](./#documentation-for-api-endpoints) [[Back to Model list]](./#documentation-for-models) [[Back to README]](./)
+[[Back to top]](#) [[Back to API list]](api.md#documentation-for-api-endpoints) [[Back to Model list]](api.md#documentation-for-models) [[Back to README]](api.md)
 
 # **update_orders_status_async**
 > UpdateOrderStatusResponse update_orders_status_async(request)
@@ -588,7 +588,7 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[Bearer](./#Bearer)
+[Bearer](api.md#Bearer)
 
 ### HTTP request headers
 
@@ -605,5 +605,5 @@ Name | Type | Description  | Notes
 **404** | Not Found |  -  |
 **500** | Internal Server Error |  -  |
 
-[[Back to top]](#) [[Back to API list]](./#documentation-for-api-endpoints) [[Back to Model list]](./#documentation-for-models) [[Back to README]](./)
+[[Back to top]](#) [[Back to API list]](api.md#documentation-for-api-endpoints) [[Back to Model list]](api.md#documentation-for-models) [[Back to README]](api.md)
 

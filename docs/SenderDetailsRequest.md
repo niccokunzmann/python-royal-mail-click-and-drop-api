@@ -26,6 +26,6 @@ sender_details_request_dict = sender_details_request_instance.to_dict()
 # create an instance of SenderDetailsRequest from a dict
 sender_details_request_from_dict = SenderDetailsRequest.from_dict(sender_details_request_dict)
 ```
-[[Back to Model list]](./#documentation-for-models) [[Back to API list]](./#documentation-for-api-endpoints) [[Back to README]](./)
+[[Back to Model list]](api.md#documentation-for-models) [[Back to API list]](api.md#documentation-for-api-endpoints) [[Back to README]](api.md)
 
 

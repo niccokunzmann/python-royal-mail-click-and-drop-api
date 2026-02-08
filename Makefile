@@ -41,11 +41,14 @@ stubs-help: image
 
 fix-stubs:
 	for f in docs/*.md; do \
-		sed -i "s|../README.md|./README.md|g" $$f; \
+		sed -i "s|../README.md|api.md|g" $$f; \
 	done
-	mv README.md docs/
-	sed -i "s|docs/|./|g" docs/README.md
-	git checkout -- .gitignore README.md
+	mv README.md docs/api.md
+	sed -i "s|docs/|./|g" docs/api.md
+	sed -i "s|(#installation--usage)||g" docs/api.md
+	sed -i "s|\[default to 25\]|default to 25|g" docs/OrdersApi.md
+	git checkout -- .gitignore
+	git checkout -- README.md || true
 
 html: .venv
 	.venv/bin/mkdocs build

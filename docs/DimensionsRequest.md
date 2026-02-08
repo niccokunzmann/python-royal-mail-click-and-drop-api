@@ -27,6 +27,6 @@ dimensions_request_dict = dimensions_request_instance.to_dict()
 # create an instance of DimensionsRequest from a dict
 dimensions_request_from_dict = DimensionsRequest.from_dict(dimensions_request_dict)
 ```
-[[Back to Model list]](./#documentation-for-models) [[Back to API list]](./#documentation-for-api-endpoints) [[Back to README]](./)
+[[Back to Model list]](api.md#documentation-for-models) [[Back to API list]](api.md#documentation-for-api-endpoints) [[Back to README]](api.md)
 
 

@@ -25,6 +25,6 @@ update_order_status_response_dict = update_order_status_response_instance.to_dic
 # create an instance of UpdateOrderStatusResponse from a dict
 update_order_status_response_from_dict = UpdateOrderStatusResponse.from_dict(update_order_status_response_dict)
 ```
-[[Back to Model list]](./#documentation-for-models) [[Back to API list]](./#documentation-for-api-endpoints) [[Back to README]](./)
+[[Back to Model list]](api.md#documentation-for-models) [[Back to API list]](api.md#documentation-for-api-endpoints) [[Back to README]](api.md)
 
 

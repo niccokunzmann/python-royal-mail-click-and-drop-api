@@ -25,6 +25,6 @@ failed_order_response_dict = failed_order_response_instance.to_dict()
 # create an instance of FailedOrderResponse from a dict
 failed_order_response_from_dict = FailedOrderResponse.from_dict(failed_order_response_dict)
 ```
-[[Back to Model list]](./#documentation-for-models) [[Back to API list]](./#documentation-for-api-endpoints) [[Back to README]](./)
+[[Back to Model list]](api.md#documentation-for-models) [[Back to API list]](api.md#documentation-for-api-endpoints) [[Back to README]](api.md)
 
 
