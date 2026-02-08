@@ -29,3 +29,4 @@ stubs: image
 
 stubs-help: image
 	docker run --rm openapitools/openapi-generator-cli help generate	
+
