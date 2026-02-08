@@ -94,7 +94,6 @@ repo_url: https://github.com/niccokunzmann/python-royal-mail-click-and-drop-api
 edit_uri: edit/main/docs/
 nav:
   - index.md
-  - maintenance.md
   - API:
     - api.md
     - AddressRequest.md
@@ -145,3 +144,4 @@ nav:
     - UpdateOrdersStatusRequest.md
     - UpdatedOrderInfo.md
     - VersionApi.md
+  - maintenance.md

@@ -29,3 +29,9 @@ Or live preview:
 ```sh
 make livehtml
 ```
+
+## Build the package
+
+```sh
+uv build
+```
