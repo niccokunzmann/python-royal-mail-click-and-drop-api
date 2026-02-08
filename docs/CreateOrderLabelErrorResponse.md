@@ -2,6 +2,7 @@
 
 
 ## Properties
+
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **message** | **str** |  | [optional] 
@@ -17,7 +18,7 @@ json = "{}"
 # create an instance of CreateOrderLabelErrorResponse from a JSON string
 create_order_label_error_response_instance = CreateOrderLabelErrorResponse.from_json(json)
 # print the JSON string representation of the object
-print CreateOrderLabelErrorResponse.to_json()
+print(CreateOrderLabelErrorResponse.to_json())
 
 # convert the object into a dict
 create_order_label_error_response_dict = create_order_label_error_response_instance.to_dict()

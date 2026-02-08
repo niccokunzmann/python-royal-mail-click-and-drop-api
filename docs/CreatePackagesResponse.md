@@ -2,6 +2,7 @@
 
 
 ## Properties
+
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **package_number** | **int** |  | [optional] 
@@ -17,7 +18,7 @@ json = "{}"
 # create an instance of CreatePackagesResponse from a JSON string
 create_packages_response_instance = CreatePackagesResponse.from_json(json)
 # print the JSON string representation of the object
-print CreatePackagesResponse.to_json()
+print(CreatePackagesResponse.to_json())
 
 # convert the object into a dict
 create_packages_response_dict = create_packages_response_instance.to_dict()

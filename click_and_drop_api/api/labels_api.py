@@ -11,25 +11,18 @@
     Do not edit the class manually.
 """  # noqa: E501
 
-
-import re  # noqa: F401
-import io
 import warnings
-
-from pydantic import validate_arguments, ValidationError
-
+from pydantic import validate_call, Field, StrictFloat, StrictStr, StrictInt
+from typing import Any, Dict, List, Optional, Tuple, Union
 from typing_extensions import Annotated
-from pydantic import Field, StrictBool, StrictStr
 
-from typing import Optional, Union
+from pydantic import Field, StrictBool, StrictBytes, StrictStr, field_validator
+from typing import Optional, Tuple, Union
+from typing_extensions import Annotated
 
-
-from click_and_drop_api.api_client import ApiClient
+from click_and_drop_api.api_client import ApiClient, RequestSerialized
 from click_and_drop_api.api_response import ApiResponse
-from click_and_drop_api.exceptions import (  # noqa: F401
-    ApiTypeError,
-    ApiValueError
-)
+from click_and_drop_api.rest import RESTResponseType
 
 
 class LabelsApi:
@@ -44,52 +37,30 @@ class LabelsApi:
             api_client = ApiClient.get_default()
         self.api_client = api_client
 
-    @validate_arguments
-    def get_orders_label_async(self, order_identifiers : Annotated[StrictStr, Field(..., description="One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/")], document_type : Annotated[StrictStr, Field(..., description="Document generation mode. When documentType is set to \"postageLabel\" the additional parameters below must be used. These additional parameters will be ignored when documentType is not set to \"postageLabel\"")], include_returns_label : Annotated[Optional[StrictBool], Field(description="Include returns label. Required when documentType is set to 'postageLabel'")] = None, include_cn : Annotated[Optional[StrictBool], Field(description="Include CN22/CN23 with label. Optional parameter. If this parameter is used the setting will override the default account behaviour specified in the \"Label format\" setting \"Generate customs declarations with orders\"")] = None, **kwargs) -> bytearray:  # noqa: E501
-        """Return a single PDF file with generated label and/or associated document(s)  # noqa: E501
 
-        <b>Reserved for OBA customers only</b>  The account \"Label format\" settings page will control the page format settings used to print the postage label and associated documents. Certain combinations of these settings may prevent associated documents from being printed together with the postage label within a single document. If this occurs the documentType option can be used in a separate call to print missing documents.   # noqa: E501
-        This method makes a synchronous HTTP request by default. To make an
-        asynchronous HTTP request, please pass async_req=True
+    @validate_call
+    def get_orders_label_async(
+        self,
+        order_identifiers: Annotated[StrictStr, Field(description="One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/")],
+        document_type: Annotated[StrictStr, Field(description="Document generation mode. When documentType is set to \"postageLabel\" the additional parameters below must be used. These additional parameters will be ignored when documentType is not set to \"postageLabel\"")],
+        include_returns_label: Annotated[Optional[StrictBool], Field(description="Include returns label. Required when documentType is set to 'postageLabel'")] = None,
+        include_cn: Annotated[Optional[StrictBool], Field(description="Include CN22/CN23 with label. Optional parameter. If this parameter is used the setting will override the default account behaviour specified in the \"Label format\" setting \"Generate customs declarations with orders\"")] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> bytearray:
+        """Return a single PDF file with generated label and/or associated document(s)
 
-        >>> thread = api.get_orders_label_async(order_identifiers, document_type, include_returns_label, include_cn, async_req=True)
-        >>> result = thread.get()
-
-        :param order_identifiers: One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/ (required)
-        :type order_identifiers: str
-        :param document_type: Document generation mode. When documentType is set to \"postageLabel\" the additional parameters below must be used. These additional parameters will be ignored when documentType is not set to \"postageLabel\" (required)
-        :type document_type: str
-        :param include_returns_label: Include returns label. Required when documentType is set to 'postageLabel'
-        :type include_returns_label: bool
-        :param include_cn: Include CN22/CN23 with label. Optional parameter. If this parameter is used the setting will override the default account behaviour specified in the \"Label format\" setting \"Generate customs declarations with orders\"
-        :type include_cn: bool
-        :param async_req: Whether to execute the request asynchronously.
-        :type async_req: bool, optional
-        :param _request_timeout: timeout setting for this request.
-               If one number provided, it will be total request
-               timeout. It can also be a pair (tuple) of
-               (connection, read) timeouts.
-        :return: Returns the result object.
-                 If the method is called asynchronously,
-                 returns the request thread.
-        :rtype: bytearray
-        """
-        kwargs['_return_http_data_only'] = True
-        if '_preload_content' in kwargs:
-            message = "Error! Please call the get_orders_label_async_with_http_info method with `_preload_content` instead and obtain raw data from ApiResponse.raw_data"  # noqa: E501
-            raise ValueError(message)
-        return self.get_orders_label_async_with_http_info(order_identifiers, document_type, include_returns_label, include_cn, **kwargs)  # noqa: E501
-
-    @validate_arguments
-    def get_orders_label_async_with_http_info(self, order_identifiers : Annotated[StrictStr, Field(..., description="One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/")], document_type : Annotated[StrictStr, Field(..., description="Document generation mode. When documentType is set to \"postageLabel\" the additional parameters below must be used. These additional parameters will be ignored when documentType is not set to \"postageLabel\"")], include_returns_label : Annotated[Optional[StrictBool], Field(description="Include returns label. Required when documentType is set to 'postageLabel'")] = None, include_cn : Annotated[Optional[StrictBool], Field(description="Include CN22/CN23 with label. Optional parameter. If this parameter is used the setting will override the default account behaviour specified in the \"Label format\" setting \"Generate customs declarations with orders\"")] = None, **kwargs) -> ApiResponse:  # noqa: E501
-        """Return a single PDF file with generated label and/or associated document(s)  # noqa: E501
-
-        <b>Reserved for OBA customers only</b>  The account \"Label format\" settings page will control the page format settings used to print the postage label and associated documents. Certain combinations of these settings may prevent associated documents from being printed together with the postage label within a single document. If this occurs the documentType option can be used in a separate call to print missing documents.   # noqa: E501
-        This method makes a synchronous HTTP request by default. To make an
-        asynchronous HTTP request, please pass async_req=True
-
-        >>> thread = api.get_orders_label_async_with_http_info(order_identifiers, document_type, include_returns_label, include_cn, async_req=True)
-        >>> result = thread.get()
+        <b>Reserved for OBA customers only</b>  The account \"Label format\" settings page will control the page format settings used to print the postage label and associated documents. Certain combinations of these settings may prevent associated documents from being printed together with the postage label within a single document. If this occurs the documentType option can be used in a separate call to print missing documents. 
 
         :param order_identifiers: One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/ (required)
         :type order_identifiers: str
@@ -99,95 +70,40 @@ class LabelsApi:
         :type include_returns_label: bool
         :param include_cn: Include CN22/CN23 with label. Optional parameter. If this parameter is used the setting will override the default account behaviour specified in the \"Label format\" setting \"Generate customs declarations with orders\"
         :type include_cn: bool
-        :param async_req: Whether to execute the request asynchronously.
-        :type async_req: bool, optional
-        :param _preload_content: if False, the ApiResponse.data will
-                                 be set to none and raw_data will store the
-                                 HTTP response body without reading/decoding.
-                                 Default is True.
-        :type _preload_content: bool, optional
-        :param _return_http_data_only: response data instead of ApiResponse
-                                       object with status code, headers, etc
-        :type _return_http_data_only: bool, optional
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
                                  (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
         :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the authentication
-                              in the spec for a single request.
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
         :type _request_auth: dict, optional
-        :type _content_type: string, optional: force content-type for the request
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
         :return: Returns the result object.
-                 If the method is called asynchronously,
-                 returns the request thread.
-        :rtype: tuple(bytearray, status_code(int), headers(HTTPHeaderDict))
-        """
+        """ # noqa: E501
 
-        _params = locals()
-
-        _all_params = [
-            'order_identifiers',
-            'document_type',
-            'include_returns_label',
-            'include_cn'
-        ]
-        _all_params.extend(
-            [
-                'async_req',
-                '_return_http_data_only',
-                '_preload_content',
-                '_request_timeout',
-                '_request_auth',
-                '_content_type',
-                '_headers'
-            ]
+        _param = self._get_orders_label_async_serialize(
+            order_identifiers=order_identifiers,
+            document_type=document_type,
+            include_returns_label=include_returns_label,
+            include_cn=include_cn,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
         )
 
-        # validate the arguments
-        for _key, _val in _params['kwargs'].items():
-            if _key not in _all_params:
-                raise ApiTypeError(
-                    "Got an unexpected keyword argument '%s'"
-                    " to method get_orders_label_async" % _key
-                )
-            _params[_key] = _val
-        del _params['kwargs']
-
-        _collection_formats = {}
-
-        # process the path parameters
-        _path_params = {}
-        if _params['order_identifiers'] is not None:
-            _path_params['orderIdentifiers'] = _params['order_identifiers']
-
-
-        # process the query parameters
-        _query_params = []
-        if _params.get('document_type') is not None:  # noqa: E501
-            _query_params.append(('documentType', _params['document_type']))
-
-        if _params.get('include_returns_label') is not None:  # noqa: E501
-            _query_params.append(('includeReturnsLabel', _params['include_returns_label']))
-
-        if _params.get('include_cn') is not None:  # noqa: E501
-            _query_params.append(('includeCN', _params['include_cn']))
-
-        # process the header parameters
-        _header_params = dict(_params.get('_headers', {}))
-        # process the form parameters
-        _form_params = []
-        _files = {}
-        # process the body parameter
-        _body_params = None
-        # set the HTTP header `Accept`
-        _header_params['Accept'] = self.api_client.select_header_accept(
-            ['application/pdf', 'application/json'])  # noqa: E501
-
-        # authentication setting
-        _auth_settings = ['Bearer']  # noqa: E501
-
-        _response_types_map = {
+        _response_types_map: Dict[str, Optional[str]] = {
             '200': "bytearray",
             '400': "List[OrderErrorResponse]",
             '401': None,
@@ -195,20 +111,256 @@ class LabelsApi:
             '404': None,
             '500': "ErrorResponse",
         }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        ).data
 
-        return self.api_client.call_api(
-            '/orders/{orderIdentifiers}/label', 'GET',
-            _path_params,
-            _query_params,
-            _header_params,
+
+    @validate_call
+    def get_orders_label_async_with_http_info(
+        self,
+        order_identifiers: Annotated[StrictStr, Field(description="One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/")],
+        document_type: Annotated[StrictStr, Field(description="Document generation mode. When documentType is set to \"postageLabel\" the additional parameters below must be used. These additional parameters will be ignored when documentType is not set to \"postageLabel\"")],
+        include_returns_label: Annotated[Optional[StrictBool], Field(description="Include returns label. Required when documentType is set to 'postageLabel'")] = None,
+        include_cn: Annotated[Optional[StrictBool], Field(description="Include CN22/CN23 with label. Optional parameter. If this parameter is used the setting will override the default account behaviour specified in the \"Label format\" setting \"Generate customs declarations with orders\"")] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ApiResponse[bytearray]:
+        """Return a single PDF file with generated label and/or associated document(s)
+
+        <b>Reserved for OBA customers only</b>  The account \"Label format\" settings page will control the page format settings used to print the postage label and associated documents. Certain combinations of these settings may prevent associated documents from being printed together with the postage label within a single document. If this occurs the documentType option can be used in a separate call to print missing documents. 
+
+        :param order_identifiers: One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/ (required)
+        :type order_identifiers: str
+        :param document_type: Document generation mode. When documentType is set to \"postageLabel\" the additional parameters below must be used. These additional parameters will be ignored when documentType is not set to \"postageLabel\" (required)
+        :type document_type: str
+        :param include_returns_label: Include returns label. Required when documentType is set to 'postageLabel'
+        :type include_returns_label: bool
+        :param include_cn: Include CN22/CN23 with label. Optional parameter. If this parameter is used the setting will override the default account behaviour specified in the \"Label format\" setting \"Generate customs declarations with orders\"
+        :type include_cn: bool
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._get_orders_label_async_serialize(
+            order_identifiers=order_identifiers,
+            document_type=document_type,
+            include_returns_label=include_returns_label,
+            include_cn=include_cn,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "bytearray",
+            '400': "List[OrderErrorResponse]",
+            '401': None,
+            '403': None,
+            '404': None,
+            '500': "ErrorResponse",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        )
+
+
+    @validate_call
+    def get_orders_label_async_without_preload_content(
+        self,
+        order_identifiers: Annotated[StrictStr, Field(description="One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/")],
+        document_type: Annotated[StrictStr, Field(description="Document generation mode. When documentType is set to \"postageLabel\" the additional parameters below must be used. These additional parameters will be ignored when documentType is not set to \"postageLabel\"")],
+        include_returns_label: Annotated[Optional[StrictBool], Field(description="Include returns label. Required when documentType is set to 'postageLabel'")] = None,
+        include_cn: Annotated[Optional[StrictBool], Field(description="Include CN22/CN23 with label. Optional parameter. If this parameter is used the setting will override the default account behaviour specified in the \"Label format\" setting \"Generate customs declarations with orders\"")] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> RESTResponseType:
+        """Return a single PDF file with generated label and/or associated document(s)
+
+        <b>Reserved for OBA customers only</b>  The account \"Label format\" settings page will control the page format settings used to print the postage label and associated documents. Certain combinations of these settings may prevent associated documents from being printed together with the postage label within a single document. If this occurs the documentType option can be used in a separate call to print missing documents. 
+
+        :param order_identifiers: One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/ (required)
+        :type order_identifiers: str
+        :param document_type: Document generation mode. When documentType is set to \"postageLabel\" the additional parameters below must be used. These additional parameters will be ignored when documentType is not set to \"postageLabel\" (required)
+        :type document_type: str
+        :param include_returns_label: Include returns label. Required when documentType is set to 'postageLabel'
+        :type include_returns_label: bool
+        :param include_cn: Include CN22/CN23 with label. Optional parameter. If this parameter is used the setting will override the default account behaviour specified in the \"Label format\" setting \"Generate customs declarations with orders\"
+        :type include_cn: bool
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._get_orders_label_async_serialize(
+            order_identifiers=order_identifiers,
+            document_type=document_type,
+            include_returns_label=include_returns_label,
+            include_cn=include_cn,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "bytearray",
+            '400': "List[OrderErrorResponse]",
+            '401': None,
+            '403': None,
+            '404': None,
+            '500': "ErrorResponse",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        return response_data.response
+
+
+    def _get_orders_label_async_serialize(
+        self,
+        order_identifiers,
+        document_type,
+        include_returns_label,
+        include_cn,
+        _request_auth,
+        _content_type,
+        _headers,
+        _host_index,
+    ) -> RequestSerialized:
+
+        _host = None
+
+        _collection_formats: Dict[str, str] = {
+        }
+
+        _path_params: Dict[str, str] = {}
+        _query_params: List[Tuple[str, str]] = []
+        _header_params: Dict[str, Optional[str]] = _headers or {}
+        _form_params: List[Tuple[str, str]] = []
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
+        _body_params: Optional[bytes] = None
+
+        # process the path parameters
+        if order_identifiers is not None:
+            _path_params['orderIdentifiers'] = order_identifiers
+        # process the query parameters
+        if document_type is not None:
+            
+            _query_params.append(('documentType', document_type))
+            
+        if include_returns_label is not None:
+            
+            _query_params.append(('includeReturnsLabel', include_returns_label))
+            
+        if include_cn is not None:
+            
+            _query_params.append(('includeCN', include_cn))
+            
+        # process the header parameters
+        # process the form parameters
+        # process the body parameter
+
+
+        # set the HTTP header `Accept`
+        if 'Accept' not in _header_params:
+            _header_params['Accept'] = self.api_client.select_header_accept(
+                [
+                    'application/pdf', 
+                    'application/json'
+                ]
+            )
+
+
+        # authentication setting
+        _auth_settings: List[str] = [
+            'Bearer'
+        ]
+
+        return self.api_client.param_serialize(
+            method='GET',
+            resource_path='/orders/{orderIdentifiers}/label',
+            path_params=_path_params,
+            query_params=_query_params,
+            header_params=_header_params,
             body=_body_params,
             post_params=_form_params,
             files=_files,
-            response_types_map=_response_types_map,
             auth_settings=_auth_settings,
-            async_req=_params.get('async_req'),
-            _return_http_data_only=_params.get('_return_http_data_only'),  # noqa: E501
-            _preload_content=_params.get('_preload_content', True),
-            _request_timeout=_params.get('_request_timeout'),
             collection_formats=_collection_formats,
-            _request_auth=_params.get('_request_auth'))
+            _host=_host,
+            _request_auth=_request_auth
+        )
+
+

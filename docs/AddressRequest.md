@@ -2,6 +2,7 @@
 
 
 ## Properties
+
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **full_name** | **str** |  | [optional] 
@@ -24,7 +25,7 @@ json = "{}"
 # create an instance of AddressRequest from a JSON string
 address_request_instance = AddressRequest.from_json(json)
 # print the JSON string representation of the object
-print AddressRequest.to_json()
+print(AddressRequest.to_json())
 
 # convert the object into a dict
 address_request_dict = address_request_instance.to_dict()

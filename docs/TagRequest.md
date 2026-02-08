@@ -2,6 +2,7 @@
 
 
 ## Properties
+
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **key** | **str** |  | [optional] 
@@ -17,7 +18,7 @@ json = "{}"
 # create an instance of TagRequest from a JSON string
 tag_request_instance = TagRequest.from_json(json)
 # print the JSON string representation of the object
-print TagRequest.to_json()
+print(TagRequest.to_json())
 
 # convert the object into a dict
 tag_request_dict = tag_request_instance.to_dict()

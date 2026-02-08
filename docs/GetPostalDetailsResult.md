@@ -2,6 +2,7 @@
 
 
 ## Properties
+
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **title** | **str** |  | [optional] 
@@ -28,7 +29,7 @@ json = "{}"
 # create an instance of GetPostalDetailsResult from a JSON string
 get_postal_details_result_instance = GetPostalDetailsResult.from_json(json)
 # print the JSON string representation of the object
-print GetPostalDetailsResult.to_json()
+print(GetPostalDetailsResult.to_json())
 
 # convert the object into a dict
 get_postal_details_result_dict = get_postal_details_result_instance.to_dict()

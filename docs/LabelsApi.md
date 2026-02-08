@@ -23,9 +23,8 @@ used in a separate call to print missing documents.
 ### Example
 
 * Api Key Authentication (Bearer):
+
 ```python
-import time
-import os
 import click_and_drop_api
 from click_and_drop_api.rest import ApiException
 from pprint import pprint
@@ -69,6 +68,7 @@ with click_and_drop_api.ApiClient(configuration) as api_client:
 
 ### Parameters
 
+
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **order_identifiers** | **str**| One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\&quot;ref\&quot;;1001;\&quot;Reference%3BWith%3BSpecial%3BSymbols!\&quot;;2345/ | 
@@ -90,6 +90,7 @@ Name | Type | Description  | Notes
  - **Accept**: application/pdf, application/json
 
 ### HTTP response details
+
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 **200** | Return the PDF file with labels |  -  |

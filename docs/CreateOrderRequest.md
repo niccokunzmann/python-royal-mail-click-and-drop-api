@@ -2,6 +2,7 @@
 
 
 ## Properties
+
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **order_reference** | **str** |  | [optional] 
@@ -39,7 +40,7 @@ json = "{}"
 # create an instance of CreateOrderRequest from a JSON string
 create_order_request_instance = CreateOrderRequest.from_json(json)
 # print the JSON string representation of the object
-print CreateOrderRequest.to_json()
+print(CreateOrderRequest.to_json())
 
 # convert the object into a dict
 create_order_request_dict = create_order_request_instance.to_dict()

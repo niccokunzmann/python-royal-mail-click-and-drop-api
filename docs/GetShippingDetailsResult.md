@@ -2,6 +2,7 @@
 
 
 ## Properties
+
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **shipping_cost** | **float** |  | 
@@ -28,7 +29,7 @@ json = "{}"
 # create an instance of GetShippingDetailsResult from a JSON string
 get_shipping_details_result_instance = GetShippingDetailsResult.from_json(json)
 # print the JSON string representation of the object
-print GetShippingDetailsResult.to_json()
+print(GetShippingDetailsResult.to_json())
 
 # convert the object into a dict
 get_shipping_details_result_dict = get_shipping_details_result_instance.to_dict()

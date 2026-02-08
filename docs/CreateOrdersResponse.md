@@ -2,6 +2,7 @@
 
 
 ## Properties
+
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **success_count** | **int** |  | [optional] 
@@ -19,7 +20,7 @@ json = "{}"
 # create an instance of CreateOrdersResponse from a JSON string
 create_orders_response_instance = CreateOrdersResponse.from_json(json)
 # print the JSON string representation of the object
-print CreateOrdersResponse.to_json()
+print(CreateOrdersResponse.to_json())
 
 # convert the object into a dict
 create_orders_response_dict = create_orders_response_instance.to_dict()

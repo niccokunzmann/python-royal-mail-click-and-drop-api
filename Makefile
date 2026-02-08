@@ -17,7 +17,7 @@ image:
 stubs: image
 	docker run --rm -v "$${PWD}:/local" -u $$(id -u):$$(id -g) openapitools/openapi-generator-cli generate \
 		-i /local/click-and-drop-api-v1.yaml \
-		-g python-pydantic-v1 \
+		-g python \
 		-o /local/ \
 		--package-name click_and_drop_api \
 		--git-host https://github.com \

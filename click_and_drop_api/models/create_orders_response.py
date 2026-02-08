@@ -17,76 +17,92 @@ import pprint
 import re  # noqa: F401
 import json
 
-
-from typing import List, Optional
-from pydantic import BaseModel, Field, StrictInt, conlist
+from pydantic import BaseModel, ConfigDict, Field, StrictInt
+from typing import Any, ClassVar, Dict, List, Optional
 from click_and_drop_api.models.create_order_response import CreateOrderResponse
 from click_and_drop_api.models.failed_order_response import FailedOrderResponse
+from typing import Optional, Set
+from typing_extensions import Self
 
 class CreateOrdersResponse(BaseModel):
     """
     CreateOrdersResponse
-    """
+    """ # noqa: E501
     success_count: Optional[StrictInt] = Field(default=None, alias="successCount")
     errors_count: Optional[StrictInt] = Field(default=None, alias="errorsCount")
-    created_orders: Optional[conlist(CreateOrderResponse)] = Field(default=None, alias="createdOrders")
-    failed_orders: Optional[conlist(FailedOrderResponse)] = Field(default=None, alias="failedOrders")
-    __properties = ["successCount", "errorsCount", "createdOrders", "failedOrders"]
+    created_orders: Optional[List[CreateOrderResponse]] = Field(default=None, alias="createdOrders")
+    failed_orders: Optional[List[FailedOrderResponse]] = Field(default=None, alias="failedOrders")
+    __properties: ClassVar[List[str]] = ["successCount", "errorsCount", "createdOrders", "failedOrders"]
 
-    class Config:
-        """Pydantic configuration"""
-        allow_population_by_field_name = True
-        validate_assignment = True
+    model_config = ConfigDict(
+        populate_by_name=True,
+        validate_assignment=True,
+        protected_namespaces=(),
+    )
+
 
     def to_str(self) -> str:
         """Returns the string representation of the model using alias"""
-        return pprint.pformat(self.dict(by_alias=True))
+        return pprint.pformat(self.model_dump(by_alias=True))
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
+        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> CreateOrdersResponse:
+    def from_json(cls, json_str: str) -> Optional[Self]:
         """Create an instance of CreateOrdersResponse from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
-    def to_dict(self):
-        """Returns the dictionary representation of the model using alias"""
-        _dict = self.dict(by_alias=True,
-                          exclude={
-                          },
-                          exclude_none=True)
+    def to_dict(self) -> Dict[str, Any]:
+        """Return the dictionary representation of the model using alias.
+
+        This has the following differences from calling pydantic's
+        `self.model_dump(by_alias=True)`:
+
+        * `None` is only added to the output dict for nullable fields that
+          were set at model initialization. Other fields with value `None`
+          are ignored.
+        """
+        excluded_fields: Set[str] = set([
+        ])
+
+        _dict = self.model_dump(
+            by_alias=True,
+            exclude=excluded_fields,
+            exclude_none=True,
+        )
         # override the default output from pydantic by calling `to_dict()` of each item in created_orders (list)
         _items = []
         if self.created_orders:
-            for _item in self.created_orders:
-                if _item:
-                    _items.append(_item.to_dict())
+            for _item_created_orders in self.created_orders:
+                if _item_created_orders:
+                    _items.append(_item_created_orders.to_dict())
             _dict['createdOrders'] = _items
         # override the default output from pydantic by calling `to_dict()` of each item in failed_orders (list)
         _items = []
         if self.failed_orders:
-            for _item in self.failed_orders:
-                if _item:
-                    _items.append(_item.to_dict())
+            for _item_failed_orders in self.failed_orders:
+                if _item_failed_orders:
+                    _items.append(_item_failed_orders.to_dict())
             _dict['failedOrders'] = _items
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: dict) -> CreateOrdersResponse:
+    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
         """Create an instance of CreateOrdersResponse from a dict"""
         if obj is None:
             return None
 
         if not isinstance(obj, dict):
-            return CreateOrdersResponse.parse_obj(obj)
+            return cls.model_validate(obj)
 
-        _obj = CreateOrdersResponse.parse_obj({
-            "success_count": obj.get("successCount"),
-            "errors_count": obj.get("errorsCount"),
-            "created_orders": [CreateOrderResponse.from_dict(_item) for _item in obj.get("createdOrders")] if obj.get("createdOrders") is not None else None,
-            "failed_orders": [FailedOrderResponse.from_dict(_item) for _item in obj.get("failedOrders")] if obj.get("failedOrders") is not None else None
+        _obj = cls.model_validate({
+            "successCount": obj.get("successCount"),
+            "errorsCount": obj.get("errorsCount"),
+            "createdOrders": [CreateOrderResponse.from_dict(_item) for _item in obj["createdOrders"]] if obj.get("createdOrders") is not None else None,
+            "failedOrders": [FailedOrderResponse.from_dict(_item) for _item in obj["failedOrders"]] if obj.get("failedOrders") is not None else None
         })
         return _obj
 

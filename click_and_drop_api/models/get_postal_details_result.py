@@ -17,14 +17,16 @@ import pprint
 import re  # noqa: F401
 import json
 
-
-from typing import Optional
-from pydantic import BaseModel, Field, StrictStr, constr
+from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from typing import Any, ClassVar, Dict, List, Optional
+from typing_extensions import Annotated
+from typing import Optional, Set
+from typing_extensions import Self
 
 class GetPostalDetailsResult(BaseModel):
     """
     GetPostalDetailsResult
-    """
+    """ # noqa: E501
     title: Optional[StrictStr] = None
     first_name: Optional[StrictStr] = Field(default=None, alias="firstName")
     last_name: Optional[StrictStr] = Field(default=None, alias="lastName")
@@ -35,60 +37,75 @@ class GetPostalDetailsResult(BaseModel):
     city: Optional[StrictStr] = None
     county: Optional[StrictStr] = None
     postcode: Optional[StrictStr] = None
-    country_code: Optional[constr(strict=True, max_length=3)] = Field(default=None, alias="countryCode")
+    country_code: Optional[Annotated[str, Field(strict=True, max_length=3)]] = Field(default=None, alias="countryCode")
     phone_number: Optional[StrictStr] = Field(default=None, alias="phoneNumber")
     email_address: Optional[StrictStr] = Field(default=None, alias="emailAddress")
-    __properties = ["title", "firstName", "lastName", "companyName", "addressLine1", "addressLine2", "addressLine3", "city", "county", "postcode", "countryCode", "phoneNumber", "emailAddress"]
+    __properties: ClassVar[List[str]] = ["title", "firstName", "lastName", "companyName", "addressLine1", "addressLine2", "addressLine3", "city", "county", "postcode", "countryCode", "phoneNumber", "emailAddress"]
 
-    class Config:
-        """Pydantic configuration"""
-        allow_population_by_field_name = True
-        validate_assignment = True
+    model_config = ConfigDict(
+        populate_by_name=True,
+        validate_assignment=True,
+        protected_namespaces=(),
+    )
+
 
     def to_str(self) -> str:
         """Returns the string representation of the model using alias"""
-        return pprint.pformat(self.dict(by_alias=True))
+        return pprint.pformat(self.model_dump(by_alias=True))
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
+        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> GetPostalDetailsResult:
+    def from_json(cls, json_str: str) -> Optional[Self]:
         """Create an instance of GetPostalDetailsResult from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
-    def to_dict(self):
-        """Returns the dictionary representation of the model using alias"""
-        _dict = self.dict(by_alias=True,
-                          exclude={
-                          },
-                          exclude_none=True)
+    def to_dict(self) -> Dict[str, Any]:
+        """Return the dictionary representation of the model using alias.
+
+        This has the following differences from calling pydantic's
+        `self.model_dump(by_alias=True)`:
+
+        * `None` is only added to the output dict for nullable fields that
+          were set at model initialization. Other fields with value `None`
+          are ignored.
+        """
+        excluded_fields: Set[str] = set([
+        ])
+
+        _dict = self.model_dump(
+            by_alias=True,
+            exclude=excluded_fields,
+            exclude_none=True,
+        )
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: dict) -> GetPostalDetailsResult:
+    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
         """Create an instance of GetPostalDetailsResult from a dict"""
         if obj is None:
             return None
 
         if not isinstance(obj, dict):
-            return GetPostalDetailsResult.parse_obj(obj)
+            return cls.model_validate(obj)
 
-        _obj = GetPostalDetailsResult.parse_obj({
+        _obj = cls.model_validate({
             "title": obj.get("title"),
-            "first_name": obj.get("firstName"),
-            "last_name": obj.get("lastName"),
-            "company_name": obj.get("companyName"),
-            "address_line1": obj.get("addressLine1"),
-            "address_line2": obj.get("addressLine2"),
-            "address_line3": obj.get("addressLine3"),
+            "firstName": obj.get("firstName"),
+            "lastName": obj.get("lastName"),
+            "companyName": obj.get("companyName"),
+            "addressLine1": obj.get("addressLine1"),
+            "addressLine2": obj.get("addressLine2"),
+            "addressLine3": obj.get("addressLine3"),
             "city": obj.get("city"),
             "county": obj.get("county"),
             "postcode": obj.get("postcode"),
-            "country_code": obj.get("countryCode"),
-            "phone_number": obj.get("phoneNumber"),
-            "email_address": obj.get("emailAddress")
+            "countryCode": obj.get("countryCode"),
+            "phoneNumber": obj.get("phoneNumber"),
+            "emailAddress": obj.get("emailAddress")
         })
         return _obj
 

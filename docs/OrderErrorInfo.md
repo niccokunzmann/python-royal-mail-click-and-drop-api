@@ -2,6 +2,7 @@
 
 
 ## Properties
+
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **order_identifier** | **int** |  | [optional] 
@@ -19,7 +20,7 @@ json = "{}"
 # create an instance of OrderErrorInfo from a JSON string
 order_error_info_instance = OrderErrorInfo.from_json(json)
 # print the JSON string representation of the object
-print OrderErrorInfo.to_json()
+print(OrderErrorInfo.to_json())
 
 # convert the object into a dict
 order_error_info_dict = order_error_info_instance.to_dict()

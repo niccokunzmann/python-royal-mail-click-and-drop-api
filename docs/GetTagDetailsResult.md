@@ -2,6 +2,7 @@
 
 
 ## Properties
+
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **key** | **str** |  | [optional] 
@@ -17,7 +18,7 @@ json = "{}"
 # create an instance of GetTagDetailsResult from a JSON string
 get_tag_details_result_instance = GetTagDetailsResult.from_json(json)
 # print the JSON string representation of the object
-print GetTagDetailsResult.to_json()
+print(GetTagDetailsResult.to_json())
 
 # convert the object into a dict
 get_tag_details_result_dict = get_tag_details_result_instance.to_dict()

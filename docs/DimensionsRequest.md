@@ -3,6 +3,7 @@
 It is not mandatory to include the dimensions field. If the dimensions field is included then the inner fields heightInMms, widthInMms and depthInMms must be specified with non-zero values.
 
 ## Properties
+
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **height_in_mms** | **int** |  | 
@@ -19,7 +20,7 @@ json = "{}"
 # create an instance of DimensionsRequest from a JSON string
 dimensions_request_instance = DimensionsRequest.from_json(json)
 # print the JSON string representation of the object
-print DimensionsRequest.to_json()
+print(DimensionsRequest.to_json())
 
 # convert the object into a dict
 dimensions_request_dict = dimensions_request_instance.to_dict()

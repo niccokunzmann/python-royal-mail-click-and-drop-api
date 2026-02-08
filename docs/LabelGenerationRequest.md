@@ -3,6 +3,7 @@
 <b>Reserved for OBA customers only</b>
 
 ## Properties
+
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **include_label_in_response** | **bool** |  | 
@@ -19,7 +20,7 @@ json = "{}"
 # create an instance of LabelGenerationRequest from a JSON string
 label_generation_request_instance = LabelGenerationRequest.from_json(json)
 # print the JSON string representation of the object
-print LabelGenerationRequest.to_json()
+print(LabelGenerationRequest.to_json())
 
 # convert the object into a dict
 label_generation_request_dict = label_generation_request_instance.to_dict()

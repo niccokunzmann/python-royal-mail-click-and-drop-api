@@ -2,6 +2,7 @@
 
 
 ## Properties
+
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **trading_name** | **str** |  | [optional] 
@@ -18,7 +19,7 @@ json = "{}"
 # create an instance of SenderDetailsRequest from a JSON string
 sender_details_request_instance = SenderDetailsRequest.from_json(json)
 # print the JSON string representation of the object
-print SenderDetailsRequest.to_json()
+print(SenderDetailsRequest.to_json())
 
 # convert the object into a dict
 sender_details_request_dict = sender_details_request_instance.to_dict()

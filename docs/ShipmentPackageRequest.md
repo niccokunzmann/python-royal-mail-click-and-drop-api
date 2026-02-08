@@ -2,6 +2,7 @@
 
 
 ## Properties
+
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **weight_in_grams** | **int** |  | 
@@ -20,7 +21,7 @@ json = "{}"
 # create an instance of ShipmentPackageRequest from a JSON string
 shipment_package_request_instance = ShipmentPackageRequest.from_json(json)
 # print the JSON string representation of the object
-print ShipmentPackageRequest.to_json()
+print(ShipmentPackageRequest.to_json())
 
 # convert the object into a dict
 shipment_package_request_dict = shipment_package_request_instance.to_dict()

@@ -2,6 +2,7 @@
 
 
 ## Properties
+
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **company_name** | **str** |  | [optional] 
@@ -29,7 +30,7 @@ json = "{}"
 # create an instance of Importer from a JSON string
 importer_instance = Importer.from_json(json)
 # print the JSON string representation of the object
-print Importer.to_json()
+print(Importer.to_json())
 
 # convert the object into a dict
 importer_dict = importer_instance.to_dict()

@@ -2,6 +2,7 @@
 
 
 ## Properties
+
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **items** | [**List[UpdateOrderStatusRequest]**](UpdateOrderStatusRequest.md) |  | [optional] 
@@ -16,7 +17,7 @@ json = "{}"
 # create an instance of UpdateOrdersStatusRequest from a JSON string
 update_orders_status_request_instance = UpdateOrdersStatusRequest.from_json(json)
 # print the JSON string representation of the object
-print UpdateOrdersStatusRequest.to_json()
+print(UpdateOrdersStatusRequest.to_json())
 
 # convert the object into a dict
 update_orders_status_request_dict = update_orders_status_request_instance.to_dict()

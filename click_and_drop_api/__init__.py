@@ -139,3 +139,4 @@ from click_and_drop_api.models.update_order_status_request import UpdateOrderSta
 from click_and_drop_api.models.update_order_status_response import UpdateOrderStatusResponse as UpdateOrderStatusResponse
 from click_and_drop_api.models.update_orders_status_request import UpdateOrdersStatusRequest as UpdateOrdersStatusRequest
 from click_and_drop_api.models.updated_order_info import UpdatedOrderInfo as UpdatedOrderInfo
+

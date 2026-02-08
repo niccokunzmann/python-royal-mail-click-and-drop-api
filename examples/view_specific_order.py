@@ -25,5 +25,14 @@ with click_and_drop_api.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = click_and_drop_api.OrdersApi(api_client)
 
-    response = api_instance.get_orders_with_details_async(page_size=25, start_date_time=datetime(2026, 1, 1), end_date_time=datetime(2027, 1, 1), continuation_token='page-0')
-    print(response.orders)
+    response = api_instance.get_specific_orders_async(order_identifiers='1001;1002')
+    for order in response:
+        print("Order Identifier:", order.order_identifier)
+        print("Order Reference:", order.order_reference)
+        print("Order Date:", order.order_date)
+        print("Order Printed On:", order.printed_on)
+        print("Order Manifested On:", order.manifested_on)
+        print("Order Shipped On:", order.shipped_on)
+        for package in order.packages:
+            print("\tPackage Number:", package.package_number)
+            print("\tPackage Tracking Number:", package.tracking_number)

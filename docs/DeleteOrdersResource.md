@@ -2,6 +2,7 @@
 
 
 ## Properties
+
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **deleted_orders** | [**List[DeletedOrderInfo]**](DeletedOrderInfo.md) |  | [optional] 
@@ -17,7 +18,7 @@ json = "{}"
 # create an instance of DeleteOrdersResource from a JSON string
 delete_orders_resource_instance = DeleteOrdersResource.from_json(json)
 # print the JSON string representation of the object
-print DeleteOrdersResource.to_json()
+print(DeleteOrdersResource.to_json())
 
 # convert the object into a dict
 delete_orders_resource_dict = delete_orders_resource_instance.to_dict()

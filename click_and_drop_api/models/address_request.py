@@ -17,70 +17,87 @@ import pprint
 import re  # noqa: F401
 import json
 
-
-from typing import Optional
-from pydantic import BaseModel, Field, constr
+from pydantic import BaseModel, ConfigDict, Field
+from typing import Any, ClassVar, Dict, List, Optional
+from typing_extensions import Annotated
+from typing import Optional, Set
+from typing_extensions import Self
 
 class AddressRequest(BaseModel):
     """
     AddressRequest
-    """
-    full_name: Optional[constr(strict=True, max_length=210)] = Field(default=None, alias="fullName")
-    company_name: Optional[constr(strict=True, max_length=100)] = Field(default=None, alias="companyName")
-    address_line1: constr(strict=True, max_length=100) = Field(default=..., alias="addressLine1")
-    address_line2: Optional[constr(strict=True, max_length=100)] = Field(default=None, alias="addressLine2")
-    address_line3: Optional[constr(strict=True, max_length=100)] = Field(default=None, alias="addressLine3")
-    city: constr(strict=True, max_length=100) = Field(...)
-    county: Optional[constr(strict=True, max_length=100)] = None
-    postcode: Optional[constr(strict=True, max_length=20)] = None
-    country_code: constr(strict=True, max_length=3) = Field(default=..., alias="countryCode")
-    __properties = ["fullName", "companyName", "addressLine1", "addressLine2", "addressLine3", "city", "county", "postcode", "countryCode"]
+    """ # noqa: E501
+    full_name: Optional[Annotated[str, Field(strict=True, max_length=210)]] = Field(default=None, alias="fullName")
+    company_name: Optional[Annotated[str, Field(strict=True, max_length=100)]] = Field(default=None, alias="companyName")
+    address_line1: Annotated[str, Field(strict=True, max_length=100)] = Field(alias="addressLine1")
+    address_line2: Optional[Annotated[str, Field(strict=True, max_length=100)]] = Field(default=None, alias="addressLine2")
+    address_line3: Optional[Annotated[str, Field(strict=True, max_length=100)]] = Field(default=None, alias="addressLine3")
+    city: Annotated[str, Field(strict=True, max_length=100)]
+    county: Optional[Annotated[str, Field(strict=True, max_length=100)]] = None
+    postcode: Optional[Annotated[str, Field(strict=True, max_length=20)]] = None
+    country_code: Annotated[str, Field(strict=True, max_length=3)] = Field(alias="countryCode")
+    __properties: ClassVar[List[str]] = ["fullName", "companyName", "addressLine1", "addressLine2", "addressLine3", "city", "county", "postcode", "countryCode"]
 
-    class Config:
-        """Pydantic configuration"""
-        allow_population_by_field_name = True
-        validate_assignment = True
+    model_config = ConfigDict(
+        populate_by_name=True,
+        validate_assignment=True,
+        protected_namespaces=(),
+    )
+
 
     def to_str(self) -> str:
         """Returns the string representation of the model using alias"""
-        return pprint.pformat(self.dict(by_alias=True))
+        return pprint.pformat(self.model_dump(by_alias=True))
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
+        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
         return json.dumps(self.to_dict())
 
     @classmethod
-    def from_json(cls, json_str: str) -> AddressRequest:
+    def from_json(cls, json_str: str) -> Optional[Self]:
         """Create an instance of AddressRequest from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
-    def to_dict(self):
-        """Returns the dictionary representation of the model using alias"""
-        _dict = self.dict(by_alias=True,
-                          exclude={
-                          },
-                          exclude_none=True)
+    def to_dict(self) -> Dict[str, Any]:
+        """Return the dictionary representation of the model using alias.
+
+        This has the following differences from calling pydantic's
+        `self.model_dump(by_alias=True)`:
+
+        * `None` is only added to the output dict for nullable fields that
+          were set at model initialization. Other fields with value `None`
+          are ignored.
+        """
+        excluded_fields: Set[str] = set([
+        ])
+
+        _dict = self.model_dump(
+            by_alias=True,
+            exclude=excluded_fields,
+            exclude_none=True,
+        )
         return _dict
 
     @classmethod
-    def from_dict(cls, obj: dict) -> AddressRequest:
+    def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
         """Create an instance of AddressRequest from a dict"""
         if obj is None:
             return None
 
         if not isinstance(obj, dict):
-            return AddressRequest.parse_obj(obj)
+            return cls.model_validate(obj)
 
-        _obj = AddressRequest.parse_obj({
-            "full_name": obj.get("fullName"),
-            "company_name": obj.get("companyName"),
-            "address_line1": obj.get("addressLine1"),
-            "address_line2": obj.get("addressLine2"),
-            "address_line3": obj.get("addressLine3"),
+        _obj = cls.model_validate({
+            "fullName": obj.get("fullName"),
+            "companyName": obj.get("companyName"),
+            "addressLine1": obj.get("addressLine1"),
+            "addressLine2": obj.get("addressLine2"),
+            "addressLine3": obj.get("addressLine3"),
             "city": obj.get("city"),
             "county": obj.get("county"),
             "postcode": obj.get("postcode"),
-            "country_code": obj.get("countryCode")
+            "countryCode": obj.get("countryCode")
         })
         return _obj
 
