@@ -98,66 +98,66 @@ All URIs are relative to *http://api.parcel.royalmail.com/api/v1*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
-*LabelsApi* | [**get_orders_label_async**](docs/LabelsApi.md#get_orders_label_async) | **GET** /orders/{orderIdentifiers}/label | Return a single PDF file with generated label and/or associated document(s)
-*ManifestsApi* | [**get_manifest_async**](docs/ManifestsApi.md#get_manifest_async) | **GET** /manifests/{manifestIdentifier} | Get manifest
-*ManifestsApi* | [**manifest_eligible_async**](docs/ManifestsApi.md#manifest_eligible_async) | **POST** /manifests | Manifest eligible orders
-*ManifestsApi* | [**retry_manifest_async**](docs/ManifestsApi.md#retry_manifest_async) | **POST** /manifests/retry/{manifestIdentifier} | Retry manifest
-*OrdersApi* | [**create_orders_async**](docs/OrdersApi.md#create_orders_async) | **POST** /orders | Create orders
-*OrdersApi* | [**delete_orders_async**](docs/OrdersApi.md#delete_orders_async) | **DELETE** /orders/{orderIdentifiers} | Delete orders
-*OrdersApi* | [**get_orders_async**](docs/OrdersApi.md#get_orders_async) | **GET** /orders | Retrieve pageable list of orders
-*OrdersApi* | [**get_orders_with_details_async**](docs/OrdersApi.md#get_orders_with_details_async) | **GET** /orders/full | Retrieve pageable list of orders with details
-*OrdersApi* | [**get_specific_orders_async**](docs/OrdersApi.md#get_specific_orders_async) | **GET** /orders/{orderIdentifiers} | Retrieve specific orders
-*OrdersApi* | [**get_specific_orders_with_details_async**](docs/OrdersApi.md#get_specific_orders_with_details_async) | **GET** /orders/{orderIdentifiers}/full | Retrieve details of the specific orders
-*OrdersApi* | [**update_orders_status_async**](docs/OrdersApi.md#update_orders_status_async) | **PUT** /orders/status | Set order status
-*VersionApi* | [**get_version_async**](docs/VersionApi.md#get_version_async) | **GET** /version | Get API version details.
+*LabelsApi* | [**get_orders_label_async**](./LabelsApi.md#get_orders_label_async) | **GET** /orders/{orderIdentifiers}/label | Return a single PDF file with generated label and/or associated document(s)
+*ManifestsApi* | [**get_manifest_async**](./ManifestsApi.md#get_manifest_async) | **GET** /manifests/{manifestIdentifier} | Get manifest
+*ManifestsApi* | [**manifest_eligible_async**](./ManifestsApi.md#manifest_eligible_async) | **POST** /manifests | Manifest eligible orders
+*ManifestsApi* | [**retry_manifest_async**](./ManifestsApi.md#retry_manifest_async) | **POST** /manifests/retry/{manifestIdentifier} | Retry manifest
+*OrdersApi* | [**create_orders_async**](./OrdersApi.md#create_orders_async) | **POST** /orders | Create orders
+*OrdersApi* | [**delete_orders_async**](./OrdersApi.md#delete_orders_async) | **DELETE** /orders/{orderIdentifiers} | Delete orders
+*OrdersApi* | [**get_orders_async**](./OrdersApi.md#get_orders_async) | **GET** /orders | Retrieve pageable list of orders
+*OrdersApi* | [**get_orders_with_details_async**](./OrdersApi.md#get_orders_with_details_async) | **GET** /orders/full | Retrieve pageable list of orders with details
+*OrdersApi* | [**get_specific_orders_async**](./OrdersApi.md#get_specific_orders_async) | **GET** /orders/{orderIdentifiers} | Retrieve specific orders
+*OrdersApi* | [**get_specific_orders_with_details_async**](./OrdersApi.md#get_specific_orders_with_details_async) | **GET** /orders/{orderIdentifiers}/full | Retrieve details of the specific orders
+*OrdersApi* | [**update_orders_status_async**](./OrdersApi.md#update_orders_status_async) | **PUT** /orders/status | Set order status
+*VersionApi* | [**get_version_async**](./VersionApi.md#get_version_async) | **GET** /version | Get API version details.
 
 
 ## Documentation For Models
 
- - [AddressRequest](docs/AddressRequest.md)
- - [BillingDetailsRequest](docs/BillingDetailsRequest.md)
- - [CreateOrderErrorResponse](docs/CreateOrderErrorResponse.md)
- - [CreateOrderLabelErrorResponse](docs/CreateOrderLabelErrorResponse.md)
- - [CreateOrderRequest](docs/CreateOrderRequest.md)
- - [CreateOrderResponse](docs/CreateOrderResponse.md)
- - [CreateOrdersRequest](docs/CreateOrdersRequest.md)
- - [CreateOrdersResponse](docs/CreateOrdersResponse.md)
- - [CreatePackagesResponse](docs/CreatePackagesResponse.md)
- - [DeleteOrdersResource](docs/DeleteOrdersResource.md)
- - [DeletedOrderInfo](docs/DeletedOrderInfo.md)
- - [DimensionsRequest](docs/DimensionsRequest.md)
- - [ErrorResponse](docs/ErrorResponse.md)
- - [FailedOrderResponse](docs/FailedOrderResponse.md)
- - [GetOrderDetailsResource](docs/GetOrderDetailsResource.md)
- - [GetOrderInfoResource](docs/GetOrderInfoResource.md)
- - [GetOrderLineResult](docs/GetOrderLineResult.md)
- - [GetOrdersDetailsResponse](docs/GetOrdersDetailsResponse.md)
- - [GetOrdersResponse](docs/GetOrdersResponse.md)
- - [GetPostalDetailsResult](docs/GetPostalDetailsResult.md)
- - [GetShippingDetailsResult](docs/GetShippingDetailsResult.md)
- - [GetTagDetailsResult](docs/GetTagDetailsResult.md)
- - [GetVersionResource](docs/GetVersionResource.md)
- - [Importer](docs/Importer.md)
- - [LabelGenerationRequest](docs/LabelGenerationRequest.md)
- - [ManifestDetailsResponse](docs/ManifestDetailsResponse.md)
- - [ManifestEligibleOrdersRequest](docs/ManifestEligibleOrdersRequest.md)
- - [ManifestErrorsErrorDetailsResponse](docs/ManifestErrorsErrorDetailsResponse.md)
- - [ManifestErrorsResponse](docs/ManifestErrorsResponse.md)
- - [ManifestOrdersResponse](docs/ManifestOrdersResponse.md)
- - [OrderErrorInfo](docs/OrderErrorInfo.md)
- - [OrderErrorResponse](docs/OrderErrorResponse.md)
- - [OrderFieldResponse](docs/OrderFieldResponse.md)
- - [OrderUpdateError](docs/OrderUpdateError.md)
- - [PostageDetailsRequest](docs/PostageDetailsRequest.md)
- - [ProductItemRequest](docs/ProductItemRequest.md)
- - [RecipientDetailsRequest](docs/RecipientDetailsRequest.md)
- - [SenderDetailsRequest](docs/SenderDetailsRequest.md)
- - [ShipmentPackageRequest](docs/ShipmentPackageRequest.md)
- - [TagRequest](docs/TagRequest.md)
- - [UpdateOrderStatusRequest](docs/UpdateOrderStatusRequest.md)
- - [UpdateOrderStatusResponse](docs/UpdateOrderStatusResponse.md)
- - [UpdateOrdersStatusRequest](docs/UpdateOrdersStatusRequest.md)
- - [UpdatedOrderInfo](docs/UpdatedOrderInfo.md)
+ - [AddressRequest](./AddressRequest.md)
+ - [BillingDetailsRequest](./BillingDetailsRequest.md)
+ - [CreateOrderErrorResponse](./CreateOrderErrorResponse.md)
+ - [CreateOrderLabelErrorResponse](./CreateOrderLabelErrorResponse.md)
+ - [CreateOrderRequest](./CreateOrderRequest.md)
+ - [CreateOrderResponse](./CreateOrderResponse.md)
+ - [CreateOrdersRequest](./CreateOrdersRequest.md)
+ - [CreateOrdersResponse](./CreateOrdersResponse.md)
+ - [CreatePackagesResponse](./CreatePackagesResponse.md)
+ - [DeleteOrdersResource](./DeleteOrdersResource.md)
+ - [DeletedOrderInfo](./DeletedOrderInfo.md)
+ - [DimensionsRequest](./DimensionsRequest.md)
+ - [ErrorResponse](./ErrorResponse.md)
+ - [FailedOrderResponse](./FailedOrderResponse.md)
+ - [GetOrderDetailsResource](./GetOrderDetailsResource.md)
+ - [GetOrderInfoResource](./GetOrderInfoResource.md)
+ - [GetOrderLineResult](./GetOrderLineResult.md)
+ - [GetOrdersDetailsResponse](./GetOrdersDetailsResponse.md)
+ - [GetOrdersResponse](./GetOrdersResponse.md)
+ - [GetPostalDetailsResult](./GetPostalDetailsResult.md)
+ - [GetShippingDetailsResult](./GetShippingDetailsResult.md)
+ - [GetTagDetailsResult](./GetTagDetailsResult.md)
+ - [GetVersionResource](./GetVersionResource.md)
+ - [Importer](./Importer.md)
+ - [LabelGenerationRequest](./LabelGenerationRequest.md)
+ - [ManifestDetailsResponse](./ManifestDetailsResponse.md)
+ - [ManifestEligibleOrdersRequest](./ManifestEligibleOrdersRequest.md)
+ - [ManifestErrorsErrorDetailsResponse](./ManifestErrorsErrorDetailsResponse.md)
+ - [ManifestErrorsResponse](./ManifestErrorsResponse.md)
+ - [ManifestOrdersResponse](./ManifestOrdersResponse.md)
+ - [OrderErrorInfo](./OrderErrorInfo.md)
+ - [OrderErrorResponse](./OrderErrorResponse.md)
+ - [OrderFieldResponse](./OrderFieldResponse.md)
+ - [OrderUpdateError](./OrderUpdateError.md)
+ - [PostageDetailsRequest](./PostageDetailsRequest.md)
+ - [ProductItemRequest](./ProductItemRequest.md)
+ - [RecipientDetailsRequest](./RecipientDetailsRequest.md)
+ - [SenderDetailsRequest](./SenderDetailsRequest.md)
+ - [ShipmentPackageRequest](./ShipmentPackageRequest.md)
+ - [TagRequest](./TagRequest.md)
+ - [UpdateOrderStatusRequest](./UpdateOrderStatusRequest.md)
+ - [UpdateOrderStatusResponse](./UpdateOrderStatusResponse.md)
+ - [UpdateOrdersStatusRequest](./UpdateOrdersStatusRequest.md)
+ - [UpdatedOrderInfo](./UpdatedOrderInfo.md)
 
 
 <a id="documentation-for-authorization"></a>

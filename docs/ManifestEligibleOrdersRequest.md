@@ -24,6 +24,6 @@ manifest_eligible_orders_request_dict = manifest_eligible_orders_request_instanc
 # create an instance of ManifestEligibleOrdersRequest from a dict
 manifest_eligible_orders_request_from_dict = ManifestEligibleOrdersRequest.from_dict(manifest_eligible_orders_request_dict)
 ```
-[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+[[Back to Model list]](./#documentation-for-models) [[Back to API list]](./#documentation-for-api-endpoints) [[Back to README]](./)
 
 

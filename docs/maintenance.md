@@ -16,4 +16,5 @@ Install Docker: https://docs.docker.com/get-docker/
 
 ```sh
 make stubs
+make fix-stubs
 ```

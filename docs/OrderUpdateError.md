@@ -28,6 +28,6 @@ order_update_error_dict = order_update_error_instance.to_dict()
 # create an instance of OrderUpdateError from a dict
 order_update_error_from_dict = OrderUpdateError.from_dict(order_update_error_dict)
 ```
-[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+[[Back to Model list]](./#documentation-for-models) [[Back to API list]](./#documentation-for-api-endpoints) [[Back to README]](./)
 
 

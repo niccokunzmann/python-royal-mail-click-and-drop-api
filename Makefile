@@ -25,8 +25,30 @@ stubs: image
 		--git-repo-id python-royal-mail-click-and-drop-api \
 		--minimal-update \
 		--server-variables "host=api.parcel.royalmail.com"
+	make fix-stubs
 # 	sudo chown -R $(id -u):$(id -g) .
 
 stubs-help: image
 	docker run --rm openapitools/openapi-generator-cli help generate	
 
+.venv:
+	python3 -m venv .venv
+	.venv/bin/pip install -r requirements.txt -r docs-requirements.txt
+
+.PHONY: html livehtml
+
+.PHONY: fix-stubs
+
+fix-stubs:
+	for f in docs/*.md; do \
+		sed -i "s|../README.md|./README.md|g" $$f; \
+	done
+	mv README.md docs/
+	sed -i "s|docs/|./|g" docs/README.md
+	git checkout -- .gitignore README.md
+
+html: .venv
+	.venv/bin/mkdocs build
+
+livehtml: .venv
+	.venv/bin/mkdocs serve

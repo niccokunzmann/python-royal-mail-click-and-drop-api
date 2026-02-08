@@ -29,6 +29,6 @@ get_order_line_result_dict = get_order_line_result_instance.to_dict()
 # create an instance of GetOrderLineResult from a dict
 get_order_line_result_from_dict = GetOrderLineResult.from_dict(get_order_line_result_dict)
 ```
-[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+[[Back to Model list]](./#documentation-for-models) [[Back to API list]](./#documentation-for-api-endpoints) [[Back to README]](./)
 
 
