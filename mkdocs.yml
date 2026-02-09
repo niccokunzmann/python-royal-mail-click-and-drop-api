@@ -95,6 +95,7 @@ edit_uri: edit/main/docs/
 nav:
   - index.md
   - contributing.md
+  - changelog.md
   - API:
     - api.md
     - AddressRequest.md
