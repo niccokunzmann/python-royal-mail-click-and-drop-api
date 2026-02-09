@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.1
+
+- Correct link from PyPI to GitHub
+
 ## v1.0.0
 
 - Initial release
