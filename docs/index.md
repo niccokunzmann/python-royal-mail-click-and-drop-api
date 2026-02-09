@@ -40,5 +40,5 @@ The API key will be used on the examples below to authenticate the requests.
 The script below uses the API to retrieve the version of the Click & Drop API.
 
 ```python
---8<-- "examples/view_version.py"
+--8<-- "docs/examples/view_version.py"
 ```

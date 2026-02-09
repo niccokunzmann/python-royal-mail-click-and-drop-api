@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-from pathlib import Path
 import click_and_drop_api
 import os
 
@@ -10,7 +9,7 @@ configuration = click_and_drop_api.Configuration(
 
 # navigate to https://business.parcel.royalmail.com/settings/channels/
 # Configure API key authorization: Bearer
-configuration.api_key['Bearer'] = os.environ.get("API_KEY") or Path("api-key.txt").read_text().strip()
+configuration.api_key['Bearer'] = os.environ["API_KEY"]
 
 # Enter a context with an instance of the API client
 with click_and_drop_api.ApiClient(configuration) as api_client:
