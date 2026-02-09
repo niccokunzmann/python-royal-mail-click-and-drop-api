@@ -48,7 +48,7 @@ class ClickAndDrop:
         """
         return self._version_api.get_version_async()
 
-    def get_specific_orders(
+    def get_orders(
         self, order_identifiers: list[str | int] | str | int
     ) -> list[click_and_drop_api.GetOrderInfoResource]:
         """Get specific orders.
@@ -68,7 +68,27 @@ class ClickAndDrop:
             order_identifiers=";".join(map(id_or_ref_to_string, order_identifiers))
         )
 
-    def delete_specific_orders(
+    def get_order(
+        self, order_identifier: str | int
+    ) -> click_and_drop_api.GetOrderInfoResource | None:
+        """Get a specific order.
+
+        Parameters:
+            order_identifiers:
+                One or several Order Identifiers or Order References.
+                Order Identifiers are integer numbers.
+                Order References are strings.
+                The maximum number of identifiers is 100.
+
+        Returns:
+            The order or None if not found.
+
+        https://api.parcel.royalmail.com/#tag/Orders/operation/GetOrderAsync
+        """
+        orders = self.get_orders(order_identifier)
+        return orders[0] if orders else None
+
+    def delete_orders(
         self, order_identifiers: list[str | int] | str | int
     ) -> click_and_drop_api.DeleteOrdersResource:
         """Delete specific orders.
@@ -104,6 +124,15 @@ class ClickAndDrop:
             orders = [orders]
         request = click_and_drop_api.CreateOrdersRequest(items=orders)
         return self._orders_api.create_orders_async(request)
+
+    def create_order(
+        self, order: CreateOrder
+    ) -> click_and_drop_api.CreateOrdersResponse:
+        """Create a new order.
+
+        https://api.parcel.royalmail.com/#tag/Orders/operation/CreateOrdersAsync
+        """
+        return self.create_orders(order)
 
 
 __all__ = ["ClickAndDrop", "CreateOrder", "RecipientDetails", "Address"]

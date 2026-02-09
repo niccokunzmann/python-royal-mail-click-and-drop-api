@@ -46,7 +46,7 @@ print(f"Orders created: {response.created_orders}")
 print(f"Errors: {response.errors_count}")
 
 print("Getting the order from the API.")
-orders = api.get_specific_orders([REFERENCE])
+orders = api.get_orders([REFERENCE])
 
 for order in orders:
     print(f"Order Reference: {order.order_reference}")
@@ -54,7 +54,7 @@ for order in orders:
 
 print("Deleting order.")
 
-deleted_orders = api.delete_specific_orders([REFERENCE])
+deleted_orders = api.delete_orders([REFERENCE])
 
 print(f"Orders deleted: {deleted_orders.deleted_orders}")
 print(f"Errors: {deleted_orders.errors}")

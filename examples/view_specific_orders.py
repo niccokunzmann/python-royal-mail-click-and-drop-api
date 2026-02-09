@@ -11,7 +11,7 @@ api = ClickAndDrop(API_KEY)
 example_order_id = 1002
 example_order_reference = "my-ref-9999"
 
-orders = api.get_specific_orders([example_order_id, example_order_reference])
+orders = api.get_orders([example_order_id, example_order_reference])
 
 for order in orders:
     print("Order Identifier:", order.order_identifier)
