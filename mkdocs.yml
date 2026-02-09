@@ -12,7 +12,7 @@ theme:
   font: false
   palette:
     scheme: slate
-    primary: green
+    primary: red
     accent: yellow
   icon:
     logo: material/calendar-expand-horizontal
