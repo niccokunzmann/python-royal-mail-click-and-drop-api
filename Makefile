@@ -33,7 +33,7 @@ stubs-help: image
 
 .venv:
 	python3 -m venv .venv
-	.venv/bin/pip install -r requirements.txt -r docs-requirements.txt
+	.venv/bin/pip install -r requirements.txt -r docs-requirements.txt -e .
 
 .PHONY: html livehtml fix-stubs github-pages
 
@@ -65,7 +65,7 @@ github-pages: .venv
 test-examples: .venv
 	for f in examples/*.py; do \
 		echo $$f; \
-		.venv/bin/python $$f; \
+		.venv/bin/python $$f || exit 1; \
 		echo; \
 		sleep 1; \
 	done
