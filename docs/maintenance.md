@@ -35,3 +35,9 @@ make livehtml
 ```sh
 uv build
 ```
+
+## Run tests
+
+```sh
+tox
+```

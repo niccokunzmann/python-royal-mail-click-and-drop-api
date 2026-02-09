@@ -74,7 +74,8 @@ plugins:
   # Autodoc configuration.
   # https://github.com/tlambert03/mkdocs-api-autonav#configuration
   # - api-autonav:
-  #     modules: ["src/ical2jcal"]
+  #     modules:
+  #       - simple
   # This plugin is used to validate URLs (including anchors).
   - htmlproofer:
       # This is not enabled by default because this requires network I/O, so it is inherently not
@@ -93,6 +94,7 @@ repo_url: https://github.com/niccokunzmann/python-royal-mail-click-and-drop-api
 edit_uri: edit/main/docs/
 nav:
   - index.md
+  - contributing.md
   - API:
     - api.md
     - AddressRequest.md

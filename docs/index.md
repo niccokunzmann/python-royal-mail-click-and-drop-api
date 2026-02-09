@@ -37,8 +37,58 @@ The API key will be used on the examples below to authenticate the requests.
 
 ## Examples
 
-The script below uses the API to retrieve the version of the Click & Drop API.
+This sections guides you through some examples.
+Export the `API_KEY` of your account to run the examples.
+The examples use the simple API that is based on the generated API and reduces the amount of code.
+
+## Retrieve the version
+
+[Version API Documentation](https://api.parcel.royalmail.com/#tag/Version)
+
+Retrieving the version is useful to understand if you can use the API without authentication.
 
 ```python
---8<-- "docs/examples/view_version.py"
+--8<-- "examples/view_version.py"
+```
+
+Output:
+
+```text
+--8<-- "examples/view_version.py.out"
+```
+
+## View specific orders
+
+[Orders API Documentation](https://api.parcel.royalmail.com/#tag/Orders)
+
+The image below shows orders that were created as examples.
+
+![Example orders for the script to retrieve](img/orders.png)
+
+The script below retrieves information about these orders, by id (`int`) and by reference (`str`).
+
+```python
+--8<-- "examples/view_specific_orders.py"
+```
+
+Output:
+
+```text
+--8<-- "examples/view_specific_orders.py.out"
+```
+
+## Create and delete orders
+
+[Orders API Documentation](https://api.parcel.royalmail.com/#tag/Orders)
+
+The script below creates a new order and then deletes it.
+
+```python
+--8<-- "examples/create_order.py"
+```
+
+Output:
+
+```text
+--8<-- "examples/create_order.py.out"
 ```
