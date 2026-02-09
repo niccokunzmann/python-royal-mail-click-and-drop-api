@@ -56,3 +56,16 @@ livehtml: .venv
 
 github-pages: .venv
 	.venv/bin/mkdocs gh-deploy --force
+
+.PHONY: test-examples
+
+# run all examples
+# respect rate limit
+# > Exceeding the rate limit of 5 calls per second will result in a 429 error.
+test-examples: .venv
+	for f in examples/*.py; do \
+		echo $$f; \
+		.venv/bin/python $$f; \
+		echo; \
+		sleep 1; \
+	done
