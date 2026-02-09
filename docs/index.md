@@ -1,4 +1,4 @@
-# Royal Mail's Click & Drop API for Python
+# Click & Drop API for Python
 
 The Royal Mail Click & Drop API allows you to import your orders, retrieve your orders and generate labels.
 This package is an inofficial auto-generated Python client for this API.
@@ -13,7 +13,7 @@ Links for this package:
 - [Source Code](https://github.com/niccokunzmann/python-royal-mail-click-and-drop-api)
 - [Documentation Website](https://niccokunzmann.github.io/python-royal-mail-click-and-drop-api/)
 - [PyPI Package](https://pypi.org/project/click-and-drop-api/)
-- [LICENSE GPL-3.0 or later](LICENSE.txt)
+- [LICENSE GPL-3.0 or later](LICENSE.md)
 
 ## Installation
 
