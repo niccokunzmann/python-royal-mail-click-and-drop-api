@@ -32,6 +32,13 @@ class ClickAndDrop:
         Parameters:
             key: The Click & Drop API authorisation key.
         """
+        if not isinstance(key, str):
+            raise TypeError(f"Expected str, got {key}.")
+        key = key.strip()
+        if not 30 < len(key) < 40:
+            raise ValueError(f"Expected 36 characters, got {len(key)}.")
+        if "".join(key.split()) != key:
+            raise ValueError(f"Expected no whitespace in {key!r}.")
         self._key = key
         self._configuration = click_and_drop_api.Configuration(host=self.host)
         self._configuration.api_key["Bearer"] = self._key
@@ -47,6 +54,11 @@ class ClickAndDrop:
         https://api.parcel.royalmail.com/#tag/Version
         """
         return self._version_api.get_version_async()
+
+    @property
+    def key(self) -> str:
+        """The API key in use."""
+        return self._key
 
     def get_orders(
         self, order_identifiers: list[str | int] | str | int
