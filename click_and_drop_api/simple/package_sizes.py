@@ -1,0 +1,169 @@
+"""Packages sizes for Click and Drop API."""
+
+from typing import NamedTuple
+from .shipping_options import (
+    get_shipping_options,
+    ShippingOption,
+    medium_parcel_force_codes,
+)
+
+
+class PackageSize(NamedTuple):
+    """Choosing a package size.
+
+    Letter
+        Max weight:100g
+        Max length:24cm
+        Max width:16.5cm
+        Max depth:0.5cm
+
+    Large Letter
+        Max weight:1kg
+        Max length:35.3cm
+        Max width:25cm
+        Max depth:2.5cm
+
+    Small Parcel
+        Max weight:2kg
+        Max length:45cm
+        Max width:35cm
+        Max depth:16cm
+
+    Medium Parcel
+        Max weight:20kg
+        Max length:61cm
+        Max width:46cm
+        Max depth:46cm
+
+    Large Parcel
+        Max weight:30kg
+        Max length:150cm
+        Max size:Length + girth must be no more than 300cm
+
+    """
+
+    code: str
+    name: str
+    weight_grams: int
+    length_mm: int
+    width_mm: int
+    height_mm: int
+    options: list[ShippingOption]
+
+
+packages_sizes = [
+    PackageSize(
+        "letter",
+        "Letter",
+        100,
+        240,
+        165,
+        5,
+        get_shipping_options(
+            "OLP1", "OLP1SF", "OLP2", "OLP2SF", "SD1OLP", "SD2OLP", "SD3OLP"
+        ),
+    ),
+    PackageSize(
+        "large-letter",
+        "Large letter",
+        1000,
+        353,
+        250,
+        25,
+        get_shipping_options(
+            "OLP1",
+            "OLP1SF",
+            "OLP2",
+            "OLP2SF",
+            "SD1OLP",
+            "SD2OLP",
+            "SD3OLP",
+            "TOLP24",
+            "TOLP24SF",
+            "TOLP48",
+            "TOLP48SF",
+        ),
+    ),
+    PackageSize(
+        "small-parcel",
+        "Small parcel",
+        2000,
+        450,
+        350,
+        160,
+        get_shipping_options(
+            "OLP1",
+            "OLP1SF",
+            "OLP2",
+            "OLP2SF",
+            "SD1OLP",
+            "SD2OLP",
+            "SD3OLP",
+            "TOLP24",
+            "TOLP24SF",
+            "TOLP24SFA",
+            "TOLP48",
+            "TOLP48SF",
+            "TOLP48SFA",
+        ),
+    ),
+    PackageSize(
+        "medium-parcel",
+        "Medium parcel",
+        20000,
+        610,
+        460,
+        460,
+        get_shipping_options(
+            "OLP1",
+            "OLP1SF",
+            "OLP2",
+            "OLP2SF",
+            "SD1OLP",
+            "SD2OLP",
+            "SD3OLP",
+            "TOLP24",
+            "TOLP24SF",
+            "TOLP24SFA",
+            "TOLP48",
+            "TOLP48SF",
+            "TOLP48SFA",
+            *medium_parcel_force_codes,
+        ),
+    ),
+    PackageSize(
+        "large-parcel", "Large parcel", 30000, 1500, 3000, 3000, []
+    ),  # TODO: options
+]
+
+
+def choose_package_size_by_weight(weight_grams: int) -> PackageSize | None:
+    """Return the best package size based on weight in grams.
+
+    If the weight is too heavy, return None.
+    """
+    for package_size in packages_sizes:
+        if weight_grams <= package_size.weight_grams:
+            return package_size
+
+
+def list_package_sizes() -> list[str]:
+    """List all package sizes."""
+    return [package_size.code for package_size in packages_sizes]
+
+
+def get_package_size(code: str) -> PackageSize:
+    """Get a package size by code.
+
+    Returns:
+        PackageSize
+
+    Raises:
+        ValueError
+    """
+    try:
+        return packages_sizes[code]
+    except KeyError:
+        raise ValueError(
+            f"Unknown package size: {code!r}. Got {', '.join(list_package_sizes())}"
+        )
