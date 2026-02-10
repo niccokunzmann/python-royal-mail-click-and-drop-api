@@ -1,7 +1,7 @@
 """Shipping options for Click and Drop API."""
 
 from decimal import Decimal as D
-from typing import NamedTuple
+from typing import NamedTuple, Sequence
 
 
 class ShippingOption(NamedTuple):
@@ -50,7 +50,16 @@ def add_shipping_option(
 
 def list_service_codes() -> list[str]:
     """All shipping option service codes."""
-    return list(shipping_options.values())
+    return list(shipping_options.keys())
+
+
+def check_service_codes(service_codes: Sequence[str]):
+    """Check if all service codes are valid."""
+    for service_code in service_codes:
+        if service_code not in shipping_options:
+            raise ValueError(
+                f"Invalid service code: {service_code}. Should be one of {', '.join(list_service_codes())}"
+            )
 
 
 # Royal Mail 1st Class (£20 compensation)

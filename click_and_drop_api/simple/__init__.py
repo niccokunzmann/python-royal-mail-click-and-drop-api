@@ -8,13 +8,21 @@ from .package_sizes import (
     get_package_size,
     choose_package_size_by_weight,
 )
-from .shipping_options import ShippingOption, add_shipping_option, shipping_options
+from .shipping_options import (
+    ShippingOption,
+    add_shipping_option,
+    shipping_options,
+    list_service_codes,
+    check_service_codes,
+)
 
 
 __all__ = [
     "ClickAndDrop",
     "CreateOrder",
+    "check_service_codes",
     "RecipientDetails",
+    "list_service_codes",
     "Address",
     "PackageSize",
     "packages_sizes",

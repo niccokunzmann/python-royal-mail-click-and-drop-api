@@ -50,6 +50,20 @@ class PackageSize(NamedTuple):
     height_mm: int
     shipping_options: list[ShippingOption]
 
+    def get_shipping_option(self, code: str) -> Optional[ShippingOption]:
+        """Return a shipping option with the code if it is available for this package size."""
+        for shipping_option in self.shipping_options:
+            if shipping_option.service_code == code:
+                return shipping_option
+        return None
+
+    def select_shipping_options_from(
+        self,
+        selected_shipping_options: list[str],
+    ) -> list[ShippingOption]:
+        """Return a subset if the possible shipping options that are also list in selected_shipping_options."""
+        return [self.shipping_options[code] for code in selected_shipping_options]
+
 
 packages_sizes = [
     PackageSize(
