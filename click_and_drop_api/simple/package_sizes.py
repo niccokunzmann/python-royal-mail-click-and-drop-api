@@ -48,7 +48,7 @@ class PackageSize(NamedTuple):
     length_mm: int
     width_mm: int
     height_mm: int
-    options: list[ShippingOption]
+    shipping_options: list[ShippingOption]
 
 
 packages_sizes = [

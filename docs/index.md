@@ -86,3 +86,22 @@ Output:
 ```text
 --8<-- "examples/create_order.py.out"
 ```
+
+## Package sizes and their shipping options
+
+Several shipping options are available for each package size.
+There is no API for this, so the price and delivery speed is hard coded.
+You can view the table when you apply postage to an order.
+If the values are outdated, you are welcome to update them with a pull request and a screenshot of the table on the website.
+
+This example prints all the available package sizes and their shipping options.
+
+```python
+--8<-- "examples/package_size_and_cost.py"
+```
+
+Output:
+
+```text
+--8<-- "examples/package_size_and_cost.py.out"
+```

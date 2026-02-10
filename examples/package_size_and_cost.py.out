@@ -1,0 +1,81 @@
+Package Code: letter
+Package Name: Letter
+Package Max. Weight (grams): 100
+Package Max. Height (mm): 5
+Package Max. Width (mm): 165
+Package Max. Length (mm): 240
+	Royal Mail     OLP1       £1.70 	24 hour (next working day)
+	Royal Mail     OLP1SF     £3.60 	24 hour (next working day)
+	Royal Mail     OLP2       £0.87 	48 hour (2 working days)
+	Royal Mail     OLP2SF     £2.77 	48 hour (2 working days)
+	Royal Mail     SD1OLP     £8.75 	Guaranteed by 1pm next working day
+	Royal Mail     SD2OLP     £11.75 	Guaranteed by 1pm next working day
+	Royal Mail     SD3OLP     £18.75 	Guaranteed by 1pm next working day
+Package Code: large-letter
+Package Name: Large letter
+Package Max. Weight (grams): 1000
+Package Max. Height (mm): 25
+Package Max. Width (mm): 250
+Package Max. Length (mm): 353
+	Royal Mail     OLP1       £1.70 	24 hour (next working day)
+	Royal Mail     OLP1SF     £3.60 	24 hour (next working day)
+	Royal Mail     OLP2       £0.87 	48 hour (2 working days)
+	Royal Mail     OLP2SF     £2.77 	48 hour (2 working days)
+	Royal Mail     SD1OLP     £8.75 	Guaranteed by 1pm next working day
+	Royal Mail     SD2OLP     £11.75 	Guaranteed by 1pm next working day
+	Royal Mail     SD3OLP     £18.75 	Guaranteed by 1pm next working day
+	Royal Mail     TOLP24     £3.65 	24 hour (next working day)
+	Royal Mail     TOLP24SF   £5.55 	24 hour (next working day)
+	Royal Mail     TOLP48     £2.75 	48 hour (2 working days)
+	Royal Mail     TOLP48SF   £4.65 	48 hour (2 working days)
+Package Code: small-parcel
+Package Name: Small parcel
+Package Max. Weight (grams): 2000
+Package Max. Height (mm): 160
+Package Max. Width (mm): 350
+Package Max. Length (mm): 450
+	Royal Mail     OLP1       £1.70 	24 hour (next working day)
+	Royal Mail     OLP1SF     £3.60 	24 hour (next working day)
+	Royal Mail     OLP2       £0.87 	48 hour (2 working days)
+	Royal Mail     OLP2SF     £2.77 	48 hour (2 working days)
+	Royal Mail     SD1OLP     £8.75 	Guaranteed by 1pm next working day
+	Royal Mail     SD2OLP     £11.75 	Guaranteed by 1pm next working day
+	Royal Mail     SD3OLP     £18.75 	Guaranteed by 1pm next working day
+	Royal Mail     TOLP24     £3.65 	24 hour (next working day)
+	Royal Mail     TOLP24SF   £5.55 	24 hour (next working day)
+	Royal Mail     TOLP24SFA  £7.33 	24 hour (next working day)
+	Royal Mail     TOLP48     £2.75 	48 hour (2 working days)
+	Royal Mail     TOLP48SF   £4.65 	48 hour (2 working days)
+	Royal Mail     TOLP48SFA  £6.43 	48 hour (2 working days)
+Package Code: medium-parcel
+Package Name: Medium parcel
+Package Max. Weight (grams): 20000
+Package Max. Height (mm): 460
+Package Max. Width (mm): 460
+Package Max. Length (mm): 610
+	Royal Mail     OLP1       £1.70 	24 hour (next working day)
+	Royal Mail     OLP1SF     £3.60 	24 hour (next working day)
+	Royal Mail     OLP2       £0.87 	48 hour (2 working days)
+	Royal Mail     OLP2SF     £2.77 	48 hour (2 working days)
+	Royal Mail     SD1OLP     £8.75 	Guaranteed by 1pm next working day
+	Royal Mail     SD2OLP     £11.75 	Guaranteed by 1pm next working day
+	Royal Mail     SD3OLP     £18.75 	Guaranteed by 1pm next working day
+	Royal Mail     TOLP24     £3.65 	24 hour (next working day)
+	Royal Mail     TOLP24SF   £5.55 	24 hour (next working day)
+	Royal Mail     TOLP24SFA  £7.33 	24 hour (next working day)
+	Royal Mail     TOLP48     £2.75 	48 hour (2 working days)
+	Royal Mail     TOLP48SF   £4.65 	48 hour (2 working days)
+	Royal Mail     TOLP48SFA  £6.43 	48 hour (2 working days)
+	Parcel Force   PFE10SF    £93.25 	Guaranteed by 10am next working day
+	Parcel Force   PFE24      £76.90 	24 hour (next working day)
+	Parcel Force   PFE24SF    £78.40 	24 hour (next working day)
+	Parcel Force   PFE48      £76.35 	48 hour (2 working days)
+	Parcel Force   PFE48SF    £77.85 	48 hour (2 working days)
+	Parcel Force   PFEAM      £80.70 	Guaranteed by 12pm next working day
+	Parcel Force   PFEAMSF    £82.20 	Guaranteed by 12pm next working day
+Package Code: large-parcel
+Package Name: Large parcel
+Package Max. Weight (grams): 30000
+Package Max. Height (mm): 3000
+Package Max. Width (mm): 3000
+Package Max. Length (mm): 1500
