@@ -144,3 +144,6 @@ class ClickAndDrop:
         https://api.parcel.royalmail.com/#tag/Orders/operation/CreateOrdersAsync
         """
         return self.create_orders(order)
+
+
+__all__ = ["ClickAndDrop"]
