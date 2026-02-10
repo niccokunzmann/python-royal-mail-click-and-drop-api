@@ -1,12 +1,13 @@
 """The simple API interface."""
 
+from typing import Optional, Union
 from .types import CreateOrder
 import click_and_drop_api
 
 from urllib.parse import quote
 
 
-def id_or_ref_to_string(id_or_ref: int | str) -> str:
+def id_or_ref_to_string(id_or_ref: Union[int, str]) -> str:
     """Encode order ids and strings."""
     if isinstance(id_or_ref, int):
         return str(id_or_ref)
@@ -59,7 +60,7 @@ class ClickAndDrop:
         return self._key
 
     def get_orders(
-        self, order_identifiers: list[str | int] | str | int
+        self, order_identifiers: Union[list[Union[str, int]], str, int]
     ) -> list[click_and_drop_api.GetOrderInfoResource]:
         """Get specific orders.
 
@@ -79,8 +80,8 @@ class ClickAndDrop:
         )
 
     def get_order(
-        self, order_identifier: str | int
-    ) -> click_and_drop_api.GetOrderInfoResource | None:
+        self, order_identifier: Union[str, int]
+    ) -> Optional[click_and_drop_api.GetOrderInfoResource]:
         """Get a specific order.
 
         Parameters:
@@ -99,7 +100,7 @@ class ClickAndDrop:
         return orders[0] if orders else None
 
     def delete_orders(
-        self, order_identifiers: list[str | int] | str | int
+        self, order_identifiers: Union[list[Union[str, int]], str, int]
     ) -> click_and_drop_api.DeleteOrdersResource:
         """Delete specific orders.
 
@@ -124,7 +125,7 @@ class ClickAndDrop:
         )
 
     def create_orders(
-        self, orders: list[CreateOrder] | CreateOrder
+        self, orders: Union[list[CreateOrder], CreateOrder]
     ) -> click_and_drop_api.CreateOrdersResponse:
         """Create a new order.
 

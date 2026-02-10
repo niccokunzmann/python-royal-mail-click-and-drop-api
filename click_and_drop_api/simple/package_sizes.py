@@ -1,6 +1,6 @@
 """Packages sizes for Click and Drop API."""
 
-from typing import NamedTuple
+from typing import NamedTuple, Optional
 from .shipping_options import (
     get_shipping_options,
     ShippingOption,
@@ -137,7 +137,7 @@ packages_sizes = [
 ]
 
 
-def choose_package_size_by_weight(weight_grams: int) -> PackageSize | None:
+def choose_package_size_by_weight(weight_grams: int) -> Optional[PackageSize]:
     """Return the best package size based on weight in grams.
 
     If the weight is too heavy, return None.
