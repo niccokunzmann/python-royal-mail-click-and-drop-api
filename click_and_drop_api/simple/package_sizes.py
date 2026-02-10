@@ -57,12 +57,23 @@ class PackageSize(NamedTuple):
                 return shipping_option
         return None
 
-    def select_shipping_options_from(
+    def get_shipping_options_in(
         self,
         selected_shipping_options: list[str],
     ) -> list[ShippingOption]:
-        """Return a subset if the possible shipping options that are also list in selected_shipping_options."""
-        return [self.shipping_options[code] for code in selected_shipping_options]
+        """Return the shipping options that also appear in selected_shipping_options.
+
+        Parameters:
+            selected_shipping_options: The shipping option codes to choose from
+
+        Returns:
+            The shipping options that can be used for this package and are also in selected_shipping_options
+        """
+        return [
+            shipping_option
+            for shipping_option in self.shipping_options
+            if shipping_option.service_code in selected_shipping_options
+        ]
 
 
 packages_sizes = [
@@ -175,9 +186,9 @@ def get_package_size(code: str) -> PackageSize:
     Raises:
         ValueError
     """
-    try:
-        return packages_sizes[code]
-    except KeyError:
-        raise ValueError(
-            f"Unknown package size: {code!r}. Got {', '.join(list_package_sizes())}"
-        )
+    for package_size in packages_sizes:
+        if package_size.code == code:
+            return package_size
+    raise ValueError(
+        f"Unknown package size: {code!r}. Got {', '.join(list_package_sizes())}"
+    )
