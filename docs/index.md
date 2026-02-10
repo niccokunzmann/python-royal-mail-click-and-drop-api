@@ -1,4 +1,5 @@
 --8<-- "README.md"
+- [LICENSE GPL-3.0 or later](LICENSE.md)
 
 
 ## Installation

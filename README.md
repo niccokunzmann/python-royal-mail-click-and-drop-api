@@ -21,4 +21,3 @@ Links for this package:
 - [Source Code](https://github.com/niccokunzmann/python-royal-mail-click-and-drop-api)
 - [Documentation Website](https://niccokunzmann.github.io/python-royal-mail-click-and-drop-api/)
 - [PyPI Package](https://pypi.org/project/click-and-drop-api/)
-- [LICENSE GPL-3.0 or later](LICENSE.md)
