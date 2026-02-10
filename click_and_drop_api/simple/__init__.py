@@ -7,6 +7,7 @@ from .package_sizes import (
     packages_sizes,
     get_package_size,
     choose_package_size_by_weight,
+    get_package_sizes,
 )
 from .shipping_options import (
     ShippingOption,
@@ -24,6 +25,7 @@ __all__ = [
     "RecipientDetails",
     "list_service_codes",
     "Address",
+    "get_package_sizes",
     "PackageSize",
     "packages_sizes",
     "ShippingOption",

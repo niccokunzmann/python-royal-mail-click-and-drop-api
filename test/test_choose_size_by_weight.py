@@ -23,5 +23,24 @@ def test_choose_size_by_weight(weight_grams, expected_package_size):
     assert package_size.code == expected_package_size
 
 
+@pytest.mark.parametrize(
+    "weight_grams, expected_package_size",
+    [
+        (0, "large-letter"),
+        (100, "large-letter"),
+        (101, "large-letter"),
+        (1000, "large-letter"),
+        (1001, "small-parcel"),
+        (2000, "small-parcel"),
+    ],
+)
+def test_choose_size_by_weight_limited(weight_grams, expected_package_size):
+    package_size = choose_package_size_by_weight(
+        weight_grams, ["large-letter", "small-parcel"]
+    )
+    assert package_size.code == expected_package_size
+
+
 def test_too_much_weight():
     assert choose_package_size_by_weight(3000001) is None
+    assert choose_package_size_by_weight(2001, ["large-letter", "small-parcel"]) is None

@@ -177,12 +177,24 @@ packages_sizes = [
 ]
 
 
-def choose_package_size_by_weight(weight_grams: int) -> Optional[PackageSize]:
+def choose_package_size_by_weight(
+    weight_grams: int, possible_packages_codes: Optional[list[str]] = None
+) -> Optional[PackageSize]:
     """Return the best package size based on weight in grams.
 
-    If the weight is too heavy, return None.
+    Parameters:
+        weight_grams: The weight in grams
+        possible_packages_sizes: The package sizes to choose from or None to use all available sizes.
+
+    Returns:
+        The best package size.
+        If the weight is too heavy, return None.
     """
-    for package_size in packages_sizes:
+    if possible_packages_codes is None:
+        possible_packages_sizes = packages_sizes
+    else:
+        possible_packages_sizes = get_package_sizes(possible_packages_codes)
+    for package_size in possible_packages_sizes:
         if weight_grams <= package_size.weight_grams:
             return package_size
 
@@ -209,10 +221,16 @@ def get_package_size(code: str) -> PackageSize:
     )
 
 
+def get_package_sizes(codes: list[str]) -> list[PackageSize]:
+    """Return the package sizes with the given codes."""
+    return [get_package_size(code) for code in codes]
+
+
 __all__ = [
     "PackageSize",
     "packages_sizes",
     "get_package_size",
     "choose_package_size_by_weight",
     "list_package_sizes",
+    "get_package_sizes",
 ]

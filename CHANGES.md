@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.6
+
+- Allow limiting the list of shipping options when calculating by weight.
+
 ## v1.0.5
 
 - add `click_and_drop_api.simple.package_sizes.PackageSize.with_shipping_limited_to`
