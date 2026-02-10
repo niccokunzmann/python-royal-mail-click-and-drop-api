@@ -32,7 +32,14 @@ def test_check_service_codes():
 def test_select_all_shipping_options(package, selected, expected):
     """Test SelectAllShippingOptionsResponse"""
     package = get_package_size(package)
-    codes = [
-        option.service_code for option in package.get_shipping_options_in(selected)
-    ]
+    selected_subset = package.get_shipping_options_in(selected)
+    codes = [option.service_code for option in selected_subset]
     assert codes == expected, f"Expected {expected}, got {codes} for {package.code}"
+    copy = package.with_shipping_limited_to(selected)
+    assert copy.shipping_options == selected_subset
+    assert copy.code == package.code
+    assert copy.name == package.name
+    assert copy.weight_grams == package.weight_grams
+    assert copy.length_mm == package.length_mm
+    assert copy.width_mm == package.width_mm
+    assert copy.height_mm == package.height_mm

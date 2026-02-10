@@ -1,5 +1,6 @@
 """Packages sizes for Click and Drop API."""
 
+from __future__ import annotations
 from typing import NamedTuple, Optional
 from .shipping_options import (
     get_shipping_options,
@@ -74,6 +75,20 @@ class PackageSize(NamedTuple):
             for shipping_option in self.shipping_options
             if shipping_option.service_code in selected_shipping_options
         ]
+
+    def with_shipping_limited_to(
+        self, selected_shipping_options: list[str]
+    ) -> PackageSize:
+        """Return a copy with limited options for shipping."""
+        return PackageSize(
+            code=self.code,
+            name=self.name,
+            weight_grams=self.weight_grams,
+            length_mm=self.length_mm,
+            width_mm=self.width_mm,
+            height_mm=self.height_mm,
+            shipping_options=self.get_shipping_options_in(selected_shipping_options),
+        )
 
 
 packages_sizes = [
@@ -192,3 +207,12 @@ def get_package_size(code: str) -> PackageSize:
     raise ValueError(
         f"Unknown package size: {code!r}. Got {', '.join(list_package_sizes())}"
     )
+
+
+__all__ = [
+    "PackageSize",
+    "packages_sizes",
+    "get_package_size",
+    "choose_package_size_by_weight",
+    "list_package_sizes",
+]
