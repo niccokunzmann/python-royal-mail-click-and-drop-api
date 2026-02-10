@@ -21,3 +21,7 @@ import pytest
 def test_choose_size_by_weight(weight_grams, expected_package_size):
     package_size = choose_package_size_by_weight(weight_grams)
     assert package_size.code == expected_package_size
+
+
+def test_too_much_weight():
+    assert choose_package_size_by_weight(3000001) is None
