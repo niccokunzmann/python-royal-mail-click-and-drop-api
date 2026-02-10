@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.2
+
+- Sanitize and check key in `click_and_drop_api.simple.ClickAndDrop`
+
 ## v1.0.1
 
 - Correct link from PyPI to GitHub
