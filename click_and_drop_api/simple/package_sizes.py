@@ -1,7 +1,7 @@
 """Packages sizes for Click and Drop API."""
 
 from __future__ import annotations
-from typing import NamedTuple, Optional
+from typing import Literal, NamedTuple, Optional
 from .shipping_options import (
     get_shipping_options,
     ShippingOption,
@@ -43,7 +43,16 @@ class PackageSize(NamedTuple):
 
     """
 
-    code: str
+    code: Literal[
+        "undefined",
+        "letter",
+        "largeLetter",
+        "smallParcel",
+        "mediumParcel",
+        "largeParcel",
+        "parcel",
+        "documents",
+    ]
     name: str
     weight_grams: int
     length_mm: int

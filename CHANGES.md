@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.8
+
+- Better typing for `PackageSize`
+
 ## v1.0.7
 
 - Add `PackageSize.get()`
