@@ -116,7 +116,7 @@ packages_sizes = [
         ),
     ),
     PackageSize(
-        "large-letter",
+        "largeLetter",
         "Large letter",
         1000,
         353,
@@ -137,7 +137,7 @@ packages_sizes = [
         ),
     ),
     PackageSize(
-        "small-parcel",
+        "smallParcel",
         "Small parcel",
         2000,
         450,
@@ -160,7 +160,7 @@ packages_sizes = [
         ),
     ),
     PackageSize(
-        "medium-parcel",
+        "mediumParcel",
         "Medium parcel",
         20000,
         610,
@@ -184,9 +184,11 @@ packages_sizes = [
         ),
     ),
     PackageSize(
-        "large-parcel", "Large parcel", 30000, 1500, 3000, 3000, []
+        "largeParcel", "Large parcel", 30000, 1500, 3000, 3000, []
     ),  # TODO: options
 ]
+
+# TODO: Missing "parcel" and "documents"
 
 
 def choose_package_size_by_weight(

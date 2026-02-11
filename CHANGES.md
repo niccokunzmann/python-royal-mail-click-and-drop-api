@@ -3,6 +3,7 @@
 ## v1.0.7
 
 - Add `PackageSize.get()`
+- Correct codes of package sizes (large-letter -> largeLetter, small-parcel -> smallParcel, etc.)
 
 ## v1.0.6
 
