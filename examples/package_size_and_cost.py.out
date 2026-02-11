@@ -11,7 +11,7 @@ Package Max. Length (mm): 240
 	Royal Mail     SD1OLP     £8.75 	Guaranteed by 1pm next working day
 	Royal Mail     SD2OLP     £11.75 	Guaranteed by 1pm next working day
 	Royal Mail     SD3OLP     £18.75 	Guaranteed by 1pm next working day
-Package Code: large-letter
+Package Code: largeLetter
 Package Name: Large letter
 Package Max. Weight (grams): 1000
 Package Max. Height (mm): 25
@@ -28,7 +28,7 @@ Package Max. Length (mm): 353
 	Royal Mail     TOLP24SF   £5.55 	24 hour (next working day)
 	Royal Mail     TOLP48     £2.75 	48 hour (2 working days)
 	Royal Mail     TOLP48SF   £4.65 	48 hour (2 working days)
-Package Code: small-parcel
+Package Code: smallParcel
 Package Name: Small parcel
 Package Max. Weight (grams): 2000
 Package Max. Height (mm): 160
@@ -47,7 +47,7 @@ Package Max. Length (mm): 450
 	Royal Mail     TOLP48     £2.75 	48 hour (2 working days)
 	Royal Mail     TOLP48SF   £4.65 	48 hour (2 working days)
 	Royal Mail     TOLP48SFA  £6.43 	48 hour (2 working days)
-Package Code: medium-parcel
+Package Code: mediumParcel
 Package Name: Medium parcel
 Package Max. Weight (grams): 20000
 Package Max. Height (mm): 460
@@ -73,7 +73,7 @@ Package Max. Length (mm): 610
 	Parcel Force   PFE48SF    £77.85 	48 hour (2 working days)
 	Parcel Force   PFEAM      £80.70 	Guaranteed by 12pm next working day
 	Parcel Force   PFEAMSF    £82.20 	Guaranteed by 12pm next working day
-Package Code: large-parcel
+Package Code: largeParcel
 Package Name: Large parcel
 Package Max. Weight (grams): 30000
 Package Max. Height (mm): 3000

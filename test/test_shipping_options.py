@@ -20,10 +20,10 @@ def test_check_service_codes():
     ("package", "selected", "expected"),
     [
         ("letter", ["OLP1", "OLP2"], ["OLP1", "OLP2"]),
-        ("large-letter", ["OLP1", "OLP2", "OLB3"], ["OLP1", "OLP2"]),
-        ("small-parcel", ["TOLP24SFA", "TOLP48", "PFEAMSF"], ["TOLP24SFA", "TOLP48"]),
+        ("largeLetter", ["OLP1", "OLP2", "OLB3"], ["OLP1", "OLP2"]),
+        ("smallParcel", ["TOLP24SFA", "TOLP48", "PFEAMSF"], ["TOLP24SFA", "TOLP48"]),
         (
-            "medium-parcel",
+            "mediumParcel",
             ["TOLP24SFA", "TOLP48", "PFEAMSF"],
             ["TOLP24SFA", "TOLP48", "PFEAMSF"],
         ),

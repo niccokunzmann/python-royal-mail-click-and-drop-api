@@ -1,8 +1,8 @@
-Orders created: [CreateOrderResponse(order_identifier=1004, order_reference='example-order-from-python-api', created_on=datetime.datetime(2026, 2, 9, 21, 11, 40, 471028, tzinfo=TzInfo(0)), order_date=datetime.datetime(2026, 2, 9, 21, 11, 38, 936108, tzinfo=TzInfo(0)), printed_on=None, manifested_on=None, shipped_on=None, tracking_number=None, packages=[CreatePackagesResponse(package_number=1, tracking_number=None)], label=None, label_errors=[], generated_documents=[])]
+Orders created: [CreateOrderResponse(order_identifier=1012, order_reference='example-order-from-python-api', created_on=datetime.datetime(2026, 2, 11, 17, 32, 26, 763419, tzinfo=TzInfo(0)), order_date=datetime.datetime(2026, 2, 11, 17, 32, 26, 549854, tzinfo=TzInfo(0)), printed_on=None, manifested_on=None, shipped_on=None, tracking_number=None, packages=[CreatePackagesResponse(package_number=1, tracking_number=None)], label=None, label_errors=[], generated_documents=[])]
 Errors: 0
 Getting the order from the API.
 Order Reference: example-order-from-python-api
-Order Identifier: 1004
+Order Identifier: 1012
 Deleting order.
-Orders deleted: [DeletedOrderInfo(order_identifier=1004, order_reference='example-order-from-python-api', order_info=None)]
+Orders deleted: [DeletedOrderInfo(order_identifier=1012, order_reference='example-order-from-python-api', order_info=None)]
 Errors: []
