@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.0.7
+
+- Add `PackageSize.get()`
+
 ## v1.0.6
 
 - Allow limiting the list of shipping options when calculating by weight.

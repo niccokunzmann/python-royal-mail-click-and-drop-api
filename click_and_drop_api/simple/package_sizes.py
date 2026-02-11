@@ -90,6 +90,18 @@ class PackageSize(NamedTuple):
             shipping_options=self.get_shipping_options_in(selected_shipping_options),
         )
 
+    @classmethod
+    def get(cls, code: str) -> PackageSize:
+        """Get a package size by code.
+
+        Returns:
+            PackageSize
+
+        Raises:
+            ValueError
+        """
+        return get_package_size(code)
+
 
 packages_sizes = [
     PackageSize(
