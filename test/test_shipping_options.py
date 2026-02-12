@@ -100,9 +100,9 @@ def test_package_request_with_dimensions():
     package = get_package_size("letter")
     package_request = package.as_package_request(100, 3, 34, 4)
     assert package_request.dimensions is not None
-    assert package_request.dimensions.height_in_mms == 3
-    assert package_request.dimensions.width_in_mms == 34
-    assert package_request.dimensions.depth_in_mms == 4
+    assert package_request.dimensions.height_in_mms == 34
+    assert package_request.dimensions.width_in_mms == 4
+    assert package_request.dimensions.depth_in_mms == 3
 
 
 def test_ship_with_low_weight():

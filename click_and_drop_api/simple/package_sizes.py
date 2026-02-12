@@ -172,6 +172,12 @@ class PackageSize(NamedTuple):
 
         You can set more attributes of this object.
 
+        Parameters:
+            weight_in_grams: The weight in grams
+            height_in_mms: The height in mm
+            width_in_mms: The width in mm
+            depth_in_mms: The depth in mm
+
         Returns:
             The package request
 
@@ -183,17 +189,17 @@ class PackageSize(NamedTuple):
                 f"{MIN_WEIGHT_IN_GRAMS}g to {self.weight_grams}g allowed, got {weight_in_grams}g."
             )
         if height_in_mms or width_in_mms or depth_in_mms:
+            height_in_mms, width_in_mms, depth_in_mms = sorted(
+                (height_in_mms, width_in_mms, depth_in_mms), reverse=True
+            )
             if not self.dimensions_can_be_shipped(
                 height_in_mms, width_in_mms, depth_in_mms
             ):
                 sh, sw, sl = sorted(
                     (self.height_mm, self.width_mm, self.depth_mm), reverse=True
                 )
-                ah, aw, al = sorted(
-                    (height_in_mms, width_in_mms, depth_in_mms), reverse=True
-                )
                 raise InvalidDimensions(
-                    f"{ah}mm x {aw}mm x {al}mm does not fit into {sh}mm x {sw}mm x {sl}mm."
+                    f"{height_in_mms}mm x {width_in_mms}mm x {depth_in_mms}mm does not fit into {sh}mm x {sw}mm x {sl}mm."
                 )
             dimensions = DimensionsRequest(
                 height_in_mms=height_in_mms,
