@@ -28,6 +28,12 @@ export API_KEY="aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
 ```
 
 The API key will be used on the examples below to authenticate the requests.
+### OBA
+
+Some endpoints like generating labels require an OBA (Online Business Account).
+[Read more on how to turn your account into an OBA][OBA].
+
+[OBA]: https://help.parcel.royalmail.com/hc/en-gb/articles/21774606211997-Windsor-Framework-Posting-to-Northern-Ireland-from-Great-Britain#doyoushiptobusinesses
 
 ## Examples
 
