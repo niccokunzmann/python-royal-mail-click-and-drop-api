@@ -2,7 +2,9 @@
 
 ## v1.0.8
 
-- Better typing for `PackageSize`
+- Add better typing for `PackageSize`.
+- Add methods to check for weight and size in `PackageSize`
+- Add conversion methods to make creating a API request easier.
 
 ## v1.0.7
 
