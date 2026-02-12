@@ -1,6 +1,24 @@
 """Simple API access based on the generated API interface."""
 
-from .types import CreateOrder, RecipientDetails, Address
+from .types import (
+    Address,
+    BillingDetails,
+    CreateOrder,
+    CreateOrders,
+    Dimensions,
+    LabelGeneration,
+    ManifestDetailsResponse,
+    ManifestEligibleOrders,
+    PostageDetails,
+    ProductItem,
+    RecipientDetails,
+    SenderDetails,
+    ShipmentPackage,
+    Tag,
+    UpdateOrderStatus,
+    UpdateOrderStatusResponse,
+    UpdateOrdersStatus,
+)
 from .api import ClickAndDrop
 from .package_sizes import (
     PackageSize,
@@ -16,11 +34,13 @@ from .shipping_options import (
     list_service_codes,
     check_service_codes,
 )
-
+from .errors import InvalidWeight, InvalidDimensions
 
 __all__ = [
     "ClickAndDrop",
     "CreateOrder",
+    "InvalidWeight",
+    "InvalidDimensions",
     "check_service_codes",
     "RecipientDetails",
     "list_service_codes",
@@ -33,4 +53,18 @@ __all__ = [
     "shipping_options",
     "choose_package_size_by_weight",
     "get_package_size",
+    "CreateOrders",
+    "UpdateOrdersStatus",
+    "UpdateOrderStatus",
+    "UpdateOrderStatusResponse",
+    "LabelGeneration",
+    "ManifestEligibleOrders",
+    "ManifestDetailsResponse",
+    "PostageDetails",
+    "ProductItem",
+    "SenderDetails",
+    "ShipmentPackage",
+    "Tag",
+    "Dimensions",
+    "BillingDetails",
 ]

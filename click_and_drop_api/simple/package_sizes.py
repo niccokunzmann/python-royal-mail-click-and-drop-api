@@ -2,11 +2,18 @@
 
 from __future__ import annotations
 from typing import Literal, NamedTuple, Optional
+
+from click_and_drop_api.models.dimensions_request import DimensionsRequest
+from click_and_drop_api.models.shipment_package_request import ShipmentPackageRequest
 from .shipping_options import (
     get_shipping_options,
     ShippingOption,
     medium_parcel_force_codes,
 )
+from .errors import InvalidWeight, InvalidDimensions
+
+MAX_WEIGHT_IN_GRAMS = 30000
+MIN_WEIGHT_IN_GRAMS = 1
 
 
 class PackageSize(NamedTuple):
@@ -39,7 +46,7 @@ class PackageSize(NamedTuple):
     Large Parcel
         Max weight:30kg
         Max length:150cm
-        Max size:Length + girth must be no more than 300cm
+        Max size:depth + girth must be no more than 300cm
 
     """
 
@@ -55,10 +62,26 @@ class PackageSize(NamedTuple):
     ]
     name: str
     weight_grams: int
-    length_mm: int
+    depth_mm: int
     width_mm: int
     height_mm: int
     shipping_options: list[ShippingOption]
+
+    @property
+    def length_mm(self) -> int:
+        """The same as the depth."""
+        return self.depth_mm
+
+    @property
+    def dimensions_mm(self) -> tuple[int, int, int]:
+        """The dimensions in mm.
+
+        Returns:
+            (depth_mm, width_mm, height_mm) where depth_mm >= width_mm >= height_mm
+        """
+        return tuple(
+            sorted((self.depth_mm, self.width_mm, self.height_mm), reverse=True)
+        )
 
     def get_shipping_option(self, code: str) -> Optional[ShippingOption]:
         """Return a shipping option with the code if it is available for this package size."""
@@ -93,7 +116,7 @@ class PackageSize(NamedTuple):
             code=self.code,
             name=self.name,
             weight_grams=self.weight_grams,
-            length_mm=self.length_mm,
+            depth_mm=self.depth_mm,
             width_mm=self.width_mm,
             height_mm=self.height_mm,
             shipping_options=self.get_shipping_options_in(selected_shipping_options),
@@ -110,6 +133,80 @@ class PackageSize(NamedTuple):
             ValueError
         """
         return get_package_size(code)
+
+    def dimensions_can_be_shipped(
+        self, height_in_mms: int, width_in_mms: int, depth_in_mms: int
+    ):
+        """Can the dimensions be shipped."""
+        # TODO: This needs to be changed for largeParcel
+        dim = self.dimensions_mm
+        asked = tuple(sorted((height_in_mms, width_in_mms, depth_in_mms), reverse=True))
+        return (
+            dim[0] >= asked[0]
+            and dim[1] >= asked[1]
+            and dim[2] >= asked[2]
+            and height_in_mms >= 0
+            and width_in_mms >= 0
+            and depth_in_mms >= 0
+        )
+
+    def weight_can_be_shipped(self, weight_in_grams: int):
+        """Can the weight be shipped.
+
+        The APIrequires a minimum weight of 1g.
+        And a maximum weight of 30000g (30kg).
+        """
+        return (
+            MIN_WEIGHT_IN_GRAMS <= weight_in_grams
+            and weight_in_grams <= self.weight_grams
+        )
+
+    def as_package_request(
+        self,
+        weight_in_grams: int,
+        height_in_mms: Optional[int] = None,
+        width_in_mms: Optional[int] = None,
+        depth_in_mms: Optional[int] = None,
+    ) -> ShipmentPackageRequest:
+        """Return the package size as a ShipmentPackageRequest.
+
+        You can set more attributes of this object.
+
+        Returns:
+            The package request
+
+        Raises:
+            ValueError: If the weight is too heavy or the dimensions are too big.
+        """
+        if not self.weight_can_be_shipped(weight_in_grams):
+            raise InvalidWeight(
+                f"{MIN_WEIGHT_IN_GRAMS}g to {self.weight_grams}g allowed, got {weight_in_grams}g."
+            )
+        if height_in_mms or width_in_mms or depth_in_mms:
+            if not self.dimensions_can_be_shipped(
+                height_in_mms, width_in_mms, depth_in_mms
+            ):
+                sh, sw, sl = sorted(
+                    (self.height_mm, self.width_mm, self.depth_mm), reverse=True
+                )
+                ah, aw, al = sorted(
+                    (height_in_mms, width_in_mms, depth_in_mms), reverse=True
+                )
+                raise InvalidDimensions(
+                    f"{ah}mm x {aw}mm x {al}mm does not fit into {sh}mm x {sw}mm x {sl}mm."
+                )
+            dimensions = DimensionsRequest(
+                height_in_mms=height_in_mms,
+                width_in_mms=width_in_mms,
+                depth_in_mms=depth_in_mms,
+            )
+        else:
+            dimensions = None
+        return ShipmentPackageRequest(
+            dimensions=dimensions,
+            package_format_identifier=self.code,
+            weight_in_grams=weight_in_grams,
+        )
 
 
 packages_sizes = [
@@ -256,4 +353,6 @@ __all__ = [
     "choose_package_size_by_weight",
     "list_package_sizes",
     "get_package_sizes",
+    "MAX_WEIGHT_IN_GRAMS",
+    "MIN_WEIGHT_IN_GRAMS",
 ]

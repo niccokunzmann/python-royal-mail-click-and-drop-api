@@ -4,6 +4,7 @@ from click_and_drop_api.simple import (
     CreateOrder,
     RecipientDetails,
     Address,
+    PackageSize,
 )
 import os
 from datetime import datetime, UTC
@@ -16,8 +17,12 @@ api = ClickAndDrop(API_KEY)
 
 REFERENCE = "example-order-from-python-api"
 
+package = PackageSize.get("letter")  # send a letter
+service = package.get_shipping_option("OLP2")  # with 2nd class delivery
+
 new_order = CreateOrder(
     order_reference=REFERENCE,
+    is_recipient_a_business=False,
     recipient=RecipientDetails(
         address=Address(
             full_name="Nicco Kunzmann",
@@ -36,8 +41,11 @@ new_order = CreateOrder(
     ),
     order_date=datetime.now(UTC),
     subtotal=12,
-    shipping_cost_charged=3,
+    shipping_cost_charged=service.gross,  # charge the same as Royal Mail
     total=15,
+    currency_code="GBP",
+    postage_details=service.as_postage_details(),
+    packages=[package.as_package_request()],
 )
 
 response = api.create_orders(new_order)

@@ -1,7 +1,9 @@
 """Shipping options for Click and Drop API."""
 
+from __future__ import annotations
 from decimal import Decimal as D
 from typing import NamedTuple, Sequence
+from .types import PostageDetails
 
 
 class ShippingOption(NamedTuple):
@@ -18,6 +20,28 @@ class ShippingOption(NamedTuple):
     @property
     def net(self):
         return self.gross - self.tax
+
+    def as_postage_details(self) -> PostageDetails:
+        """PostageDetails generated from this ShippingOption.
+
+        Minimal attributes are set and you can modify them later.
+        """
+        return PostageDetails(
+            service_code=self.service_code,
+            carrier_name=self.brand,
+        )
+
+    @classmethod
+    def with_code(cls, service_code: str) -> ShippingOption:
+        """Get a shipping option for the service code.
+
+        Returns:
+            The shipping option
+
+        Raises:
+            KeyError
+        """
+        return shipping_options[service_code]
 
 
 shipping_options = {}
