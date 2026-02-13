@@ -33,7 +33,8 @@ stubs-help: image
 
 .venv:
 	python3 -m venv .venv
-	.venv/bin/pip install -r requirements.txt -r docs-requirements.txt -e .
+	.venv/bin/pip install --upgrade "pip>=25.1"
+	.venv/bin/pip install --group dev -e .
 
 .PHONY: html livehtml fix-stubs github-pages
 

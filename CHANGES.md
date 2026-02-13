@@ -1,10 +1,11 @@
 # Changelog
 
-## v1.0.8
+## v1.1.0
 
 - Add better typing for `PackageSize`.
 - Add methods to check for weight and size in `PackageSize`
 - Add conversion methods to make creating a API request easier.
+- Use dependency groups
 
 ## v1.0.7
 

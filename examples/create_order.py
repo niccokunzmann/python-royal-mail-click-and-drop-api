@@ -37,12 +37,11 @@ new_order = CreateOrder(
         ),
         phone_number="07726640000",
         email_address="niccokunzmann@rambler.ru",
-        address_book_reference="",
     ),
     order_date=datetime.now(UTC),
     subtotal=12,
     shipping_cost_charged=service.gross,  # charge the same as Royal Mail
-    total=15,
+    total=12 + service.gross,
     currency_code="GBP",
     postage_details=service.as_postage_details(),
     packages=[package.as_package_request()],
