@@ -15,7 +15,8 @@ API_KEY = os.environ["API_KEY"]
 
 api = ClickAndDrop(API_KEY)
 
-REFERENCE = "example-order-from-python-api"
+# choose a new reference or else the API will reject the order
+REFERENCE = "example-order-{now}".format(now=datetime.now(UTC).strftime("%Y%m%d%H%M%S"))
 
 package = PackageSize.get("letter")  # send a letter
 service = package.get_shipping_option("OLP2")  # with 2nd class delivery
@@ -39,12 +40,12 @@ new_order = CreateOrder(
         email_address="niccokunzmann@rambler.ru",
     ),
     order_date=datetime.now(UTC),
-    subtotal=12,
-    shipping_cost_charged=service.gross,  # charge the same as Royal Mail
-    total=12 + service.gross,
+    subtotal=float(12),  # 12 pounds
+    shipping_cost_charged=float(service.gross),  # charge the same as Royal Mail
+    total=float(12 + service.gross),
     currency_code="GBP",
-    postage_details=service.as_postage_details(),
-    packages=[package.as_package_request()],
+    # postage_details=service.as_postage_details(),
+    packages=[package.as_package_request(weight_in_grams=80)],
 )
 
 response = api.create_orders(new_order)
@@ -53,15 +54,16 @@ print(f"Orders created: {response.created_orders}")
 print(f"Errors: {response.errors_count}")
 
 print("Getting the order from the API.")
-orders = api.get_orders([REFERENCE])
+order = api.get_order(REFERENCE)
 
-for order in orders:
-    print(f"Order Reference: {order.order_reference}")
-    print(f"Order Identifier: {order.order_identifier}")
+print(f"Order Reference: {order.order_reference}")
+print(f"Order Identifier: {order.order_identifier}")
 
-print("Deleting order.")
+# Delete the order when run in CI test
+if "CI" in os.environ:
+    print("Deleting order.")
 
-deleted_orders = api.delete_orders([REFERENCE])
+    deleted_orders = api.delete_orders([REFERENCE])
 
-print(f"Orders deleted: {deleted_orders.deleted_orders}")
-print(f"Errors: {deleted_orders.errors}")
+    print(f"Orders deleted: {deleted_orders.deleted_orders}")
+    print(f"Errors: {deleted_orders.errors}")
