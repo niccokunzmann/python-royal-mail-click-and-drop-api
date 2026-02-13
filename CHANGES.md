@@ -6,6 +6,7 @@
 - Add methods to check for weight and size in `PackageSize`
 - Add conversion methods to make creating a API request easier.
 - Use dependency groups
+- Add more information to the example order creation
 
 ## v1.0.7
 
