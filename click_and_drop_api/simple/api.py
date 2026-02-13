@@ -71,6 +71,12 @@ class ClickAndDrop:
                 Order References are strings.
                 The maximum number of identifiers is 100.
 
+        Returns:
+            A list of orders
+
+        Raises:
+            click_and_drop_api.exceptions.BadRequestException if an order with the same reference already exists
+
         https://api.parcel.royalmail.com/#tag/Orders/operation/GetSpecificOrdersAsync
         """
         if not isinstance(order_identifiers, list):
@@ -93,6 +99,9 @@ class ClickAndDrop:
 
         Returns:
             The order or None if not found.
+
+        Raises:
+            click_and_drop_api.exceptions.BadRequestException if an order with the same reference already exists
 
         https://api.parcel.royalmail.com/#tag/Orders/operation/GetOrderAsync
         """
