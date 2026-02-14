@@ -49,13 +49,13 @@ def test_select_all_shipping_options(package, selected, expected):
 def test_shipping_option_conversion_1():
     postage = ShippingOption.with_code("OLP1").as_postage_details()
     assert postage.service_code == "OLP1"
-    assert postage.carrier_name == "Royal Mail"
+    # assert postage.carrier_name == "Royal Mail"  # API error if set
 
 
 def test_shipping_option_conversion_2():
     postage = ShippingOption.with_code("PFEAMSF").as_postage_details()
     assert postage.service_code == "PFEAMSF"
-    assert postage.carrier_name == "Parcel Force"
+    # assert postage.carrier_name == "Parcel Force"  # API error if set
 
 
 def test_as_package_request_letter():

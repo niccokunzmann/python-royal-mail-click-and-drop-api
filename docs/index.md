@@ -28,12 +28,22 @@ export API_KEY="aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
 ```
 
 The API key will be used on the examples below to authenticate the requests.
+
 ### OBA
 
 Some endpoints like generating labels require an OBA (Online Business Account).
-[Read more on how to turn your account into an OBA][OBA].
+Label generation is available for OBA accounts only:
 
-[OBA]: https://help.parcel.royalmail.com/hc/en-gb/articles/21774606211997-Windsor-Framework-Posting-to-Northern-Ireland-from-Great-Britain#doyoushiptobusinesses
+- Private accounts pay as the label is generated.
+- OBA accounts pay monthly via invoice.
+
+This only OBA can generate labels on request.
+
+1. [**Apply** for a Royal Mail Business Account (OBA)](https://www.royalmail.com/business/parcel-delivery).
+2. [**Link** your OBA to Click & Drop](https://auth.parcel.royalmail.com/register/oba).
+3. [**Fill** in required account information and make sure you follow the law][windsor].
+
+[windsor]: https://help.parcel.royalmail.com/hc/en-gb/articles/21774606211997-Windsor-Framework-Posting-to-Northern-Ireland-from-Great-Britain#doyoushiptobusinesses
 
 ## Examples
 
@@ -110,4 +120,16 @@ Output:
 
 ```text
 --8<-- "examples/package_size_and_cost.py.out"
+```
+
+## Create postage labels
+
+[Labels API Documentation](https://api.parcel.royalmail.com/#tag/Labels)
+
+! **Labels are only available for OBA accounts** !
+
+The script below takes an order id or reference as an argument and generates a postage label for it.
+
+```python
+--8<-- "examples/generate_label.py"
 ```
