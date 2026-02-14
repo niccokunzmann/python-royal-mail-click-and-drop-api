@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.1.1
+
+- Document how to create an OBA
+- Add label generation example
+- Make order creation easier and add label request example
+- add `ClickAndDrop.get_label()`
+
 ## v1.1.0
 
 - Add better typing for `PackageSize`.
