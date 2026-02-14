@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 from decimal import Decimal as D
-from typing import NamedTuple, Sequence
+from typing import Literal, NamedTuple, Optional, Sequence
 from .types import PostageDetails
 
 
@@ -21,14 +21,25 @@ class ShippingOption(NamedTuple):
     def net(self):
         return self.gross - self.tax
 
-    def as_postage_details(self) -> PostageDetails:
+    def as_postage_details(
+        self,
+        send_notifications_to: Optional[
+            Literal["sender", "recipient", "billing"]
+        ] = None,
+        **attribtues,
+    ) -> PostageDetails:
         """PostageDetails generated from this ShippingOption.
 
         Minimal attributes are set and you can modify them later.
+
+        Parameters:
+            attribtues: Additional attributes to set on the PostageDetails
         """
         return PostageDetails(
             service_code=self.service_code,
-            carrier_name=self.brand,
+            # carrier_name=self.service,  # it seems that this is not included in the API
+            send_notifications_to=send_notifications_to,
+            **attribtues,
         )
 
     @classmethod

@@ -1,19 +1,28 @@
 """The simple API interface."""
 
-from typing import Optional, Union
+from typing import Literal, Optional, Union
 from .types import CreateOrder
 import click_and_drop_api
 
 from urllib.parse import quote
 
 
-def id_or_ref_to_string(id_or_ref: Union[int, str]) -> str:
+def order_identifier_to_string(id_or_ref: Union[int, str]) -> str:
     """Encode order ids and strings."""
     if isinstance(id_or_ref, int):
         return str(id_or_ref)
     elif isinstance(id_or_ref, str):
         return f'"{quote(id_or_ref)}"'
     raise TypeError(f"Expected int or str, got {id_or_ref}.")
+
+
+def order_identifiers_to_string(
+    order_identifiers: Union[list[Union[str, int]], str, int],
+) -> str:
+    """Encode order ids and references."""
+    if not isinstance(order_identifiers, list):
+        order_identifiers = [order_identifiers]
+    return ";".join(map(order_identifier_to_string, order_identifiers))
 
 
 class ClickAndDrop:
@@ -79,10 +88,8 @@ class ClickAndDrop:
 
         https://api.parcel.royalmail.com/#tag/Orders/operation/GetSpecificOrdersAsync
         """
-        if not isinstance(order_identifiers, list):
-            order_identifiers = [order_identifiers]
         return self._orders_api.get_specific_orders_async(
-            order_identifiers=";".join(map(id_or_ref_to_string, order_identifiers))
+            order_identifiers=order_identifiers_to_string(order_identifiers)
         )
 
     def get_order(
@@ -127,10 +134,8 @@ class ClickAndDrop:
 
         https://api.parcel.royalmail.com/#tag/Orders/operation/DeleteOrdersAsync
         """
-        if not isinstance(order_identifiers, list):
-            order_identifiers = [order_identifiers]
         return self._orders_api.delete_orders_async(
-            order_identifiers=";".join(map(id_or_ref_to_string, order_identifiers))
+            order_identifiers=order_identifiers_to_string(order_identifiers)
         )
 
     def create_orders(
@@ -153,6 +158,53 @@ class ClickAndDrop:
         https://api.parcel.royalmail.com/#tag/Orders/operation/CreateOrdersAsync
         """
         return self.create_orders(order)
+
+    def get_label(
+        self,
+        order_identifiers: Union[list[Union[str, int]], str, int],
+        document_type: Literal["postageLabel", "despatchNote", "CN22", "CN23"],
+        include_returns_label: Optional[bool] = None,
+        include_cn: Optional[bool] = None,
+    ) -> bytearray:
+        r"""Generate a label for an order.
+
+        Parameters:
+            order_identifiers:
+                One or several Order Identifiers or Order References.
+                Order Identifiers are integer numbers.
+                Order References are strings.
+                The maximum number of identifiers is 100.
+            document_type:
+                Document generation mode.
+                When documentType is set to "postageLabel" the additional parameters below must be used.
+                These additional parameters will be ignored when documentType is not set to "postageLabel".
+            include_returns_label:
+                Include returns label.
+                Required when documentType is set to 'postageLabel'.
+            include_cn:
+                Include CN22/CN23 with label.
+                Optional parameter.
+                If this parameter is used the setting will override the default account behaviour specified
+                in the "Label format" setting "Generate customs declarations with orders".
+
+        Returns:
+            Return a single PDF file with generated label and/or associated document(s).
+
+        ! Reserved for OBA customers only !
+        The account "Label format" settings page will control the page format settings used to print the postage label and associated documents.
+        Certain combinations of these settings may prevent associated documents from being printed together with the postage label within a single document.
+        If this occurs the documentType option can be used in a separate call to print missing documents.
+
+        Label generation only available for orders with postage applied status.
+
+        https://api.parcel.royalmail.com/#tag/Labels/operation/GetOrdersLabelAsync
+        """
+        return self._labels_api.get_orders_label_async(
+            order_identifiers=order_identifiers_to_string(order_identifiers),
+            document_type=document_type,
+            include_returns_label=include_returns_label,
+            include_cn=include_cn,
+        )
 
 
 __all__ = ["ClickAndDrop"]

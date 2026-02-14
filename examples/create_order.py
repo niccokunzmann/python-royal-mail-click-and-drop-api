@@ -1,4 +1,10 @@
 #!/usr/bin/env python
+"""Create an order and download it.
+
+On CI, also delete the order again.
+"""
+
+from pprint import pprint
 from click_and_drop_api.simple import (
     ClickAndDrop,
     CreateOrder,
@@ -37,15 +43,21 @@ new_order = CreateOrder(
             country_code="GB",
         ),
         phone_number="07726640000",
-        email_address="niccokunzmann@rambler.ru",
+        email_address="niccokunzmann" + "@" + "rambler.ru",
     ),
     order_date=datetime.now(UTC),
     subtotal=float(12),  # 12 pounds
     shipping_cost_charged=float(service.gross),  # charge the same as Royal Mail
     total=float(12 + service.gross),
     currency_code="GBP",
-    # postage_details=service.as_postage_details(),
+    postage_details=service.as_postage_details(),
     packages=[package.as_package_request(weight_in_grams=80)],
+    # Label generation is only possible for OBA customers
+    # label = LabelGeneration(
+    #     include_label_in_response=True,
+    #     include_cn=False,
+    #     include_returns_label=False,
+    # )
 )
 
 response = api.create_orders(new_order)
@@ -58,6 +70,7 @@ order = api.get_order(REFERENCE)
 
 print(f"Order Reference: {order.order_reference}")
 print(f"Order Identifier: {order.order_identifier}")
+pprint(order.to_dict())
 
 # Delete the order when run in CI test
 if "CI" in os.environ:
