@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.2.0
+
+- Remove add_shipping_option and shipping_options from the API
+- record international sending
+- parse shipping options from files with content copied from the website where you apply postage
+- Add `ShippingOption.ships_to` to check if the shipping option can ship to a country
+
 ## v1.1.1
 
 - Document how to create an OBA

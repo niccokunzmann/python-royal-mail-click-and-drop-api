@@ -29,8 +29,6 @@ from .package_sizes import (
 )
 from .shipping_options import (
     ShippingOption,
-    add_shipping_option,
-    shipping_options,
     list_service_codes,
     check_service_codes,
 )
@@ -49,8 +47,6 @@ __all__ = [
     "PackageSize",
     "packages_sizes",
     "ShippingOption",
-    "add_shipping_option",
-    "shipping_options",
     "choose_package_size_by_weight",
     "get_package_size",
     "CreateOrders",

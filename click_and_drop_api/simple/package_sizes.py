@@ -5,12 +5,10 @@ from typing import Literal, NamedTuple, Optional
 
 from click_and_drop_api.models.dimensions_request import DimensionsRequest
 from click_and_drop_api.models.shipment_package_request import ShipmentPackageRequest
-from .shipping_options import (
-    get_shipping_options,
-    ShippingOption,
-    medium_parcel_force_codes,
-)
+from .shipping_options import ShippingOption
+
 from .errors import InvalidWeight, InvalidDimensions
+from . import shipping_options
 
 MAX_WEIGHT_IN_GRAMS = 30000
 MIN_WEIGHT_IN_GRAMS = 1
@@ -215,89 +213,57 @@ class PackageSize(NamedTuple):
         )
 
 
+letter = PackageSize(
+    "letter",
+    "Letter",
+    100,
+    240,
+    165,
+    5,
+    shipping_options.letter.options,
+)
+large_letter = PackageSize(
+    "largeLetter",
+    "Large letter",
+    1000,
+    353,
+    250,
+    25,
+    shipping_options.large_letter.options,
+)
+small_parcel = PackageSize(
+    "smallParcel",
+    "Small parcel",
+    2000,
+    450,
+    350,
+    160,
+    shipping_options.small_parcel.options,
+)
+medium_parcel = PackageSize(
+    "mediumParcel",
+    "Medium parcel",
+    20000,
+    610,
+    460,
+    460,
+    shipping_options.medium_parcel.options,
+)
+large_parcel = PackageSize(
+    "largeParcel",
+    "Large parcel",
+    30000,
+    1500,
+    3000,
+    3000,
+    shipping_options.large_parcel.options,
+)
 packages_sizes = [
-    PackageSize(
-        "letter",
-        "Letter",
-        100,
-        240,
-        165,
-        5,
-        get_shipping_options(
-            "OLP1", "OLP1SF", "OLP2", "OLP2SF", "SD1OLP", "SD2OLP", "SD3OLP"
-        ),
-    ),
-    PackageSize(
-        "largeLetter",
-        "Large letter",
-        1000,
-        353,
-        250,
-        25,
-        get_shipping_options(
-            "OLP1",
-            "OLP1SF",
-            "OLP2",
-            "OLP2SF",
-            "SD1OLP",
-            "SD2OLP",
-            "SD3OLP",
-            "TOLP24",
-            "TOLP24SF",
-            "TOLP48",
-            "TOLP48SF",
-        ),
-    ),
-    PackageSize(
-        "smallParcel",
-        "Small parcel",
-        2000,
-        450,
-        350,
-        160,
-        get_shipping_options(
-            "OLP1",
-            "OLP1SF",
-            "OLP2",
-            "OLP2SF",
-            "SD1OLP",
-            "SD2OLP",
-            "SD3OLP",
-            "TOLP24",
-            "TOLP24SF",
-            "TOLP24SFA",
-            "TOLP48",
-            "TOLP48SF",
-            "TOLP48SFA",
-        ),
-    ),
-    PackageSize(
-        "mediumParcel",
-        "Medium parcel",
-        20000,
-        610,
-        460,
-        460,
-        get_shipping_options(
-            "OLP1",
-            "OLP1SF",
-            "OLP2",
-            "OLP2SF",
-            "SD1OLP",
-            "SD2OLP",
-            "SD3OLP",
-            "TOLP24",
-            "TOLP24SF",
-            "TOLP24SFA",
-            "TOLP48",
-            "TOLP48SF",
-            "TOLP48SFA",
-            *medium_parcel_force_codes,
-        ),
-    ),
-    PackageSize(
-        "largeParcel", "Large parcel", 30000, 1500, 3000, 3000, []
-    ),  # TODO: options
+    letter,
+    large_letter,
+    small_parcel,
+    medium_parcel,
+    large_parcel,
 ]
 
 # TODO: Missing "parcel" and "documents"

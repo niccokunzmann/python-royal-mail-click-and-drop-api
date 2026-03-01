@@ -1,0 +1,76 @@
+
+Royal Mail 2nd Class (£20 compensation)
+See details
+	OLP2 	
+48 hour (2 working days)
+	Up to £20 		£1.55 	£0.00 	£1.55
+	
+	
+Royal Mail 1st Class (£20 compensation)
+See details
+	OLP1 	
+24 hour (next working day)
+	Up to £20 		£3.05 	£0.00 	£3.05
+	
+	
+Royal Mail Signed For 1st Class (£20 compensation)
+See details
+	OLP1SF 	
+24 hour (next working day)
+	Up to £20 		£4.95 	£0.00 	£4.95
+	
+	
+Royal Mail Signed For 2nd Class (£20 compensation)
+See details
+	OLP2SF 	
+48 hour (2 working days)
+	Up to £20 		£3.45 	£0.00 	£3.45
+	
+	
+Royal Mail Special Delivery Guaranteed by 1pm (£750 compensation)
+See details
+	SD1OLP 	
+Guaranteed by 1pm next working day
+	Up to £750 	Tracked, Email notification, SMS notification 	£8.75 	£0.00 	£8.75
+	
+	
+Royal Mail Special Delivery Guaranteed by 1pm (£1000 compensation)
+See details
+	SD2OLP 	
+Guaranteed by 1pm next working day
+	Up to £1000 	Tracked, Email notification, SMS notification 	£11.75 	£0.00 	£11.75
+	
+	
+Royal Mail Special Delivery Guaranteed by 1pm (£2500 compensation)
+See details
+	SD3OLP 	
+Guaranteed by 1pm next working day
+	Up to £2500 	Tracked, Email notification, SMS notification 	£18.75 	£0.00 	£18.75
+	
+	
+Tracked 24 (£75 compensation)
+See details
+	TOLP24 	
+24 hour (next working day)
+	Up to £75 	Tracked, Email notification, SMS notification, Safeplace 	£3.04 	£0.61 	£3.65
+	
+	
+Tracked 24 with Signature (£75 compensation)
+See details
+	TOLP24SF 	
+24 hour (next working day)
+	Up to £75 	Tracked, Email notification, SMS notification 	£4.62 	£0.93 	£5.55
+	
+	
+Tracked 48 (£75 compensation)
+See details
+	TOLP48 	
+48 hour (2 working days)
+	Up to £75 	Tracked, Email notification, SMS notification, Safeplace 	£2.29 	£0.46 	£2.75
+	
+	
+Tracked 48 with Signature (£75 compensation)
+See details
+	TOLP48SF 	
+48 hour (2 working days)
+	Up to £75 	Tracked, Email notification, SMS notification 	£3.87 	£0.78 	£4.65

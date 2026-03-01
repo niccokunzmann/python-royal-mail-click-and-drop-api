@@ -1,0 +1,314 @@
+
+Royal Mail 2nd Class (£20 compensation)
+See details
+	OLP2 	
+48 hour (2 working days)
+	Up to £20 		£5.25 	£0.00 	£5.25
+	
+	
+Royal Mail 1st Class (£20 compensation)
+See details
+	OLP1 	
+24 hour (next working day)
+	Up to £20 		£6.15 	£0.00 	£6.15
+	
+	
+Royal Mail Signed For 1st Class (£20 compensation)
+See details
+	OLP1SF 	
+24 hour (next working day)
+	Up to £20 		£7.65 	£0.00 	£7.65
+	
+	
+Royal Mail Signed For 2nd Class (£20 compensation)
+See details
+	OLP2SF 	
+48 hour (2 working days)
+	Up to £20 		£6.75 	£0.00 	£6.75
+	
+	
+express10 (£150 compensation)
+See details
+	PFE10 	
+Guaranteed by 10am next working day
+	Up to £150 	Tracked, Email notification, SMS notification, Safeplace 	£22.29 	£4.46 	£26.75
+	
+	
+express10 Comp 1 (£750 compensation)
+See details
+	PFE10 	
+Guaranteed by 10am next working day
+	Up to £750 	Tracked, Email notification, SMS notification, Safeplace 	£28.12 	£5.63 	£33.75
+	
+	
+express10 Comp 2 (£1000 compensation)
+See details
+	PFE10 	
+Guaranteed by 10am next working day
+	Up to £1000 	Tracked, Email notification, SMS notification, Safeplace 	£47.29 	£9.46 	£56.75
+	
+	
+express10 Comp 3 (£2500 compensation)
+See details
+	PFE10 	
+Guaranteed by 10am next working day
+	Up to £2500 	Tracked, Email notification, SMS notification, Safeplace 	£76.46 	£15.29 	£91.75
+	
+	
+express10 with Signature (£150 compensation)
+See details
+	PFE10SF 	
+Guaranteed by 10am next working day
+	Up to £150 	Tracked, Email notification, SMS notification 	£23.54 	£4.71 	£28.25
+	
+	
+express10 with Signature Comp 1 (£750 compensation)
+See details
+	PFE10SF 	
+Guaranteed by 10am next working day
+	Up to £750 	Tracked, Email notification, SMS notification 	£29.37 	£5.88 	£35.25
+	
+	
+express10 with Signature Comp 2 (£1000 compensation)
+See details
+	PFE10SF 	
+Guaranteed by 10am next working day
+	Up to £1000 	Tracked, Email notification, SMS notification 	£48.54 	£9.71 	£58.25
+	
+	
+express10 with Signature Comp 3 (£2500 compensation)
+See details
+	PFE10SF 	
+Guaranteed by 10am next working day
+	Up to £2500 	Tracked, Email notification, SMS notification 	£77.71 	£15.54 	£93.25
+	
+	
+express24 (£150 compensation)
+See details
+	PFE24 	
+24 hour (next working day)
+	Up to £150 	Tracked, Email notification, SMS notification, Safeplace 	£9.92 	£1.98 	£11.90
+	
+	
+express24 Comp 1 (£750 compensation)
+See details
+	PFE24 	
+24 hour (next working day)
+	Up to £750 	Tracked, Email notification, SMS notification, Safeplace 	£15.75 	£3.15 	£18.90
+	
+	
+express24 Comp 2 (£1000 compensation)
+See details
+	PFE24 	
+24 hour (next working day)
+	Up to £1000 	Tracked, Email notification, SMS notification, Safeplace 	£34.92 	£6.98 	£41.90
+	
+	
+express24 Comp 3 (£2500 compensation)
+See details
+	PFE24 	
+24 hour (next working day)
+	Up to £2500 	Tracked, Email notification, SMS notification, Safeplace 	£64.09 	£12.81 	£76.90
+	
+	
+express24 with Signature (£150 compensation)
+See details
+	PFE24SF 	
+24 hour (next working day)
+	Up to £150 	Tracked, Email notification, SMS notification 	£11.17 	£2.23 	£13.40
+	
+	
+express24 with Signature Comp 1 (£750 compensation)
+See details
+	PFE24SF 	
+24 hour (next working day)
+	Up to £750 	Tracked, Email notification, SMS notification 	£17.00 	£3.40 	£20.40
+	
+	
+express24 with Signature Comp 2 (£1000 compensation)
+See details
+	PFE24SF 	
+24 hour (next working day)
+	Up to £1000 	Tracked, Email notification, SMS notification 	£36.17 	£7.23 	£43.40
+	
+	
+express24 with Signature Comp 3 (£2500 compensation)
+See details
+	PFE24SF 	
+24 hour (next working day)
+	Up to £2500 	Tracked, Email notification, SMS notification 	£65.34 	£13.06 	£78.40
+	
+	
+express48 (£150 compensation)
+See details
+	PFE48 	
+48 hour (2 working days)
+	Up to £150 	Tracked, Email notification, SMS notification, Safeplace 	£9.46 	£1.89 	£11.35
+	
+	
+express48 Comp 1 (£750 compensation)
+See details
+	PFE48 	
+48 hour (2 working days)
+	Up to £750 	Tracked, Email notification, SMS notification, Safeplace 	£15.29 	£3.06 	£18.35
+	
+	
+express48 Comp 2 (£1000 compensation)
+See details
+	PFE48 	
+48 hour (2 working days)
+	Up to £1000 	Tracked, Email notification, SMS notification, Safeplace 	£34.46 	£6.89 	£41.35
+	
+	
+express48 Comp 3 (£2500 compensation)
+See details
+	PFE48 	
+48 hour (2 working days)
+	Up to £2500 	Tracked, Email notification, SMS notification, Safeplace 	£63.63 	£12.72 	£76.35
+	
+	
+express48 with Signature (£150 compensation)
+See details
+	PFE48SF 	
+48 hour (2 working days)
+	Up to £150 	Tracked, Email notification, SMS notification 	£10.71 	£2.14 	£12.85
+	
+	
+express48 with Signature Comp 1 (£750 compensation)
+See details
+	PFE48SF 	
+48 hour (2 working days)
+	Up to £750 	Tracked, Email notification, SMS notification 	£16.54 	£3.31 	£19.85
+	
+	
+express48 with Signature Comp 2 (£1000 compensation)
+See details
+	PFE48SF 	
+48 hour (2 working days)
+	Up to £1000 	Tracked, Email notification, SMS notification 	£35.71 	£7.14 	£42.85
+	
+	
+express48 with Signature Comp 3 (£2500 compensation)
+See details
+	PFE48SF 	
+48 hour (2 working days)
+	Up to £2500 	Tracked, Email notification, SMS notification 	£64.88 	£12.97 	£77.85
+	
+	
+expressAM (£150 compensation)
+See details
+	PFEAM 	
+Guaranteed by 12pm next working day
+	Up to £150 	Tracked, Email notification, SMS notification, Safeplace 	£13.08 	£2.62 	£15.70
+	
+	
+expressAM Comp 1 (£750 compensation)
+See details
+	PFEAM 	
+Guaranteed by 12pm next working day
+	Up to £750 	Tracked, Email notification, SMS notification, Safeplace 	£18.91 	£3.79 	£22.70
+	
+	
+expressAM Comp 2 (£1000 compensation)
+See details
+	PFEAM 	
+Guaranteed by 12pm next working day
+	Up to £1000 	Tracked, Email notification, SMS notification, Safeplace 	£38.08 	£7.62 	£45.70
+	
+	
+expressAM Comp 3 (£2500 compensation)
+See details
+	PFEAM 	
+Guaranteed by 12pm next working day
+	Up to £2500 	Tracked, Email notification, SMS notification, Safeplace 	£67.25 	£13.45 	£80.70
+	
+	
+expressAM with Signature (£150 compensation)
+See details
+	PFEAMSF 	
+Guaranteed by 12pm next working day
+	Up to £150 	Tracked, Email notification, SMS notification 	£14.33 	£2.87 	£17.20
+	
+	
+expressAM with Signature Comp 1 (£750 compensation)
+See details
+	PFEAMSF 	
+Guaranteed by 12pm next working day
+	Up to £750 	Tracked, Email notification, SMS notification 	£20.16 	£4.04 	£24.20
+	
+	
+expressAM with Signature Comp 2 (£1000 compensation)
+See details
+	PFEAMSF 	
+Guaranteed by 12pm next working day
+	Up to £1000 	Tracked, Email notification, SMS notification 	£39.33 	£7.87 	£47.20
+	
+	
+expressAM with Signature Comp 3 (£2500 compensation)
+See details
+	PFEAMSF 	
+Guaranteed by 12pm next working day
+	Up to £2500 	Tracked, Email notification, SMS notification 	£68.50 	£13.70 	£82.20
+	
+	
+Royal Mail Special Delivery Guaranteed by 1pm (£750 compensation)
+See details
+	SD1OLP 	
+Guaranteed by 1pm next working day
+	Up to £750 	Tracked, Email notification, SMS notification 	£8.75 	£0.00 	£8.75
+	
+	
+Royal Mail Special Delivery Guaranteed by 1pm (£1000 compensation)
+See details
+	SD2OLP 	
+Guaranteed by 1pm next working day
+	Up to £1000 	Tracked, Email notification, SMS notification 	£11.75 	£0.00 	£11.75
+	
+	
+Royal Mail Special Delivery Guaranteed by 1pm (£2500 compensation)
+See details
+	SD3OLP 	
+Guaranteed by 1pm next working day
+	Up to £2500 	Tracked, Email notification, SMS notification 	£18.75 	£0.00 	£18.75
+	
+	
+Tracked 24 (£75 compensation)
+See details
+	TOLP24 	
+24 hour (next working day)
+	Up to £75 	Tracked, Email notification, SMS notification, Safeplace 	£5.21 	£1.04 	£6.25
+	
+	
+Tracked 24 with Signature (£75 compensation)
+See details
+	TOLP24SF 	
+24 hour (next working day)
+	Up to £75 	Tracked, Email notification, SMS notification 	£6.46 	£1.29 	£7.75
+	
+	
+Tracked 24 with Age Verification (£75 compensation)
+See details
+	TOLP24SFA 	
+24 hour (next working day)
+	Up to £75 	Tracked, Email notification, SMS notification, Age verified on delivery 	£7.61 	£1.52 	£9.13
+	
+	
+Tracked 48 (£75 compensation)
+See details
+	TOLP48 	
+48 hour (2 working days)
+	Up to £75 	Tracked, Email notification, SMS notification, Safeplace 	£4.46 	£0.89 	£5.35
+	
+	
+Tracked 48 with Signature (£75 compensation)
+See details
+	TOLP48SF 	
+48 hour (2 working days)
+	Up to £75 	Tracked, Email notification, SMS notification 	£5.71 	£1.14 	£6.85
+	
+	
+Tracked 48 with Age Verification (£75 compensation)
+See details
+	TOLP48SFA 	
+48 hour (2 working days)
+	Up to £75 	Tracked, Email notification, SMS notification, Age verified on delivery 	£6.86 	£1.37 	£8.23

@@ -1,0 +1,59 @@
+
+International Tracked Heavier (£50 compensation)
+See details
+	ITHCOLP 	
+	Up to £50 	Tracked, IOSS 	£11.45 	£0.00 	£11.45
+	
+	
+International Tracked Heavier (£250 compensation)
+See details
+	ITHCOLP 	
+	Up to £250 	Tracked, IOSS 	£13.95 	£0.00 	£13.95
+	
+	
+globalpriority Europe (£100 compensation)
+See details
+	PFIGPE 	
+	Up to £100 	Tracked, Email notification, SMS notification, IOSS 	£24.70 	£0.00 	£24.70
+	
+	
+globalpriority Europe Comp 1 (£750 compensation)
+See details
+	PFIGPE 	
+	Up to £750 	Tracked, Email notification, SMS notification, IOSS 	£31.70 	£0.00 	£31.70
+	
+	
+globalpriority Europe Comp 2 (£1000 compensation)
+See details
+	PFIGPE 	
+	Up to £1000 	Tracked, Email notification, SMS notification, IOSS 	£54.70 	£0.00 	£54.70
+	
+	
+globalpriority Europe Comp 3 (£2500 compensation)
+See details
+	PFIGPE 	
+	Up to £2500 	Tracked, Email notification, SMS notification, IOSS 	£89.70 	£0.00 	£89.70
+	
+	
+globalexpress (£200 compensation)
+See details
+	PFIGX 	
+	Up to £200 	Tracked, Email notification, SMS notification, IOSS 	£51.05 	£0.00 	£51.05
+	
+	
+globalexpress Comp 1 (£750 compensation)
+See details
+	PFIGX 	
+	Up to £750 	Tracked, Email notification, SMS notification, IOSS 	£58.05 	£0.00 	£58.05
+	
+	
+globalexpress Comp 2 (£1000 compensation)
+See details
+	PFIGX 	
+	Up to £1000 	Tracked, Email notification, SMS notification, IOSS 	£81.05 	£0.00 	£81.05
+	
+	
+globalexpress Comp 3 (£2500 compensation)
+See details
+	PFIGX 	
+	Up to £2500 	Tracked, Email notification, SMS notification, IOSS 	£116.05 	£0.00 	£116.05

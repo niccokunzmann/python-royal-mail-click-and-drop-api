@@ -1,7 +1,7 @@
 from click_and_drop_api.simple import list_service_codes, check_service_codes
 from click_and_drop_api.simple.package_sizes import PackageSize, get_package_size
-from click_and_drop_api.simple.shipping_options import ShippingOption
 import pytest
+import click_and_drop_api.simple.package_sizes as package_sizes
 
 
 def test_list_all_shipping_options():
@@ -34,8 +34,10 @@ def test_select_all_shipping_options(package, selected, expected):
     """Test SelectAllShippingOptionsResponse"""
     package = get_package_size(package)
     selected_subset = package.get_shipping_options_in(selected)
-    codes = [option.service_code for option in selected_subset]
-    assert codes == expected, f"Expected {expected}, got {codes} for {package.code}"
+    codes = {option.service_code for option in selected_subset}
+    assert codes == set(expected), (
+        f"Expected {expected}, got {codes} for {package.code}"
+    )
     copy = package.with_shipping_limited_to(selected)
     assert copy.shipping_options == selected_subset
     assert copy.code == package.code
@@ -47,13 +49,15 @@ def test_select_all_shipping_options(package, selected, expected):
 
 
 def test_shipping_option_conversion_1():
-    postage = ShippingOption.with_code("OLP1").as_postage_details()
+    postage = package_sizes.letter.get_shipping_option("OLP1").as_postage_details()
     assert postage.service_code == "OLP1"
     # assert postage.carrier_name == "Royal Mail"  # API error if set
 
 
 def test_shipping_option_conversion_2():
-    postage = ShippingOption.with_code("PFEAMSF").as_postage_details()
+    postage = package_sizes.large_parcel.get_shipping_option(
+        "PFEAMSF"
+    ).as_postage_details()
     assert postage.service_code == "PFEAMSF"
     # assert postage.carrier_name == "Parcel Force"  # API error if set
 

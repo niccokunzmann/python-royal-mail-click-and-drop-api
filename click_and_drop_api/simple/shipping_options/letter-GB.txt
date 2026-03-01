@@ -1,0 +1,48 @@
+
+Royal Mail 2nd Class (£20 compensation)
+See details
+	OLP2 	
+48 hour (2 working days)
+	Up to £20 		£0.87 	£0.00 	£0.87
+	
+	
+Royal Mail 1st Class (£20 compensation)
+See details
+	OLP1 	
+24 hour (next working day)
+	Up to £20 		£1.70 	£0.00 	£1.70
+	
+	
+Royal Mail Signed For 1st Class (£20 compensation)
+See details
+	OLP1SF 	
+24 hour (next working day)
+	Up to £20 		£3.60 	£0.00 	£3.60
+	
+	
+Royal Mail Signed For 2nd Class (£20 compensation)
+See details
+	OLP2SF 	
+48 hour (2 working days)
+	Up to £20 		£2.77 	£0.00 	£2.77
+	
+	
+Royal Mail Special Delivery Guaranteed by 1pm (£750 compensation)
+See details
+	SD1OLP 	
+Guaranteed by 1pm next working day
+	Up to £750 	Tracked, Email notification, SMS notification 	£8.75 	£0.00 	£8.75
+	
+	
+Royal Mail Special Delivery Guaranteed by 1pm (£1000 compensation)
+See details
+	SD2OLP 	
+Guaranteed by 1pm next working day
+	Up to £1000 	Tracked, Email notification, SMS notification 	£11.75 	£0.00 	£11.75
+	
+	
+Royal Mail Special Delivery Guaranteed by 1pm (£2500 compensation)
+See details
+	SD3OLP 	
+Guaranteed by 1pm next working day
+	Up to £2500 	Tracked, Email notification, SMS notification 	£18.75 	£0.00 	£18.75

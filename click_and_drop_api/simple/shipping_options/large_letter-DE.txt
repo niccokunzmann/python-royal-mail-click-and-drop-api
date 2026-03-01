@@ -1,0 +1,29 @@
+
+International Economy (£20 compensation)
+See details
+	IEOLP 	
+	Up to £20 	IOSS 	£4.10 	£0.00 	£4.10
+	
+	
+International Standard (£20 compensation)
+See details
+	ISOLP 	
+	Up to £20 	IOSS 	£3.40 	£0.00 	£3.40
+	
+	
+International Tracked (£50 compensation)
+See details
+	ITROLP 	
+	Up to £50 	Tracked, IOSS 	£9.65 	£0.00 	£9.65
+	
+	
+International Tracked (£250 compensation)
+See details
+	ITROLP 	
+	Up to £250 	Tracked, IOSS 	£12.15 	£0.00 	£12.15
+	
+	
+International Tracked & Signed (£50 compensation)
+See details
+	ITSOLP 	
+	Up to £50 	Tracked, IOSS 	£9.95 	£0.00 	£9.95
