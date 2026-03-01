@@ -1,6 +1,10 @@
 # Changelog
 
-## v1.2.0
+## v1.2.1
+
+- fix: include the shipping option files.
+
+## v1.2.0 (yanked)
 
 - Remove add_shipping_option and shipping_options from the API
 - record international sending
