@@ -31,6 +31,26 @@ jobs:
         run: |
           tox -e py
 
+  release:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          pip install tox
+      - name: Test release
+        run: |
+          tox -e release
+
   examples:
     runs-on: ubuntu-latest
     strategy:
@@ -59,6 +79,7 @@ jobs:
     needs:
       - python-versions
       - examples
+      - release
     if: startsWith(github.ref, 'refs/tags/v')
     steps:
       - name: Checkout code
