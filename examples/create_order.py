@@ -10,6 +10,7 @@ from click_and_drop_api.simple import (
     CreateOrder,
     RecipientDetails,
     Address,
+    LabelGeneration,
     PackageSize,
 )
 import os
@@ -53,11 +54,11 @@ new_order = CreateOrder(
     postage_details=service.as_postage_details(),
     packages=[package.as_package_request(weight_in_grams=80)],
     # Label generation is only possible for OBA customers
-    # label = LabelGeneration(
-    #     include_label_in_response=True,
-    #     include_cn=False,
-    #     include_returns_label=False,
-    # )
+    label=LabelGeneration(
+        include_label_in_response=True,
+        include_cn=False,
+        include_returns_label=False,
+    ),
 )
 
 response = api.create_orders(new_order)

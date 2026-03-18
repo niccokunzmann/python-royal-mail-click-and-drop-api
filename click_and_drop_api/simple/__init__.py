@@ -20,6 +20,7 @@ from .types import (
     UpdateOrdersStatus,
 )
 from .api import ClickAndDrop
+from .mock import MockClickAndDrop
 from .package_sizes import (
     PackageSize,
     packages_sizes,
@@ -36,6 +37,7 @@ from .errors import InvalidWeight, InvalidDimensions
 
 __all__ = [
     "ClickAndDrop",
+    "MockClickAndDrop",
     "CreateOrder",
     "InvalidWeight",
     "InvalidDimensions",
