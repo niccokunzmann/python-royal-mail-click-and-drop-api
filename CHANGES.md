@@ -1,5 +1,21 @@
 # Changelog
 
+## v1.3.0
+
+- Add `AbstractClickAndDrop` ABC with shared interface for `ClickAndDrop` and `MockClickAndDrop`
+- Add `MockClickAndDrop` — in-memory drop-in replacement for unit tests
+- Concrete `create_order`, `get_order`, `delete_order` helpers on the ABC (delegate to plural abstract methods)
+- Add `ShippingTestResult` named tuple and `AbstractClickAndDrop.test_shipping()` — creates and immediately deletes a test order against the API
+- `test_shipping` accepts a destination as an `Address` instance or an ISO 3166-1 alpha-2 country code string
+- Add `click_and_drop_api.simple.addresses` — sample valid addresses for all 249 ISO 3166-1 countries, accessible via `ADDRESSES["DE"]` or `get_address("DE")`
+- Add OBA shipping options: `letter`, `large_letter`, `parcel`, `documents` modules now include OBA service codes parsed from txt files
+- Add `parcel` and `documents` `PackageSize` instances to `package_sizes`
+- Add `ShippingOption.is_oba` flag and `max_weight_g` field
+- Add enhancement flags: `signed_for`, `local_collect`, `ddp`
+- Add `ServiceConstraint` dataclass and `SERVICE_CONSTRAINTS` dict to `parcel` module — per-service-code physical limits (weight + dimensions) for all OBA parcel service codes
+- Add `SERVICE_MAX_WEIGHT_G` to `parcel` module — per-service-code weight limits verified against the live API via `scripts/test_parcel_orders.py`
+- Add `scripts/test_parcel_orders.py` — creates test orders for each parcel type and reports 3 kg capability per service code
+
 ## v1.2.1
 
 - fix: include the shipping option files.
