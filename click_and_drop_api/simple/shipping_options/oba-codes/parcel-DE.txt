@@ -1,0 +1,41 @@
+
+INTL BUS PRCLS UNTRACKED DDP (01 / X6002738)
+See details
+	DE6 	
+	N/A 	IOSS, Delivery duty paid
+	Royal Mail OBA
+	
+globalpriority Europe (01 / Y6002738) (£100 compensation)
+See details
+	ECA 	
+	Up to £100 	Tracked, Signed For included, Email notification, IOSS
+	Royal Mail OBA
+	
+INTL BUS PRCLS TRACKED DDP (01 / X6002738) (£100 compensation)
+See details
+	MPR 	
+	Up to £100 	Tracked, Email notification, Delivery duty paid
+	Royal Mail OBA
+	
+INTERNATIONAL STANDARD ON ACCOUNT (01) (£20 compensation)
+See details
+	OLA 	
+	Up to £20 	IOSS
+	Royal Mail OBA
+	
+INTERNATIONAL ECONOMY ON ACCOUNT (01) (£20 compensation)
+See details
+	OLS 	
+	Up to £20 	IOSS
+	Royal Mail OBA
+	
+INTERNATIONAL TRACKED ON ACCOUNT (01) (£50 compensation)
+See details
+	OTA 	
+	Up to £50 	Tracked, Email notification, IOSS
+	Royal Mail OBA
+	
+INTL TRACKED ON ACCOUNT EXTRA COMP (01) (£250 compensation)
+See details
+	OTB 	
+	Up to £250 	Tracked, Email notification, IOSS 

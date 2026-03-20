@@ -25,6 +25,11 @@ class ShippingOption:
     safeplace: bool = False
     age_verified: bool = False
     ioss: bool = False
+    signed_for: bool = False
+    local_collect: bool = False
+    ddp: bool = False
+    is_oba: bool = False
+    max_weight_g: Optional[int] = None
 
     @property
     def net(self):
@@ -39,6 +44,9 @@ class ShippingOption:
             "Safeplace": self.safeplace,
             "Age verified on delivery": self.age_verified,
             "IOSS": self.ioss,
+            "Signed For": self.signed_for,
+            "Local Collect": self.local_collect,
+            "Delivery duty paid": self.ddp,
         }
         return ", ".join(name for name, enabled in flags.items() if enabled)
 

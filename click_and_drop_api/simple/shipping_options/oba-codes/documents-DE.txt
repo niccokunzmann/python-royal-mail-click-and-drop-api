@@ -1,0 +1,23 @@
+
+INTERNATIONAL STANDARD ON ACCOUNT (01) (£20 compensation)
+See details
+	OLA 	
+	Up to £20 	IOSS
+	Royal Mail OBA
+	
+INTERNATIONAL ECONOMY ON ACCOUNT (01) (£20 compensation)
+See details
+	OLS 	
+	Up to £20 	IOSS
+	Royal Mail OBA
+	
+INTERNATIONAL TRACKED ON ACCOUNT (01) (£50 compensation)
+See details
+	OTA 	
+	Up to £50 	Tracked, Email notification, IOSS
+	Royal Mail OBA
+	
+INTL TRACKED ON ACCOUNT EXTRA COMP (01) (£250 compensation)
+See details
+	OTB 	
+	Up to £250 	Tracked, Email notification 

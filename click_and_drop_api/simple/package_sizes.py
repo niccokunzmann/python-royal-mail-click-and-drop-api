@@ -258,15 +258,33 @@ large_parcel = PackageSize(
     3000,
     shipping_options.large_parcel.options,
 )
+parcel = PackageSize(
+    "parcel",
+    "Parcel",
+    30000,
+    1500,
+    3000,
+    3000,
+    shipping_options.parcel.options,
+)
+documents = PackageSize(
+    "documents",
+    "Documents",
+    30000,
+    1500,
+    3000,
+    3000,
+    shipping_options.documents.options,
+)
 packages_sizes = [
     letter,
     large_letter,
     small_parcel,
     medium_parcel,
     large_parcel,
+    parcel,
+    documents,
 ]
-
-# TODO: Missing "parcel" and "documents"
 
 
 def choose_package_size_by_weight(
@@ -321,6 +339,8 @@ def get_package_sizes(codes: list[str]) -> list[PackageSize]:
 __all__ = [
     "PackageSize",
     "packages_sizes",
+    "parcel",
+    "documents",
     "get_package_size",
     "choose_package_size_by_weight",
     "list_package_sizes",

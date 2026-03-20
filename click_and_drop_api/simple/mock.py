@@ -7,13 +7,14 @@ from typing import Literal, Optional, Union
 
 import click_and_drop_api
 
+from .base import AbstractClickAndDrop
 from .types import CreateOrder
 
 _MOCK_KEY = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
 _MOCK_VERSION = "1.0.0-mock"
 
 
-class MockClickAndDrop:
+class MockClickAndDrop(AbstractClickAndDrop):
     """Drop-in replacement for ClickAndDrop that stores orders in memory.
 
     Useful for unit tests that should not make real HTTP calls.
@@ -82,11 +83,6 @@ class MockClickAndDrop:
             failed_orders=[],
         )
 
-    def create_order(
-        self, order: CreateOrder
-    ) -> click_and_drop_api.CreateOrdersResponse:
-        return self.create_orders(order)
-
     def get_orders(
         self, order_identifiers: Union[list[Union[str, int]], str, int]
     ) -> list[click_and_drop_api.GetOrderInfoResource]:
@@ -105,12 +101,6 @@ class MockClickAndDrop:
                         result.append(order)
                         break
         return result
-
-    def get_order(
-        self, order_identifier: Union[str, int]
-    ) -> Optional[click_and_drop_api.GetOrderInfoResource]:
-        orders = self.get_orders(order_identifier)
-        return orders[0] if orders else None
 
     def delete_orders(
         self, order_identifiers: Union[list[Union[str, int]], str, int]

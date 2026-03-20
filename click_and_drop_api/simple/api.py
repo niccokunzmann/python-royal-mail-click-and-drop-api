@@ -1,6 +1,7 @@
 """The simple API interface."""
 
 from typing import Literal, Optional, Union
+from .base import AbstractClickAndDrop
 from .types import CreateOrder
 import click_and_drop_api
 
@@ -25,7 +26,7 @@ def order_identifiers_to_string(
     return ";".join(map(order_identifier_to_string, order_identifiers))
 
 
-class ClickAndDrop:
+class ClickAndDrop(AbstractClickAndDrop):
     """The Click & Drop API simplified."""
 
     host = "https://api.parcel.royalmail.com/api/v1"
@@ -92,29 +93,6 @@ class ClickAndDrop:
             order_identifiers=order_identifiers_to_string(order_identifiers)
         )
 
-    def get_order(
-        self, order_identifier: Union[str, int]
-    ) -> Optional[click_and_drop_api.GetOrderInfoResource]:
-        """Get a specific order.
-
-        Parameters:
-            order_identifiers:
-                One or several Order Identifiers or Order References.
-                Order Identifiers are integer numbers.
-                Order References are strings.
-                The maximum number of identifiers is 100.
-
-        Returns:
-            The order or None if not found.
-
-        Raises:
-            click_and_drop_api.exceptions.BadRequestException if an order with the same reference already exists
-
-        https://api.parcel.royalmail.com/#tag/Orders/operation/GetOrderAsync
-        """
-        orders = self.get_orders(order_identifier)
-        return orders[0] if orders else None
-
     def delete_orders(
         self, order_identifiers: Union[list[Union[str, int]], str, int]
     ) -> click_and_drop_api.DeleteOrdersResource:
@@ -149,15 +127,6 @@ class ClickAndDrop:
             orders = [orders]
         request = click_and_drop_api.CreateOrdersRequest(items=orders)
         return self._orders_api.create_orders_async(request)
-
-    def create_order(
-        self, order: CreateOrder
-    ) -> click_and_drop_api.CreateOrdersResponse:
-        """Create a new order.
-
-        https://api.parcel.royalmail.com/#tag/Orders/operation/CreateOrdersAsync
-        """
-        return self.create_orders(order)
 
     def get_label(
         self,

@@ -13,6 +13,8 @@ from . import large_letter
 from . import small_parcel
 from . import medium_parcel
 from . import large_parcel
+from . import parcel
+from . import documents
 
 
 def _get_all_shipping_options() -> list[ShippingOption]:
@@ -22,6 +24,8 @@ def _get_all_shipping_options() -> list[ShippingOption]:
         + small_parcel.options
         + medium_parcel.options
         + large_parcel.options
+        + parcel.options
+        + documents.options
     )
 
 
@@ -56,9 +60,11 @@ def get_shipping_options(*options: str) -> list[ShippingOption]:
 
 
 __all__ = [
+    "documents",
     "large_letter",
     "large_parcel",
     "letter",
     "medium_parcel",
+    "parcel",
     "small_parcel",
 ]

@@ -122,8 +122,10 @@ def test_gross_and_tax_parsed():
 
 
 def test_brand_royal_mail():
-    domestic = [o for o in letter_options if not o.international]
-    assert all(o.brand == "Royal Mail" for o in domestic)
+    domestic_non_oba = [
+        o for o in letter_options if not o.international and not o.is_oba
+    ]
+    assert all(o.brand == "Royal Mail" for o in domestic_non_oba)
 
 
 def test_brand_parcel_force():

@@ -1,0 +1,230 @@
+
+Royal Mail 1st Class (01 / 816331X0) (£20 compensation)
+See details
+	BPL1 	
+24 hour (next working day)
+	Up to £20 	
+	Royal Mail OBA
+	
+Royal Mail 2nd Class (01 / 816331X0) (£20 compensation)
+See details
+	BPL2 	
+48 hour (2 working days)
+	Up to £20 	
+	Royal Mail OBA
+	
+Royal Mail 1st Class Signed For (01) (£20 compensation)
+See details
+	BPR1 	
+24 hour (next working day)
+	Up to £20 	Signed For included
+	Royal Mail OBA
+	
+Royal Mail 2nd Class Signed For (01) (£20 compensation)
+See details
+	BPR2 	
+48 hour (2 working days)
+	Up to £20 	Signed For included
+	Royal Mail OBA
+	
+Special Delivery Guaranteed by 1pm - £750 (01) (£750 compensation)
+See details
+	SD1 	
+Guaranteed by 1pm next working day
+	Up to £750 	Signed For included, Email/SMS notification, Local Collect
+	Royal Mail OBA
+	
+Special Delivery Guaranteed by 1pm - £1000 (01) (£1000 compensation)
+See details
+	SD2 	
+Guaranteed by 1pm next working day
+	Up to £1000 	Signed For included, Email/SMS notification, Local Collect
+	Royal Mail OBA
+	
+Special Delivery Guaranteed by 1pm - £2500 (01) (£2500 compensation)
+See details
+	SD3 	
+Guaranteed by 1pm next working day
+	Up to £2500 	Signed For included, Email/SMS notification, Local Collect
+	Royal Mail OBA
+	
+Special Delivery Guaranteed by 9am - £750 (01) (£750 compensation)
+See details
+	SD4 	
+Guaranteed by 9am next working day
+	Up to £750 	Signed For included, Email/SMS notification, Local Collect
+	Royal Mail OBA
+	
+Special Delivery Guaranteed by 9am - £1000 (01) (£1000 compensation)
+See details
+	SD5 	
+Guaranteed by 9am next working day
+	Up to £1000 	Signed For included, Email/SMS notification, Local Collect
+	Royal Mail OBA
+	
+Special Delivery Guaranteed by 9am - £2500 (01) (£2500 compensation)
+See details
+	SD6 	
+Guaranteed by 9am next working day
+	Up to £2500 	Signed For included, Email/SMS notification, Local Collect
+	Royal Mail OBA
+	
+Special Delivery Guaranteed by 1pm (ID) - £750 (01) (£750 compensation)
+See details
+	SDA 	
+Guaranteed by 1pm next working day
+	Up to £750 	Signed For included, Email/SMS notification, Local Collect
+	Royal Mail OBA
+	
+Special Delivery Guaranteed by 1pm (ID) - £1000 (01) (£1000 compensation)
+See details
+	SDB 	
+Guaranteed by 1pm next working day
+	Up to £1000 	Signed For included, Email/SMS notification, Local Collect
+	Royal Mail OBA
+	
+Special Delivery Guaranteed by 1pm (ID) - £2500 (01) (£2500 compensation)
+See details
+	SDC 	
+Guaranteed by 1pm next working day
+	Up to £2500 	Signed For included, Email/SMS notification, Local Collect
+	Royal Mail OBA
+	
+Special Delivery Guaranteed by 9am (ID) - £750 (01) (£750 compensation)
+See details
+	SDE 	
+Guaranteed by 9am next working day
+	Up to £750 	Signed For included, Email/SMS notification, Local Collect
+	Royal Mail OBA
+	
+Special Delivery Guaranteed by 9am (ID) - £1000 (01) (£1000 compensation)
+See details
+	SDF 	
+Guaranteed by 9am next working day
+	Up to £1000 	Signed For included, Email/SMS notification, Local Collect
+	Royal Mail OBA
+	
+Special Delivery Guaranteed by 9am (ID) - £2500 (01) (£2500 compensation)
+See details
+	SDG 	
+Guaranteed by 9am next working day
+	Up to £2500 	Signed For included, Email/SMS notification, Local Collect
+	Royal Mail OBA
+	
+Special Delivery Guaranteed by 1pm (AGE) - £750 (01 / 816331X0) (£750 compensation)
+See details
+	SDH 	
+Guaranteed by 1pm next working day
+	Up to £750 	Signed For included, Email/SMS notification
+	Royal Mail OBA
+	
+Special Delivery Guaranteed by 1pm (AGE) - £1000 (01 / 816331X0) (£1000 compensation)
+See details
+	SDJ 	
+Guaranteed by 1pm next working day
+	Up to £1000 	Signed For included, Email/SMS notification
+	Royal Mail OBA
+	
+Special Delivery Guaranteed by 1pm (AGE) - £2500 (01 / 816331X0) (£2500 compensation)
+See details
+	SDK 	
+Guaranteed by 1pm next working day
+	Up to £2500 	Signed For included, Email/SMS notification
+	Royal Mail OBA
+	
+Special Delivery Guaranteed by 9am (AGE) - £750 (01) (£750 compensation)
+See details
+	SDM 	
+Guaranteed by 9am next working day
+	Up to £750 	Signed For included, Email/SMS notification
+	Royal Mail OBA
+	
+Special Delivery Guaranteed by 9am (AGE) - £1000 (01) (£1000 compensation)
+See details
+	SDN 	
+Guaranteed by 9am next working day
+	Up to £1000 	Signed For included, Email/SMS notification
+	Royal Mail OBA
+	
+Special Delivery Guaranteed by 9am (AGE) - £2500 (01) (£2500 compensation)
+See details
+	SDQ 	
+Guaranteed by 9am next working day
+	Up to £2500 	Signed For included, Email/SMS notification
+	Royal Mail OBA
+	
+Special Delivery Guaranteed AG £750 (01) (£750 compensation)
+See details
+	SDV 	
+Guaranteed end of next day delivery
+	Up to £750 	Tracked, Signed For included, Email/SMS notification
+	Royal Mail OBA
+	
+Special Delivery Guaranteed AG £1000 (01) (£1000 compensation)
+See details
+	SDW 	
+Guaranteed end of next day delivery
+	Up to £1000 	Tracked, Signed For included, Email/SMS notification
+	Royal Mail OBA
+	
+Special Delivery Guaranteed AG £2500 (01) (£2500 compensation)
+See details
+	SDX 	
+Guaranteed end of next day delivery
+	Up to £2500 	Tracked, Signed For included, Email/SMS notification
+	Royal Mail OBA
+	
+Special Delivery Guaranteed ID £750 (01) (£750 compensation)
+See details
+	SDY 	
+Guaranteed end of next day delivery
+	Up to £750 	Tracked, Signed For included, Email/SMS notification, Local Collect
+	Royal Mail OBA
+	
+Special Delivery Guaranteed ID £1000 (01) (£1000 compensation)
+See details
+	SDZ 	
+Guaranteed end of next day delivery
+	Up to £1000 	Tracked, Signed For included, Email/SMS notification, Local Collect
+	Royal Mail OBA
+	
+Special Delivery Guaranteed ID £2500 (01) (£2500 compensation)
+See details
+	SEA 	
+Guaranteed end of next day delivery
+	Up to £2500 	Tracked, Signed For included, Email/SMS notification, Local Collect
+	Royal Mail OBA
+	
+Special Delivery Guaranteed £750 (01) (£750 compensation)
+See details
+	SEB 	
+Guaranteed end of next day delivery
+	Up to £750 	Tracked, Signed For included, Email/SMS notification, Local Collect
+	Royal Mail OBA
+	
+Special Delivery Guaranteed £1000 (01) (£1000 compensation)
+See details
+	SEC 	
+Guaranteed end of next day delivery
+	Up to £1000 	Tracked, Signed For included, Email/SMS notification, Local Collect
+	Royal Mail OBA
+	
+Special Delivery Guaranteed £2500 (01) (£2500 compensation)
+See details
+	SED 	
+Guaranteed end of next day delivery
+	Up to £2500 	Tracked, Signed For included, Email/SMS notification, Local Collect
+	Royal Mail OBA
+	
+1st Class Account Mail (01 / 816331X0)
+See details
+	STL1 	
+24 hour (next working day)
+	N/A 	Signed For optional
+	Royal Mail OBA
+	
+2nd Class Account Mail (01 / 816331X0)
+See details
+	STL2 	
+48 hour (2 working days)
+	N/A 	Signed For optional 
