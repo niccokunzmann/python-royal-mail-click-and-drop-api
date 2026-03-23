@@ -122,6 +122,36 @@ Output:
 --8<-- "examples/package_size_and_cost.py.out"
 ```
 
+## Print shipping countries for a service code
+
+This example prints every country that accepts a given service code by testing each one via the API.
+Test orders are created and immediately deleted — no real shipments are made.
+
+```python
+--8<-- "examples/shipping_countries.py"
+```
+
+Output:
+
+```text
+--8<-- "examples/shipping_countries.py.out"
+```
+
+## Check if account is OBA
+
+Some features — such as label generation and OBA-only service codes — require an OBA (Online Business Account).
+This example checks whether your account is an OBA by sending a test order with an OBA service code and immediately deleting it.
+
+```python
+--8<-- "examples/check_oba.py"
+```
+
+Output:
+
+```text
+--8<-- "examples/check_oba.py.out"
+```
+
 ## Create postage labels
 
 [Labels API Documentation](https://api.parcel.royalmail.com/#tag/Labels)

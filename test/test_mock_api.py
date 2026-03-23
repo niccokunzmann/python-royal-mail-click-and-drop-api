@@ -227,7 +227,7 @@ def test_test_shipping_returns_named_tuple():
 def test_test_shipping_succeeds_with_mock():
     api = MockClickAndDrop()
     result = api.test_shipping("smallParcel", "TPN24")
-    assert result.success is True
+    assert result.is_success is True
     assert isinstance(result.message, str)
 
 
@@ -242,13 +242,13 @@ def test_test_shipping_default_weight():
     api = MockClickAndDrop()
     # weight_in_grams defaults to 1 — should not raise
     result = api.test_shipping("letter", "BPL1")
-    assert result.success is True
+    assert result.is_success is True
 
 
 def test_test_shipping_address_by_country_code():
     api = MockClickAndDrop()
     result = api.test_shipping("smallParcel", "TPN24", address="DE")
-    assert result.success is True
+    assert result.is_success is True
 
 
 def test_test_shipping_address_object():
@@ -256,13 +256,13 @@ def test_test_shipping_address_object():
 
     api = MockClickAndDrop()
     result = api.test_shipping("smallParcel", "TPN24", address=ADDRESSES["FR"])
-    assert result.success is True
+    assert result.is_success is True
 
 
 def test_test_shipping_custom_weight():
     api = MockClickAndDrop()
     result = api.test_shipping("smallParcel", "TPN24", weight_in_grams=500)
-    assert result.success is True
+    assert result.is_success is True
 
 
 def test_test_shipping_message_contains_order_id():
@@ -275,5 +275,5 @@ def test_test_shipping_multiple_calls_stay_clean():
     api = MockClickAndDrop()
     for service_code in ("BPL1", "TPN24", "TPS48"):
         result = api.test_shipping("smallParcel", service_code)
-        assert result.success is True
+        assert result.is_success is True
     assert len(api._orders) == 0

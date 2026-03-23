@@ -11,6 +11,7 @@ import uuid
 from datetime import datetime, timezone
 
 from click_and_drop_api.exceptions import ApiException
+from click_and_drop_api.models.create_order_response import CreateOrderResponse
 from click_and_drop_api.simple import (
     Address,
     CreateOrder,
@@ -18,14 +19,43 @@ from click_and_drop_api.simple import (
     RecipientDetails,
     ShipmentPackage,
 )
-from click_and_drop_api.simple.addresses import get_address
+from click_and_drop_api.simple.addresses import get_address, get_all_country_codes
 
 
 class ShippingTestResult(NamedTuple):
     """Result of a live API shipping test."""
 
-    success: bool
-    message: str
+    successful_addresses: list[Address]
+    failed_addresses: list[Address]
+    failed_messages: list[str]
+
+    @property
+    def is_success(self) -> bool:
+        """Whether all addresses succeeded.
+
+        Note: If you have several countries to test, this will be ``True`` if
+        *any* country succeeds.
+        """
+        return bool(self.successful_addresses)
+
+    @property
+    def is_failure(self) -> bool:
+        """Whether any addresses failed.
+
+        Note: If you have several countries to test, this will be ``True`` if
+        *any* country failes.
+        """
+        return bool(self.failed_addresses)
+
+    @property
+    def failed_countries(self) -> list[str]:
+        """List of ISO 3166-1 alpha-2 country codes that failed."""
+        return [a.country_code for a in self.failed_addresses]
+
+    @property
+    def successful_countries(self) -> list[str]:
+        """List of ISO 3166-1 alpha-2 country codes that succeeded."""
+        return [a.country_code for a in self.successful_addresses]
 
 
 class AbstractClickAndDrop(ABC):
@@ -87,12 +117,37 @@ class AbstractClickAndDrop(ABC):
     ) -> bytearray:
         """Generate a label PDF for one or more orders."""
 
+    NON_OBA_TEST_SERVICE_CODE = "OLP1"
+
+    def is_oba(self) -> bool:
+        """Wether this is an OBA account.
+
+        Check wether this is an OBA account by trying to create an order service code.
+        """
+        return self.test_shipping("letter", self.NON_OBA_TEST_SERVICE_CODE).is_failure
+
+    def get_countries_for_shipping(
+        self,
+        package_size: str,
+        service_code: str,
+        weight_in_grams: int = 1,
+    ) -> list[str]:
+        """Get a list of ISO 3166-1 alpha-2 country code strings.
+
+        These are the countries that can be shipped with this service.
+        """
+        countries = get_all_country_codes()
+        result = self.test_shipping(
+            package_size, service_code, weight_in_grams, countries
+        )
+        return result.successful_countries
+
     def test_shipping(
         self,
         package_size: str,
         service_code: str,
         weight_in_grams: int = 1,
-        address: "Union[str, Address]" = "GB",
+        address: Union[str, Address, list[Union[str, Address]]] = "GB",
     ) -> ShippingTestResult:
         """Create a minimal test order, delete it, and report the result.
 
@@ -100,7 +155,8 @@ class AbstractClickAndDrop(ABC):
             package_size: The package format identifier (e.g. ``"smallParcel"``).
             service_code: The OBA service code to test (e.g. ``"TPN24"``).
             weight_in_grams: Weight of the test parcel in grams. Defaults to 1.
-            address: Destination address. Pass either an :class:`~click_and_drop_api.simple.types.Address`
+            address: Destination address(es).
+                Pass either an :class:`~click_and_drop_api.simple.types.Address`
                 instance or an ISO 3166-1 alpha-2 country code string (e.g. ``"DE"``).
                 Use :mod:`click_and_drop_api.simple.addresses` for a ready-made
                 address for every country.
@@ -108,13 +164,76 @@ class AbstractClickAndDrop(ABC):
         Returns:
             :class:`ShippingTestResult` with ``success=True/False`` and a message.
         """
+        if not isinstance(address, list):
+            address = [address]
+        if not address:
+            raise ValueError("At least one address or country must be specified")
+        address = [get_address(a) if isinstance(a, str) else a for a in address]
+        orders = [
+            self.create_test_order_for_address(
+                package_size, service_code, weight_in_grams, a
+            )
+            for a in address
+        ]
+        reference_to_address = {
+            order.order_reference: order.recipient.address for order in orders
+        }
 
-        if isinstance(address, str):
-            address = get_address(address)
+        def get_order_address(order: CreateOrder | CreateOrderResponse) -> Address:
+            return reference_to_address[order.order_reference]
 
-        order_reference = f"test-{uuid.uuid4().hex[:16]}"
+        successful_addresses = []
+        failed_addresses = []
+        failed_messages = []
+        to_delete = []
+        # we can request at max 100 orders at a time
+        for i in range((len(orders) - 1) // 100 + 1):
+            order_subset = orders[i * 100 : (i + 1) * 100]
+            try:
+                response = self.create_orders(order_subset)
+            except ApiException as e:
+                failed_addresses += [get_order_address(order) for order in order_subset]
+                failed_messages += [
+                    f"API error ({e.status} {e.reason}): {e.body or e.data or ''}"
+                ] * len(order_subset)
+                continue
+            except Exception as e:
+                failed_addresses += [get_order_address(order) for order in order_subset]
+                failed_messages += [f"Unexpected error: {e}"] * len(order_subset)
+                continue
+            for co in response.created_orders:
+                successful_addresses.append(get_order_address(co))
+                to_delete.append(co.order_identifier)
+            for fo in response.failed_orders:
+                failed_addresses.append(get_order_address(fo.order))
+                failed_messages.append(
+                    ";".join(
+                        f"Error {e.error_code} in {e.fields}: {e.error_message}"
+                        for e in fo.errors
+                    )
+                )
+        for i in range((len(to_delete) - 1) // 100 + 1):
+            self.delete_orders(to_delete[i * 100 : (i + 1) * 100])
+        return ShippingTestResult(
+            successful_addresses, failed_addresses, failed_messages
+        )
 
-        order = CreateOrder(
+    def get_order_test_name(self, country_code: str) -> str:
+        """Return a name for a test order for a specific country."""
+        return f"test-{country_code}-{uuid.uuid4().hex[:16]}"
+
+    def create_test_order_for_address(
+        self,
+        package_size: str,
+        service_code: str,
+        weight_in_grams: int,
+        address: Address,
+    ):
+        """Create an order for a specific country."""
+
+        order_reference = self.get_order_test_name(address.country_code)
+
+        return CreateOrder(
             order_reference=order_reference,
             recipient=RecipientDetails(address=address),
             packages=[
@@ -129,45 +248,6 @@ class AbstractClickAndDrop(ABC):
             total=1.00,
             currency_code="GBP",
             postage_details=PostageDetails(service_code=service_code),
-        )
-
-        try:
-            response = self.create_order(order)
-        except ApiException as e:
-            return ShippingTestResult(
-                False, f"API error ({e.status} {e.reason}): {e.body or e.data or ''}"
-            )
-        except Exception as e:
-            return ShippingTestResult(False, f"Unexpected error: {e}")
-
-        if response.failed_orders:
-            errors = [
-                e2.error_message
-                for e1 in response.failed_orders
-                for e2 in (e1.errors or [])
-                if e2.error_message
-            ]
-            return ShippingTestResult(
-                False,
-                f"Order rejected by API: {'; '.join(errors) or response.failed_orders}",
-            )
-
-        if response.created_orders:
-            order_ids = [co.order_identifier for co in response.created_orders]
-            try:
-                self.delete_orders(order_ids)
-            except ApiException:
-                pass  # best-effort cleanup
-            return ShippingTestResult(
-                True,
-                (
-                    f"API accepted the order (id {order_ids[0]}) "
-                    f"and it was deleted immediately."
-                ),
-            )
-
-        return ShippingTestResult(
-            False, "API returned no created orders and no errors — unexpected response."
         )
 
 

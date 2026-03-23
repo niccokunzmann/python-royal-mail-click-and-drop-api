@@ -1,5 +1,16 @@
 # Changelog
 
+## v1.4.0
+
+- `ShippingTestResult` redesigned: fields are now `successful_addresses`, `failed_addresses`, `failed_messages` (list-based, one entry per country tested)
+- `ShippingTestResult` gains properties: `is_success`, `is_failure`, `successful_countries`, `failed_countries`
+- `test_shipping` now accepts a list of addresses/country codes and batches them in groups of 100 for efficiency
+- Add `AbstractClickAndDrop.is_oba()` — detects OBA accounts by probing `a test order
+- Add `AbstractClickAndDrop.get_countries_for_shipping()` — returns every country the API accepts for a given service code and package size
+- Add `get_all_country_codes()` to `click_and_drop_api.simple.addresses`
+- Add `examples/check_oba.py` — checks whether the account is an OBA account
+- Add `examples/shipping_countries.py` — prints all countries a service code ships to
+
 ## v1.3.0
 
 - Add `AbstractClickAndDrop` ABC with shared interface for `ClickAndDrop` and `MockClickAndDrop`

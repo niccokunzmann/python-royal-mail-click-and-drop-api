@@ -23,6 +23,11 @@ def get_address(country_code: str) -> Address:
     return ADDRESSES[country_code.upper()]
 
 
+def get_all_country_codes() -> list[str]:
+    """Return all known country codes (ISO 3166-1 alpha-2)."""
+    return list(sorted(ADDRESSES.keys()))
+
+
 ADDRESSES: dict[str, Address] = {
     "AD": Address(
         full_name="Test Recipient",
@@ -1686,4 +1691,4 @@ ADDRESSES: dict[str, Address] = {
     ),
 }
 
-__all__ = ["ADDRESSES", "get_address"]
+__all__ = ["ADDRESSES", "get_address", "get_all_country_codes"]
