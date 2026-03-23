@@ -58,13 +58,13 @@ The examples use the simple API that is based on the generated API and reduces t
 Retrieving the version is useful to understand if you can use the API without authentication.
 
 ```python
---8<-- "examples/view_version.py"
+--8<-- "click_and_drop_api/examples/view_version.py"
 ```
 
 Output:
 
 ```text
---8<-- "examples/view_version.py.out"
+--8<-- "click_and_drop_api/examples/view_version.py.out"
 ```
 
 ## View specific orders
@@ -78,13 +78,13 @@ The image below shows orders that were created as examples.
 The script below retrieves information about these orders, by id (`int`) and by reference (`str`).
 
 ```python
---8<-- "examples/view_specific_orders.py"
+--8<-- "click_and_drop_api/examples/view_specific_orders.py"
 ```
 
 Output:
 
 ```text
---8<-- "examples/view_specific_orders.py.out"
+--8<-- "click_and_drop_api/examples/view_specific_orders.py.out"
 ```
 
 ## Create and delete orders
@@ -94,13 +94,13 @@ Output:
 The script below creates a new order and then deletes it.
 
 ```python
---8<-- "examples/create_order.py"
+--8<-- "click_and_drop_api/examples/create_order.py"
 ```
 
 Output:
 
 ```text
---8<-- "examples/create_order.py.out"
+--8<-- "click_and_drop_api/examples/create_order.py.out"
 ```
 
 ## Package sizes and their shipping options
@@ -113,13 +113,13 @@ If the values are outdated, you are welcome to update them with a pull request a
 This example prints all the available package sizes and their shipping options.
 
 ```python
---8<-- "examples/package_size_and_cost.py"
+--8<-- "click_and_drop_api/examples/package_size_and_cost.py"
 ```
 
 Output:
 
 ```text
---8<-- "examples/package_size_and_cost.py.out"
+--8<-- "click_and_drop_api/examples/package_size_and_cost.py.out"
 ```
 
 ## Print shipping countries for a service code
@@ -128,13 +128,13 @@ This example prints every country that accepts a given service code by testing e
 Test orders are created and immediately deleted — no real shipments are made.
 
 ```python
---8<-- "examples/shipping_countries.py"
+--8<-- "click_and_drop_api/examples/shipping_countries.py"
 ```
 
 Output:
 
 ```text
---8<-- "examples/shipping_countries.py.out"
+--8<-- "click_and_drop_api/examples/shipping_countries.py.out"
 ```
 
 ## Check if account is OBA
@@ -143,13 +143,13 @@ Some features — such as label generation and OBA-only service codes — requir
 This example checks whether your account is an OBA by sending a test order with an OBA service code and immediately deleting it.
 
 ```python
---8<-- "examples/check_oba.py"
+--8<-- "click_and_drop_api/examples/check_oba.py"
 ```
 
 Output:
 
 ```text
---8<-- "examples/check_oba.py.out"
+--8<-- "click_and_drop_api/examples/check_oba.py.out"
 ```
 
 ## Create postage labels
@@ -161,5 +161,5 @@ Output:
 The script below takes an order id or reference as an argument and generates a postage label for it.
 
 ```python
---8<-- "examples/generate_label.py"
+--8<-- "click_and_drop_api/examples/generate_label.py"
 ```

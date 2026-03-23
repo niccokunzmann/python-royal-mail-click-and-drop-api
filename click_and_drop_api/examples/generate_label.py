@@ -18,7 +18,7 @@ if len(sys.argv) < 2:
     print(
         f"""{Path(__file__).name} [ORDER_NUMBER_OR_REFERENCE]
 
-    ORDER_NUMBER_OR_REFERENCE: The order number or reference.   
+    ORDER_NUMBER_OR_REFERENCE: The order number or reference.
     """
     )
     print(__doc__)

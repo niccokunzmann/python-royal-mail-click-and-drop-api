@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.4.1
+
+- Move examples from `examples/` into `click_and_drop_api/examples/` — now executable as modules: `python -m click_and_drop_api.examples.view_version`
+- Add `click_and_drop_api/examples/__init__.py` documenting all runnable examples
+- Update `make test-examples` to use `python -m click_and_drop_api.examples.<name>`
+- `create_order.py` now always uses a timestamped reference instead of `None`
+
 ## v1.4.0
 
 - `ShippingTestResult` redesigned: fields are now `successful_addresses`, `failed_addresses`, `failed_messages` (list-based, one entry per country tested)

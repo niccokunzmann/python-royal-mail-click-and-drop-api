@@ -64,9 +64,9 @@ github-pages: .venv
 # respect rate limit
 # > Exceeding the rate limit of 5 calls per second will result in a 429 error.
 test-examples: .venv
-	for f in examples/*.py; do \
-		echo $$f; \
-		.venv/bin/python $$f || exit 1; \
+	for m in view_version view_specific_orders package_size_and_cost create_order check_oba shipping_countries; do \
+		echo click_and_drop_api.examples.$$m; \
+		.venv/bin/python -m click_and_drop_api.examples.$$m || exit 1; \
 		echo; \
 		sleep 1; \
 	done

@@ -23,7 +23,7 @@ api = ClickAndDrop(API_KEY)
 
 # choose a new reference or else the API will reject the order
 REFERENCE = "example-order-{now}".format(now=datetime.now(UTC).strftime("%Y%m%d%H%M%S"))
-REFERENCE = None
+
 package = PackageSize.get("letter")  # send a letter
 service = package.get_shipping_option("OLP2")  # with 2nd class delivery
 
