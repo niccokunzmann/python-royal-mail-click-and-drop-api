@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 
 import pytest
 
-from click_and_drop_api.simple.base import ShippingTestResult
+from click_and_drop_api.simple.shipping_test_result import ShippingTestResult
 from click_and_drop_api.simple.mock import MockClickAndDrop
 from click_and_drop_api.simple.types import (
     Address,
@@ -265,10 +265,10 @@ def test_test_shipping_custom_weight():
     assert result.is_success is True
 
 
-def test_test_shipping_message_contains_order_id():
+def test_test_shipping_message_is_empty_on_success():
     api = MockClickAndDrop()
     result = api.test_shipping("smallParcel", "TPN24")
-    assert "id" in result.message
+    assert result.message == ""
 
 
 def test_test_shipping_multiple_calls_stay_clean():
