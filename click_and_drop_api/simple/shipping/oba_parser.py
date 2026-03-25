@@ -15,10 +15,13 @@ from decimal import Decimal as D
 from pathlib import Path
 from typing import Optional
 
-from .model import ShippingOption
+from .package_shipping_option import PackageShippingOption
+from .format_dimensions import PACKAGE_FORMATS, SERVICE_DIMENSIONS
 
-# Maps OBA enhancement tokens to ShippingOption field names.
-# "Email/SMS notification" is handled separately as it maps to two fields.
+_COMP_PATTERN = re.compile(r"^\t(Up to £[\d.]+|N/A)")
+
+# Maps OBA enhancement tokens to PackageShippingOption field names.
+# "Email/SMS notification" is handled separately (maps to two fields).
 _ENHANCEMENT_FIELDS: dict[str, str] = {
     "Tracked": "tracked",
     "Email notification": "email_notification",
@@ -58,15 +61,20 @@ def parse_oba_file(
     path: Path | str,
     package_size: str,
     max_weight_g: Optional[int] = None,
-) -> list[ShippingOption]:
+) -> list[PackageShippingOption]:
     """Parse an OBA shipping option txt file.
 
     The filename stem determines whether options are international:
     files ending in ``-GB`` are domestic; all others are international.
+
+    Parameters:
+        max_weight_g: Default service-level weight cap for every option in this
+            file. Individual entries may be overridden via SERVICE_DIMENSIONS.
     """
     path = Path(path)
     international = not path.stem.endswith("-GB")
     lines = path.read_text().splitlines()
+    fmt = PACKAGE_FORMATS[package_size]
     options = []
 
     i = 0
@@ -75,7 +83,6 @@ def parse_oba_file(
             i += 1
             continue
 
-        # Service name: last non-empty, non-tab line before "See details"
         service = ""
         for j in range(i - 1, -1, -1):
             line = lines[j]
@@ -83,14 +90,12 @@ def parse_oba_file(
                 service = line.strip()
                 break
 
-        # Service code: first non-empty line after "See details"
         i += 1
         while i < len(lines) and not lines[i].strip():
             i += 1
         code_line = lines[i].strip() if i < len(lines) else ""
         service_code = code_line.split()[0] if code_line else ""
 
-        # Next non-empty line: delivery speed or data line
         i += 1
         while i < len(lines) and not lines[i].strip():
             i += 1
@@ -98,22 +103,20 @@ def parse_oba_file(
             break
 
         next_line = lines[i]
-        comp_pattern = re.compile(r"^\t(Up to £[\d.]+|N/A)")
-        if comp_pattern.match(next_line):
+        if _COMP_PATTERN.match(next_line):
             delivery_speed = ""
             data_line = next_line
         else:
             delivery_speed = next_line.strip()
             i += 1
-            while i < len(lines) and not comp_pattern.match(lines[i]):
+            while i < len(lines) and not _COMP_PATTERN.match(lines[i]):
                 i += 1
             data_line = lines[i] if i < len(lines) else ""
 
-        if not data_line or not comp_pattern.match(data_line):
+        if not data_line or not _COMP_PATTERN.match(data_line):
             i += 1
             continue
 
-        # Data line format: \t{Up to £X | N/A}\t{enhancements}
         parts = data_line.split("\t")
         comp_str = parts[1].strip() if len(parts) > 1 else "N/A"
         if comp_str == "N/A":
@@ -124,9 +127,18 @@ def parse_oba_file(
 
         enhancements_str = parts[2].strip() if len(parts) > 2 else ""
 
+        # Use per-service dimensions if available, else fall back to format default.
+        dims = SERVICE_DIMENSIONS.get(service_code, fmt)
+
         options.append(
-            ShippingOption(
-                package_size=package_size,
+            PackageShippingOption(
+                package_size_code=package_size,
+                package_name=dims.name,
+                package_max_weight_g=dims.max_weight_g,
+                depth_mm=dims.depth_mm,
+                width_mm=dims.width_mm,
+                height_mm=dims.height_mm,
+                max_sum_mm=dims.max_sum_mm,
                 brand="Royal Mail OBA",
                 service=service,
                 service_code=service_code,
@@ -135,7 +147,7 @@ def parse_oba_file(
                 gross=D("0.00"),
                 international=international,
                 is_oba=True,
-                max_weight_g=max_weight_g,
+                service_max_weight_g=max_weight_g,
                 **_parse_enhancement_flags(enhancements_str),
             )
         )

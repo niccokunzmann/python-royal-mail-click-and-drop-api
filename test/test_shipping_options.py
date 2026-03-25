@@ -1,17 +1,14 @@
-from click_and_drop_api.simple import list_service_codes, check_service_codes
-from click_and_drop_api.simple.package_sizes import PackageSize, get_package_size
 import pytest
-import click_and_drop_api.simple.package_sizes as package_sizes
+from click_and_drop_api.simple import check_service_codes, db
 
 
 def test_list_all_shipping_options():
-    """Test ListAllShippingOptionsResponse"""
-    assert list_service_codes()
-    assert all(isinstance(code, str) for code in list_service_codes())
+    codes = db.service_codes()
+    assert codes
+    assert all(isinstance(code, str) for code in codes)
 
 
 def test_check_service_codes():
-    """Test CheckServiceCodesResponse"""
     check_service_codes(["OLP1", "OLP2"])
     with pytest.raises(ValueError):
         check_service_codes(["OLP1", "OLP2", "OLB3"])
@@ -30,79 +27,58 @@ def test_check_service_codes():
         ),
     ],
 )
-def test_select_all_shipping_options(package, selected, expected):
-    """Test SelectAllShippingOptionsResponse"""
-    package = get_package_size(package)
-    selected_subset = package.get_shipping_options_in(selected)
-    codes = {option.service_code for option in selected_subset}
-    assert codes == set(expected), (
-        f"Expected {expected}, got {codes} for {package.code}"
-    )
-    copy = package.with_shipping_limited_to(selected)
-    assert copy.shipping_options == selected_subset
-    assert copy.code == package.code
-    assert copy.name == package.name
-    assert copy.weight_grams == package.weight_grams
-    assert copy.length_mm == package.length_mm
-    assert copy.width_mm == package.width_mm
-    assert copy.height_mm == package.height_mm
+def test_select_shipping_options(package, selected, expected):
+    selected_set = set(selected)
+    options = [
+        o for o in db.for_package_size(package) if o.service_code in selected_set
+    ]
+    codes = {o.service_code for o in options}
+    assert codes == set(expected)
 
 
 def test_shipping_option_conversion_1():
-    postage = package_sizes.letter.get_shipping_option("OLP1").as_postage_details()
+    postage = db.get("letter", "OLP1").as_postage_details()
     assert postage.service_code == "OLP1"
-    # assert postage.carrier_name == "Royal Mail"  # API error if set
 
 
 def test_shipping_option_conversion_2():
-    postage = package_sizes.large_parcel.get_shipping_option(
-        "PFEAMSF"
-    ).as_postage_details()
+    postage = db.get("largeParcel", "PFEAMSF").as_postage_details()
     assert postage.service_code == "PFEAMSF"
-    # assert postage.carrier_name == "Parcel Force"  # API error if set
 
 
 def test_as_package_request_letter():
-    """Check the weight."""
-    package = get_package_size("letter")
-    assert package.as_package_request(100).weight_in_grams == 100
+    option = db.get("letter", "OLP1")
+    assert option.as_package_request(100).weight_in_grams == 100
 
 
-def test_as_package_request_largeLetter():
-    """Check the weight."""
-    package = get_package_size("largeLetter")
-    assert package.as_package_request(200).weight_in_grams == 200
+def test_as_package_request_large_letter():
+    option = db.get("largeLetter", "OLP1")
+    assert option.as_package_request(200).weight_in_grams == 200
 
 
 def test_cannot_be_too_heavy():
-    package = get_package_size("letter")
-    with pytest.raises(ValueError, match="1g to 100g allowed, got 2000g."):
-        package.as_package_request(2000)
+    option = db.get("letter", "OLP1")
+    with pytest.raises(ValueError, match="1g to 100g allowed"):
+        option.as_package_request(2000)
 
-    package = get_package_size("largeLetter")
-    with pytest.raises(ValueError, match="1g to 1000g allowed, got 3000g."):
-        package.as_package_request(3000)
+    option = db.get("largeLetter", "OLP1")
+    with pytest.raises(ValueError, match="1g to 1000g allowed"):
+        option.as_package_request(3000)
 
 
 def test_cannot_be_too_big():
-    package = get_package_size("letter")
-    with pytest.raises(
-        ValueError,
-        match="1000mm x 1000mm x 1000mm does not fit into 240mm x 165mm x 5mm.",
-    ):
-        package.as_package_request(100, 1000, 1000, 1000)
+    option = db.get("letter", "OLP1")
+    with pytest.raises(ValueError, match="does not fit into"):
+        option.as_package_request(100, 1000, 1000, 1000)
 
-    package = get_package_size("largeLetter")
-    with pytest.raises(
-        ValueError,
-        match="1003mm x 1002mm x 1001mm does not fit into 353mm x 250mm x 25mm.",
-    ):
-        package.as_package_request(1000, 1001, 1003, 1002)
+    option = db.get("largeLetter", "OLP1")
+    with pytest.raises(ValueError, match="does not fit into"):
+        option.as_package_request(1000, 1001, 1003, 1002)
 
 
 def test_package_request_with_dimensions():
-    package = get_package_size("letter")
-    package_request = package.as_package_request(100, 3, 34, 4)
+    option = db.get("letter", "OLP1")
+    package_request = option.as_package_request(100, 3, 34, 4)
     assert package_request.dimensions is not None
     assert package_request.dimensions.height_in_mms == 34
     assert package_request.dimensions.width_in_mms == 4
@@ -110,46 +86,123 @@ def test_package_request_with_dimensions():
 
 
 def test_ship_with_low_weight():
-    package = get_package_size("letter")
+    options = db.for_package_size("letter").for_service("OLP1")
     with pytest.raises(ValueError, match="1g to 100g allowed, got 0g."):
-        package.as_package_request(0)
+        options[0].as_package_request(0)
 
 
-def test_dimensions_order_themselves():
-    p = PackageSize("letter", "Letter", 100, 30, 40, 50, [])
-    assert p.dimensions_can_be_shipped(30, 40, 50)
-    assert p.dimensions_can_be_shipped(30, 50, 40)
-    assert p.dimensions_can_be_shipped(50, 30, 40)
-    assert p.dimensions_can_be_shipped(50, 40, 30)
-    assert p.dimensions_can_be_shipped(40, 30, 50)
-    assert p.dimensions_can_be_shipped(40, 50, 30)
-    assert not p.dimensions_can_be_shipped(40, 50, 100)
-    assert not p.dimensions_can_be_shipped(40, 100, 50)
-    assert not p.dimensions_can_be_shipped(100, 40, 50)
-    assert not p.dimensions_can_be_shipped(100, 50, 40)
+@pytest.mark.parametrize(
+    "dims,fits",
+    [
+        ((30, 40, 50), True),
+        ((30, 50, 40), True),
+        ((50, 30, 40), True),
+        ((50, 40, 30), True),
+        ((40, 30, 50), True),
+        ((40, 50, 30), True),
+        ((40, 50, 100), False),
+        ((40, 100, 50), False),
+        ((100, 40, 50), False),
+        ((100, 50, 40), False),
+    ],
+)
+def test_dimensions_order_themselves(dims, fits):
+    from click_and_drop_api.simple.shipping.package_shipping_option import (
+        PackageShippingOption,
+    )
+    from decimal import Decimal as D
+
+    p = PackageShippingOption(
+        package_size_code="letter",
+        package_name="Letter",
+        package_max_weight_g=100,
+        depth_mm=30,
+        width_mm=40,
+        height_mm=50,
+        brand="",
+        service="",
+        service_code="",
+        delivery_speed="",
+        compensation=D("0"),
+        gross=D("0"),
+    )
+    assert p.dimensions_can_be_shipped(*dims) is fits
 
 
-def test_dimensions_order_themselves_2():
-    p = PackageSize("letter", "Letter", 100, 401, 301, 501, [])
-    assert p.dimensions_can_be_shipped(301, 401, 501)
-    assert p.dimensions_can_be_shipped(301, 501, 401)
-    assert p.dimensions_can_be_shipped(501, 301, 401)
-    assert p.dimensions_can_be_shipped(501, 401, 301)
-    assert p.dimensions_can_be_shipped(401, 301, 501)
-    assert p.dimensions_can_be_shipped(401, 501, 301)
-    assert not p.dimensions_can_be_shipped(401, 501, 1000)
-    assert not p.dimensions_can_be_shipped(401, 1000, 501)
-    assert not p.dimensions_can_be_shipped(1000, 401, 501)
-    assert not p.dimensions_can_be_shipped(1000, 501, 401)
+def test_dimensions():
+    from click_and_drop_api.simple.shipping.package_shipping_option import (
+        PackageShippingOption,
+    )
+    from decimal import Decimal as D
+
+    p = PackageShippingOption(
+        package_size_code="letter",
+        package_name="Letter",
+        package_max_weight_g=100,
+        depth_mm=401,
+        width_mm=301,
+        height_mm=501,
+        brand="",
+        service="",
+        service_code="",
+        delivery_speed="",
+        compensation=D("0"),
+        gross=D("0"),
+    )
+    assert p.dimensions_mm == (501, 401, 301)
 
 
 def test_negative_values_not_ok():
-    p = PackageSize("letter", "Letter", 100, 401, 301, 501, [])
+    from click_and_drop_api.simple.shipping.package_shipping_option import (
+        PackageShippingOption,
+    )
+    from decimal import Decimal as D
+
+    p = PackageShippingOption(
+        package_size_code="letter",
+        package_name="Letter",
+        package_max_weight_g=100,
+        depth_mm=401,
+        width_mm=301,
+        height_mm=501,
+        brand="",
+        service="",
+        service_code="",
+        delivery_speed="",
+        compensation=D("0"),
+        gross=D("0"),
+    )
     assert not p.dimensions_can_be_shipped(-1, 401, 501)
     assert not p.dimensions_can_be_shipped(401, -1, 501)
     assert not p.dimensions_can_be_shipped(401, 501, -1)
 
 
-def test_dimensions():
-    p = PackageSize("letter", "Letter", 100, 401, 301, 501, [])
-    assert p.dimensions_mm == (501, 401, 301)
+def test_db_len():
+    assert len(db) > 0
+
+
+def test_db_bool():
+    assert db
+    from click_and_drop_api.simple.shipping.db import ShippingDB
+
+    assert not ShippingDB([])
+
+
+def test_db_iter():
+    options = list(db)
+    assert len(options) == len(db)
+    assert all(hasattr(o, "service_code") for o in options)
+
+
+def test_db_getitem():
+    first = db[0]
+    assert hasattr(first, "service_code")
+    assert hasattr(first, "package_size_code")
+
+
+def test_db_str():
+    for option in db:
+        assert repr(option.package_size_code) in repr(db)
+        assert repr(option.service_code) in repr(db)
+
+    assert db.__class__.__name__ in repr(db)

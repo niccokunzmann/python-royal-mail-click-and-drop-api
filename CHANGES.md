@@ -1,5 +1,32 @@
 # Changelog
 
+## v2.0.0
+
+### Breaking changes
+
+- `PackageSize` and `ShippingOption` have been removed and merged into the single
+  class `PackageShippingOption`. The free-standing helper functions
+  (`get_shipping_option`, `get_shipping_options_for`, `list_service_codes`,
+  `list_package_size_codes`, `choose_package_size_by_weight`, `choose_by_weight`)
+  have also been removed. Use the `db` object (a `ShippingDB` instance) instead.
+
+### New features
+
+- `PackageShippingOption` — flat dataclass merging all package format fields
+  (`package_size_code`, `package_name`, `package_max_weight_g`, `depth_mm`,
+  `width_mm`, `height_mm`, `max_sum_mm`) with all service fields. The effective
+  `max_weight_g` is `min(package_max_weight_g, service_max_weight_g)`.
+- `ShippingDB` — chainable registry: `for_package_size`, `for_service`,
+  `for_oba`, `for_international`, `for_weight`, `filter`, `get`,
+  `service_codes`, `package_size_codes`.
+  Supports `len()`, `bool()`, iteration, indexing, and `repr()`.
+- `_format_dimensions.py` — per-format physical constraints; Parcel Force
+  services (`FE*`, `ND*`) automatically get 150 cm max length + 300 cm sum limit.
+- `max_sum_mm` constraint on `PackageShippingOption` — validated in
+  `dimensions_can_be_shipped` and `as_package_request`.
+- Module-level `db = ShippingDB.default()` available from
+  `click_and_drop_api.simple`.
+
 ## v1.4.1
 
 - Move examples from `examples/` into `click_and_drop_api/examples/` — now executable as modules: `python -m click_and_drop_api.examples.view_version`

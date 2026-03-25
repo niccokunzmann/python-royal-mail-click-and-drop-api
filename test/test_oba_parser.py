@@ -1,13 +1,13 @@
 """Tests for the OBA parser and OBA shipping option modules."""
 
-from click_and_drop_api.simple.shipping_options.parcel import options as parcel_options
-from click_and_drop_api.simple.shipping_options.documents import (
+from click_and_drop_api.simple.shipping.parcel import options as parcel_options
+from click_and_drop_api.simple.shipping.documents import (
     options as documents_options,
 )
-from click_and_drop_api.simple.shipping_options.large_letter import (
+from click_and_drop_api.simple.shipping.large_letter import (
     options as large_letter_options,
 )
-from click_and_drop_api.simple.shipping_options.letter import options as letter_options
+from click_and_drop_api.simple.shipping.letter import options as letter_options
 
 
 def _oba(options):
@@ -56,4 +56,5 @@ def test_oba_ioss_international():
 def test_non_oba_options_not_flagged():
     non_oba = [o for o in letter_options if not o.is_oba]
     assert len(non_oba) > 0
-    assert all(o.max_weight_g is None for o in non_oba)
+    print([o.max_weight_g for o in non_oba])
+    assert all(o.max_weight_g == 100 for o in non_oba)

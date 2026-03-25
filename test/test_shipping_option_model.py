@@ -1,25 +1,32 @@
-"""Tests for ShippingOption.enhancement property and parser."""
+"""Tests for PackageShippingOption.enhancement property and parser."""
 
 from decimal import Decimal as D
 
 import pytest
 
-from click_and_drop_api.simple.shipping_options.model import ShippingOption
-from click_and_drop_api.simple.shipping_options.letter import options as letter_options
-from click_and_drop_api.simple.shipping_options.large_letter import (
+from click_and_drop_api.simple.shipping.package_shipping_option import (
+    PackageShippingOption,
+)
+from click_and_drop_api.simple.shipping.letter import options as letter_options
+from click_and_drop_api.simple.shipping.large_letter import (
     options as large_letter_options,
 )
-from click_and_drop_api.simple.shipping_options.small_parcel import (
+from click_and_drop_api.simple.shipping.small_parcel import (
     options as small_parcel_options,
 )
-from click_and_drop_api.simple.shipping_options.large_parcel import (
+from click_and_drop_api.simple.shipping.large_parcel import (
     options as large_parcel_options,
 )
 
 
-def _make(**kwargs) -> ShippingOption:
+def _make(**kwargs) -> PackageShippingOption:
     defaults = dict(
-        package_size="letter",
+        package_size_code="letter",
+        package_name="Letter",
+        package_max_weight_g=100,
+        depth_mm=240,
+        width_mm=165,
+        height_mm=5,
         brand="Royal Mail",
         service="Test Service (£20 compensation)",
         service_code="OLP1",
@@ -28,7 +35,7 @@ def _make(**kwargs) -> ShippingOption:
         gross=D("1.70"),
     )
     defaults.update(kwargs)
-    return ShippingOption(**defaults)
+    return PackageShippingOption(**defaults)
 
 
 # --- enhancement property ---
@@ -133,7 +140,7 @@ def test_brand_parcel_force():
 
 
 def test_package_size_stored():
-    assert all(o.package_size == "smallParcel" for o in small_parcel_options)
+    assert all(o.package_size_code == "smallParcel" for o in small_parcel_options)
 
 
 def test_enhancement_roundtrip():

@@ -5,7 +5,7 @@ The limits were verified against the live API using scripts/test_parcel_orders.p
 
 import pytest
 
-from click_and_drop_api.simple.shipping_options.parcel import SERVICE_MAX_WEIGHT_G
+from click_and_drop_api.simple.shipping.parcel import SERVICE_MAX_WEIGHT_G
 
 _3KG = 3_000
 

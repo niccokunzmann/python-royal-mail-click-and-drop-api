@@ -10,7 +10,7 @@ from click_and_drop_api.simple import (
     CreateOrder,
     RecipientDetails,
     Address,
-    PackageSize,
+    db,
 )
 import os
 from datetime import datetime, UTC
@@ -24,8 +24,7 @@ api = ClickAndDrop(API_KEY)
 # choose a new reference or else the API will reject the order
 REFERENCE = "example-order-{now}".format(now=datetime.now(UTC).strftime("%Y%m%d%H%M%S"))
 
-package = PackageSize.get("letter")  # send a letter
-service = package.get_shipping_option("OLP2")  # with 2nd class delivery
+service = db.get("letter", "OLP2")  # letter, 2nd class delivery
 
 new_order = CreateOrder(
     order_reference=REFERENCE,
@@ -51,7 +50,7 @@ new_order = CreateOrder(
     total=float(12 + service.gross),
     currency_code="GBP",
     postage_details=service.as_postage_details(),
-    packages=[package.as_package_request(weight_in_grams=80)],
+    packages=[service.as_package_request(weight_in_grams=80)],
     ## Label generation is only possible for OBA customers
     # label=LabelGeneration(
     #     include_label_in_response=True,

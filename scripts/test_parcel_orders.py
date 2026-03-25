@@ -17,16 +17,16 @@ from click_and_drop_api.simple.types import (
     PostageDetails,
     RecipientDetails,
 )
-from click_and_drop_api.simple.shipping_options.small_parcel import (
+from click_and_drop_api.simple.shipping.small_parcel import (
     options as small_parcel_options,
 )
-from click_and_drop_api.simple.shipping_options.medium_parcel import (
+from click_and_drop_api.simple.shipping.medium_parcel import (
     options as medium_parcel_options,
 )
-from click_and_drop_api.simple.shipping_options.large_parcel import (
+from click_and_drop_api.simple.shipping.large_parcel import (
     options as large_parcel_options,
 )
-from click_and_drop_api.simple.shipping_options.parcel import (
+from click_and_drop_api.simple.shipping.parcel import (
     options as oba_parcel_options,
     SERVICE_MAX_WEIGHT_G as OBA_PARCEL_SERVICE_MAX_WEIGHT_G,
 )

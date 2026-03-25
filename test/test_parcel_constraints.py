@@ -13,7 +13,7 @@ Parcel Force services (FE0–FE3, NDA–NDE):
 
 import pytest
 
-from click_and_drop_api.simple.shipping_options.parcel import (
+from click_and_drop_api.simple.shipping.parcel import (
     SERVICE_CONSTRAINTS,
 )
 
@@ -58,7 +58,7 @@ _ALL_RM_CODES = _RM_2KG_CODES + _RM_10KG_CODES + _RM_20KG_CODES
 
 
 def test_all_codes_have_constraints():
-    from click_and_drop_api.simple.shipping_options.parcel import SERVICE_MAX_WEIGHT_G
+    from click_and_drop_api.simple.shipping.parcel import SERVICE_MAX_WEIGHT_G
 
     assert set(SERVICE_CONSTRAINTS) == set(SERVICE_MAX_WEIGHT_G)
 

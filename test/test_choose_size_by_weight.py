@@ -1,12 +1,16 @@
-from click_and_drop_api.simple import choose_package_size_by_weight
-
 import pytest
+from click_and_drop_api.simple import db
+from click_and_drop_api.simple.shipping.db import ShippingDB
+
+
+def _limited(*codes: str) -> ShippingDB:
+    return ShippingDB([o for o in db if o.package_size_code in set(codes)])
 
 
 @pytest.mark.parametrize(
     "weight_grams, expected_package_size",
     [
-        (0, "letter"),
+        (1, "letter"),
         (100, "letter"),
         (101, "largeLetter"),
         (1000, "largeLetter"),
@@ -18,15 +22,15 @@ import pytest
         (30000, "largeParcel"),
     ],
 )
-def test_choose_size_by_weight(weight_grams, expected_package_size):
-    package_size = choose_package_size_by_weight(weight_grams)
-    assert package_size.code == expected_package_size
+def test_filter_weight(weight_grams, expected_package_size):
+    result = db.for_weight(weight_grams)
+    assert any(o.package_size_code == expected_package_size for o in result)
 
 
 @pytest.mark.parametrize(
     "weight_grams, expected_package_size",
     [
-        (0, "largeLetter"),
+        (1, "largeLetter"),
         (100, "largeLetter"),
         (101, "largeLetter"),
         (1000, "largeLetter"),
@@ -34,13 +38,11 @@ def test_choose_size_by_weight(weight_grams, expected_package_size):
         (2000, "smallParcel"),
     ],
 )
-def test_choose_size_by_weight_limited(weight_grams, expected_package_size):
-    package_size = choose_package_size_by_weight(
-        weight_grams, ["largeLetter", "smallParcel"]
-    )
-    assert package_size.code == expected_package_size
+def test_filter_weight_limited(weight_grams, expected_package_size):
+    result = _limited("largeLetter", "smallParcel").for_weight(weight_grams)
+    assert any(o.package_size_code == expected_package_size for o in result)
 
 
-def test_too_much_weight():
-    assert choose_package_size_by_weight(3000001) is None
-    assert choose_package_size_by_weight(2001, ["largeLetter", "smallParcel"]) is None
+def test_filter_weight_empty():
+    assert not db.for_weight(3_000_001)
+    assert not _limited("largeLetter", "smallParcel").for_weight(2001)

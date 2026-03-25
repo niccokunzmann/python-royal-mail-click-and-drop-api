@@ -6,7 +6,7 @@ These shipping options are copied from the website to create a database.
 
 from typing import Sequence
 
-from .model import ShippingOption
+from .package_shipping_option import PackageShippingOption
 
 from . import letter
 from . import large_letter
@@ -17,7 +17,7 @@ from . import parcel
 from . import documents
 
 
-def _get_all_shipping_options() -> list[ShippingOption]:
+def _get_all_shipping_options() -> list[PackageShippingOption]:
     return (
         letter.options
         + large_letter.options
@@ -31,12 +31,7 @@ def _get_all_shipping_options() -> list[ShippingOption]:
 
 def list_service_codes() -> list[str]:
     """All shipping option service codes."""
-    return list(
-        {
-            shipping_option.service_code
-            for shipping_option in _get_all_shipping_options()
-        }
-    )
+    return list({option.service_code for option in _get_all_shipping_options()})
 
 
 def check_service_codes(service_codes: Sequence[str]):
@@ -49,17 +44,18 @@ def check_service_codes(service_codes: Sequence[str]):
             )
 
 
-def get_shipping_options(*options: str) -> list[ShippingOption]:
-    """Return the shipping options with the codes."""
-    options = set(options)
+def get_shipping_options(*codes: str) -> list[PackageShippingOption]:
+    """Return the shipping options with the given service codes."""
+    code_set = set(codes)
     return [
-        shipping_option
-        for shipping_option in _get_all_shipping_options()
-        if shipping_option.service_code in options
+        option
+        for option in _get_all_shipping_options()
+        if option.service_code in code_set
     ]
 
 
 __all__ = [
+    "PackageShippingOption",
     "documents",
     "large_letter",
     "large_parcel",
