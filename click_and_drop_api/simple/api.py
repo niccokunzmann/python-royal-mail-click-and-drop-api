@@ -32,7 +32,7 @@ class AccountCacheEntry:
     """A cache entry per API key."""
 
     api_key: str
-    is_oba: bool | None = None
+    is_oba: Optional[bool] = None
 
 
 ACCOUNT_CACHE: dict[str, AccountCacheEntry] = {}

@@ -1,8 +1,12 @@
 # Changelog
 
-## v2.0.1
+## v3.0.0
 
 - cache `is_oba()` by api key
+
+### Breaking changes
+
+- remove Python 3.9 support
 
 ## v2.0.0
 
