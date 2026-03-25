@@ -3,6 +3,7 @@
 ## v3.0.0
 
 - cache `is_oba()` by api key
+- Add `PackageShippingOption.max_weight_kg` property (converts `max_weight_g` to kg)
 
 ### Breaking changes
 

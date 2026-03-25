@@ -67,6 +67,11 @@ class PackageShippingOption:
             return min(self.package_max_weight_g, self.service_max_weight_g)
         return self.package_max_weight_g
 
+    @property
+    def max_weight_kg(self) -> float:
+        """Effective weight limit in kilograms."""
+        return self.max_weight_g / 1000
+
     # ── Convenience ─────────────────────────────────────────────────────────
 
     @property
