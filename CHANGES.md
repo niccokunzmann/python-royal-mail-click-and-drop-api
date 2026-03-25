@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.0.1
+
+- cache `is_oba()` by api key
+
 ## v2.0.0
 
 ### Breaking changes

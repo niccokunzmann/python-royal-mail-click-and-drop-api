@@ -1,5 +1,6 @@
 """The simple API interface."""
 
+from dataclasses import dataclass
 from typing import Literal, Optional, Union
 from .base import AbstractClickAndDrop
 from .types import CreateOrder
@@ -24,6 +25,17 @@ def order_identifiers_to_string(
     if not isinstance(order_identifiers, list):
         order_identifiers = [order_identifiers]
     return ";".join(map(order_identifier_to_string, order_identifiers))
+
+
+@dataclass
+class AccountCacheEntry:
+    """A cache entry per API key."""
+
+    api_key: str
+    is_oba: bool | None = None
+
+
+ACCOUNT_CACHE: dict[str, AccountCacheEntry] = {}
 
 
 class ClickAndDrop(AbstractClickAndDrop):
@@ -63,6 +75,26 @@ class ClickAndDrop(AbstractClickAndDrop):
         https://api.parcel.royalmail.com/#tag/Version
         """
         return self._version_api.get_version_async()
+
+    @property
+    def _account_cache(self) -> AccountCacheEntry:
+        """Cached account information for speed."""
+        result = ACCOUNT_CACHE.get(self._key)
+        if result is None:
+            result = AccountCacheEntry(self._key)
+            ACCOUNT_CACHE[self._key] = result
+        return result
+
+    def is_oba(self) -> bool:
+        """Wether this is an OBA account.
+
+        Check wether this is an OBA account by trying to create an order service code.
+        """
+        if self._account_cache.is_oba is not None:
+            return self._account_cache.is_oba
+        result = super().is_oba()
+        self._account_cache.is_oba = result
+        return result
 
     @property
     def key(self) -> str:
