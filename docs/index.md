@@ -87,6 +87,12 @@ Output:
 --8<-- "click_and_drop_api/examples/view_specific_orders.py.out"
 ```
 
+## View a single order
+
+```python
+--8<-- "click_and_drop_api/examples/view_order.py"
+```
+
 ## Create and delete orders
 
 [Orders API Documentation](https://api.parcel.royalmail.com/#tag/Orders)
