@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 
 import pytest
 
+from click_and_drop_api.models.order_field_response import OrderFieldResponse
 from click_and_drop_api.simple.shipping_test_result import ShippingTestResult
 from click_and_drop_api.simple.mock import MockClickAndDrop
 from click_and_drop_api.simple.types import (
@@ -277,3 +278,36 @@ def test_test_shipping_multiple_calls_stay_clean():
         result = api.test_shipping("smallParcel", service_code)
         assert result.is_success is True
     assert len(api._orders) == 0
+
+
+_api = MockClickAndDrop()
+
+
+def _field(name: str, value: str | None) -> OrderFieldResponse:
+    return OrderFieldResponse(fieldName=name, value=value)
+
+
+def test_format_fields_empty():
+    assert _api.format_fields_for_error_message([]) == ""
+
+
+def test_format_fields_single():
+    assert (
+        _api.format_fields_for_error_message([_field("postcode", "INVALID")])
+        == "postcode=INVALID"
+    )
+
+
+def test_format_fields_multiple():
+    fields = [_field("postcode", "INVALID"), _field("countryCode", "XX")]
+    assert (
+        _api.format_fields_for_error_message(fields)
+        == "postcode=INVALID, countryCode=XX"
+    )
+
+
+def test_format_fields_none_value():
+    assert (
+        _api.format_fields_for_error_message([_field("postcode", None)])
+        == "postcode=None"
+    )

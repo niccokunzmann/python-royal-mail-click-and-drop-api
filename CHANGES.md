@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.0.2
+
+- Better formatted error message for `ClickAndDropAPI.test_shipping`
+
 ## v3.0.1
 
 - Add `view_order` example: print order details by order number or reference (`python -m click_and_drop_api.examples.view_order <id>`)

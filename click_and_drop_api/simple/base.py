@@ -12,6 +12,7 @@ from datetime import datetime, timezone
 
 from click_and_drop_api.exceptions import ApiException
 from click_and_drop_api.models.create_order_response import CreateOrderResponse
+from click_and_drop_api.models.order_field_response import OrderFieldResponse
 from click_and_drop_api.simple import (
     Address,
     CreateOrder,
@@ -173,7 +174,9 @@ class AbstractClickAndDrop(ABC):
                 failed_addresses.append(get_order_address(fo.order))
                 failed_messages.append(
                     ";".join(
-                        f"Error {e.error_code} in {e.fields}: {e.error_message}"
+                        f"Error {e.error_code} in "
+                        f"{self.format_fields_for_error_message(e.fields)}: "
+                        f"{e.error_message}"
                         for e in fo.errors
                     )
                 )
@@ -182,6 +185,10 @@ class AbstractClickAndDrop(ABC):
         return ShippingTestResult(
             successful_addresses, failed_addresses, failed_messages
         )
+
+    def format_fields_for_error_message(self, fields: list[OrderFieldResponse]) -> str:
+        """Return a comma-separated list of error message fields."""
+        return ", ".join(f"{f.field_name}={f.value}" for f in fields)
 
     def get_order_test_name(self, country_code: str) -> str:
         """Return a name for a test order for a specific country."""
