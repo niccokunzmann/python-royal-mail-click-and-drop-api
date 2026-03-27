@@ -127,6 +127,11 @@ class ShippingDB:
         """
         return self._options[0]
 
+    @property
+    def any_or_none(self) -> Optional[PackageShippingOption]:
+        """Any option in the DB, or ``None`` if the DB is empty."""
+        return self._options[0] if self._options else None
+
     def __getitem__(self, key: int):
         return self._options[key]
 

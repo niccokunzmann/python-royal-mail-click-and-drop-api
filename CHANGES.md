@@ -3,6 +3,7 @@
 ## v3.0.2
 
 - Better formatted error message for `ClickAndDropAPI.test_shipping`
+- Add `any_or_none` property to `ShippingDB`
 
 ## v3.0.1
 

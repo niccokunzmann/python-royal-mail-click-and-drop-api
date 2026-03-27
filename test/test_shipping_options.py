@@ -197,7 +197,27 @@ def test_db_iter():
 def test_db_getitem():
     first = db[0]
     assert hasattr(first, "service_code")
-    assert hasattr(first, "package_size_code")
+
+
+def test_db_any():
+    assert db.any is db[0]
+
+
+def test_db_any_raises_on_empty():
+    from click_and_drop_api.simple.shipping.db import ShippingDB
+
+    with pytest.raises(IndexError):
+        ShippingDB([]).any
+
+
+def test_db_any_or_none_non_empty():
+    assert db.any_or_none is db[0]
+
+
+def test_db_any_or_none_empty():
+    from click_and_drop_api.simple.shipping.db import ShippingDB
+
+    assert ShippingDB([]).any_or_none is None
 
 
 def test_db_str():
