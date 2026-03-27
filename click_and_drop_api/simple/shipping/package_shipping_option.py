@@ -20,6 +20,10 @@ class PackageShippingOption:
     Merges all physical package constraints (dimensions, weight) with the
     full Royal Mail service details (code, enhancements, pricing) into one
     object so callers never have to juggle two separate instances.
+
+    Note:
+        OBA shipping options do not have a price.
+        https://clickanddrop.uservoice.com/forums/399930-general/suggestions/45005089-show-the-service-price-cost
     """
 
     # ── Package format ──────────────────────────────────────────────────────
