@@ -1,5 +1,10 @@
 import pytest
 from click_and_drop_api.simple import check_service_codes, db
+from click_and_drop_api.simple.shipping.db import ShippingDB
+from click_and_drop_api.simple.shipping.package_shipping_option import (
+    PackageShippingOption,
+)
+from decimal import Decimal as D
 
 
 def test_list_all_shipping_options():
@@ -107,11 +112,6 @@ def test_ship_with_low_weight():
     ],
 )
 def test_dimensions_order_themselves(dims, fits):
-    from click_and_drop_api.simple.shipping.package_shipping_option import (
-        PackageShippingOption,
-    )
-    from decimal import Decimal as D
-
     p = PackageShippingOption(
         package_size_code="letter",
         package_name="Letter",
@@ -130,11 +130,6 @@ def test_dimensions_order_themselves(dims, fits):
 
 
 def test_dimensions():
-    from click_and_drop_api.simple.shipping.package_shipping_option import (
-        PackageShippingOption,
-    )
-    from decimal import Decimal as D
-
     p = PackageShippingOption(
         package_size_code="letter",
         package_name="Letter",
@@ -153,11 +148,6 @@ def test_dimensions():
 
 
 def test_negative_values_not_ok():
-    from click_and_drop_api.simple.shipping.package_shipping_option import (
-        PackageShippingOption,
-    )
-    from decimal import Decimal as D
-
     p = PackageShippingOption(
         package_size_code="letter",
         package_name="Letter",
@@ -183,8 +173,6 @@ def test_db_len():
 
 def test_db_bool():
     assert db
-    from click_and_drop_api.simple.shipping.db import ShippingDB
-
     assert not ShippingDB([])
 
 
@@ -204,8 +192,6 @@ def test_db_any():
 
 
 def test_db_any_raises_on_empty():
-    from click_and_drop_api.simple.shipping.db import ShippingDB
-
     with pytest.raises(IndexError):
         ShippingDB([]).any
 
@@ -215,8 +201,6 @@ def test_db_any_or_none_non_empty():
 
 
 def test_db_any_or_none_empty():
-    from click_and_drop_api.simple.shipping.db import ShippingDB
-
     assert ShippingDB([]).any_or_none is None
 
 
