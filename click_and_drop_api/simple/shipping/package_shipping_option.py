@@ -5,12 +5,32 @@ from dataclasses import dataclass
 from decimal import Decimal as D
 from typing import Literal, Optional
 
+from click_and_drop_api.simple.addresses import get_all_country_codes
+
 from click_and_drop_api.models.dimensions_request import DimensionsRequest
 from click_and_drop_api.models.shipment_package_request import ShipmentPackageRequest
 from click_and_drop_api.simple.types import PostageDetails
 from click_and_drop_api.simple.errors import InvalidWeight, InvalidDimensions
 
 MIN_WEIGHT_IN_GRAMS = 1
+
+# Country codes treated as domestic (national) by Royal Mail.
+NATIONAL_COUNTRY_CODES: frozenset[str] = frozenset({"GB", "GG", "IM", "JE"})
+
+# Country codes excluded from international shipping options.
+NON_INTERNATIONAL_COUNTRY_CODES: frozenset[str] = frozenset(
+    {
+        "GB",
+        "GG",
+        "IM",
+        "JE",  # Royal Mail domestic
+        "GS",  # South Georgia (BFPO)
+        "CC",
+        "NF",  # Australia Post territories
+        "FM",  # USPS territory
+        "PM",  # La Poste (France)
+    }
+)
 
 
 @dataclass
@@ -75,6 +95,26 @@ class PackageShippingOption:
     def max_weight_kg(self) -> float:
         """Effective weight limit in kilograms."""
         return self.max_weight_g / 1000
+
+    @property
+    def country_codes(self) -> list[str]:
+        """Country codes this option ships to.
+
+        Returns the four national codes (GB, GG, IM, JE) for domestic services,
+        or all other known country codes for international services,
+        excluding those that Royal Mail does not serve.
+
+        If you want to get an updated list of contry codes
+        that the live API accepts, use
+        ``api.get_countries_for_shipping(package_size, service_code)`` instead.
+        """
+        if not self.international:
+            return sorted(NATIONAL_COUNTRY_CODES)
+        return [
+            c
+            for c in get_all_country_codes()
+            if c not in NON_INTERNATIONAL_COUNTRY_CODES
+        ]
 
     # ── Convenience ─────────────────────────────────────────────────────────
 

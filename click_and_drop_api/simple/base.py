@@ -27,6 +27,8 @@ from click_and_drop_api.simple.addresses import get_address, get_all_country_cod
 class AbstractClickAndDrop(ABC):
     """Common interface shared by ClickAndDrop and MockClickAndDrop."""
 
+    max_order_count: int = 100
+
     @property
     @abstractmethod
     def key(self) -> str:
@@ -37,10 +39,35 @@ class AbstractClickAndDrop(ABC):
         """Get the API version."""
 
     @abstractmethod
+    def _create_orders(
+        self, orders: list[CreateOrder]
+    ) -> click_and_drop_api.CreateOrdersResponse:
+        """Create one or more orders."""
+
     def create_orders(
         self, orders: Union[list[CreateOrder], CreateOrder]
     ) -> click_and_drop_api.CreateOrdersResponse:
-        """Create one or more orders."""
+        """Create a new orders.
+
+        Parameters:
+            orders: One or more :class:`~click_and_drop_api.simple.types.CreateOrder` instances.
+        Returns:
+            A :class:`~click_and_drop_api.CreateOrdersResponse` instance containing created and failed orders.
+
+        https://api.parcel.royalmail.com/#tag/Orders/operation/CreateOrdersAsync
+        """
+        if isinstance(orders, CreateOrder):
+            orders = [orders]
+        result = click_and_drop_api.CreateOrdersResponse(
+            created_orders=[], failed_orders=[], success_count=0, errors_count=0
+        )
+        for i in range(0, len(orders), self.max_order_count):
+            response = self._create_orders(orders[i : i + self.max_order_count])
+            result.created_orders.extend(response.created_orders)
+            result.failed_orders.extend(response.failed_orders)
+            result.success_count += response.success_count
+            result.errors_count += response.errors_count
+        return result
 
     def create_order(
         self, order: CreateOrder
@@ -49,23 +76,87 @@ class AbstractClickAndDrop(ABC):
         return self.create_orders(order)
 
     @abstractmethod
+    def _get_orders(
+        self, order_identifiers: list[Union[str, int]]
+    ) -> list[click_and_drop_api.GetOrderInfoResource]:
+        """Retrieve orders by identifier or reference."""
+
     def get_orders(
         self, order_identifiers: Union[list[Union[str, int]], str, int]
     ) -> list[click_and_drop_api.GetOrderInfoResource]:
-        """Retrieve orders by identifier or reference."""
+        """Get specific orders.
+
+        Parameters:
+            order_identifiers:
+                One or several Order Identifiers or Order References.
+                Order Identifiers are integer numbers.
+                Order References are strings.
+
+        Returns:
+            A list of orders
+
+        Raises:
+            click_and_drop_api.exceptions.BadRequestException if an order with the same reference already exists
+
+        https://api.parcel.royalmail.com/#tag/Orders/operation/GetSpecificOrdersAsync
+        """
+        if not isinstance(order_identifiers, list):
+            order_identifiers = [order_identifiers]
+        result = []
+        for i in range(0, len(order_identifiers), self.max_order_count):
+            result.extend(
+                self._get_orders(order_identifiers[i : i + self.max_order_count])
+            )
+        return result
 
     def get_order(
         self, order_identifier: Union[str, int]
     ) -> Optional[click_and_drop_api.GetOrderInfoResource]:
-        """Retrieve a single order, or None if not found."""
+        """Retrieve a single order.
+
+        Parameters:
+            order_identifier: Order Identifier (integer) or Order Reference (string).
+
+        Returns:
+            The order if found, else None.
+        """
         orders = self.get_orders(order_identifier)
         return orders[0] if orders else None
 
     @abstractmethod
+    def _delete_orders(
+        self, order_identifiers: list[Union[str, int]]
+    ) -> click_and_drop_api.DeleteOrdersResource:
+        """Delete orders by identifier or reference."""
+
     def delete_orders(
         self, order_identifiers: Union[list[Union[str, int]], str, int]
     ) -> click_and_drop_api.DeleteOrdersResource:
-        """Delete orders by identifier or reference."""
+        """Delete specific orders.
+
+        Please be aware labels generated on orders which are deleted are no longer valid and must be destroyed.
+        Cancelled label information is automatically shared with Royal Mail Revenue Protection,
+        and should a cancelled label be identified on an item in the Royal Mail Network,
+        you will be charged on your account and an additional handling fee applied.
+
+        Parameters:
+            order_identifiers:
+                One or several Order Identifiers or Order References.
+                Order Identifiers are integer numbers.
+                Order References are strings.
+
+        https://api.parcel.royalmail.com/#tag/Orders/operation/DeleteOrdersAsync
+        """
+        if not isinstance(order_identifiers, list):
+            order_identifiers = [order_identifiers]
+        result = click_and_drop_api.DeleteOrdersResource(deleted_orders=[], errors=[])
+        for i in range(0, len(order_identifiers), self.max_order_count):
+            deleted = self._delete_orders(
+                order_identifiers[i : i + self.max_order_count]
+            )
+            result.deleted_orders.extend(deleted.deleted_orders)
+            result.errors.extend(deleted.errors)
+        return result
 
     def delete_order(
         self, order_identifier: Union[str, int]
@@ -101,6 +192,10 @@ class AbstractClickAndDrop(ABC):
         """Get a list of ISO 3166-1 alpha-2 country code strings.
 
         These are the countries that can be shipped with this service.
+
+        Note:
+            This method only seems to work for OBA accounts
+            to limit the countries.
         """
         countries = get_all_country_codes()
         result = self.test_shipping(
@@ -129,6 +224,10 @@ class AbstractClickAndDrop(ABC):
 
         Returns:
             :class:`ShippingTestResult` with ``success=True/False`` and a message.
+
+        Note:
+            This method only seems to work for OBA accounts
+            to limit the countries.
         """
         if not isinstance(address, list):
             address = [address]
@@ -153,35 +252,30 @@ class AbstractClickAndDrop(ABC):
         failed_messages = []
         to_delete = []
         # we can request at max 100 orders at a time
-        for i in range((len(orders) - 1) // 100 + 1):
-            order_subset = orders[i * 100 : (i + 1) * 100]
-            try:
-                response = self.create_orders(order_subset)
-            except ApiException as e:
-                failed_addresses += [get_order_address(order) for order in order_subset]
-                failed_messages += [
-                    f"API error ({e.status} {e.reason}): {e.body or e.data or ''}"
-                ] * len(order_subset)
-                continue
-            except Exception as e:
-                failed_addresses += [get_order_address(order) for order in order_subset]
-                failed_messages += [f"Unexpected error: {e}"] * len(order_subset)
-                continue
-            for co in response.created_orders:
-                successful_addresses.append(get_order_address(co))
-                to_delete.append(co.order_identifier)
-            for fo in response.failed_orders:
-                failed_addresses.append(get_order_address(fo.order))
-                failed_messages.append(
-                    ";".join(
-                        f"Error {e.error_code} in "
-                        f"{self.format_fields_for_error_message(e.fields)}: "
-                        f"{e.error_message}"
-                        for e in fo.errors
-                    )
+        try:
+            response = self.create_orders(orders)
+        except ApiException as e:
+            failed_addresses += [get_order_address(order) for order in orders]
+            failed_messages += [
+                f"API error ({e.status} {e.reason}): {e.body or e.data or ''}"
+            ] * len(orders)
+        except Exception as e:
+            failed_addresses += [get_order_address(order) for order in orders]
+            failed_messages += [f"Unexpected error: {e}"] * len(orders)
+        for co in response.created_orders:
+            successful_addresses.append(get_order_address(co))
+            to_delete.append(co.order_identifier)
+        for fo in response.failed_orders:
+            failed_addresses.append(get_order_address(fo.order))
+            failed_messages.append(
+                ";".join(
+                    f"Error {e.error_code} in "
+                    f"{self.format_fields_for_error_message(e.fields)}: "
+                    f"{e.error_message}"
+                    for e in fo.errors
                 )
-        for i in range((len(to_delete) - 1) // 100 + 1):
-            self.delete_orders(to_delete[i * 100 : (i + 1) * 100])
+            )
+        self.delete_orders(to_delete)
         return ShippingTestResult(
             successful_addresses, failed_addresses, failed_messages
         )

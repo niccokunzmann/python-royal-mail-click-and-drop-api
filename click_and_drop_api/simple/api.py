@@ -101,60 +101,23 @@ class ClickAndDrop(AbstractClickAndDrop):
         """The API key in use."""
         return self._key
 
-    def get_orders(
-        self, order_identifiers: Union[list[Union[str, int]], str, int]
+    def _get_orders(
+        self, order_identifiers: Union[list[Union[str, int]]]
     ) -> list[click_and_drop_api.GetOrderInfoResource]:
-        """Get specific orders.
-
-        Parameters:
-            order_identifiers:
-                One or several Order Identifiers or Order References.
-                Order Identifiers are integer numbers.
-                Order References are strings.
-                The maximum number of identifiers is 100.
-
-        Returns:
-            A list of orders
-
-        Raises:
-            click_and_drop_api.exceptions.BadRequestException if an order with the same reference already exists
-
-        https://api.parcel.royalmail.com/#tag/Orders/operation/GetSpecificOrdersAsync
-        """
         return self._orders_api.get_specific_orders_async(
             order_identifiers=order_identifiers_to_string(order_identifiers)
         )
 
-    def delete_orders(
-        self, order_identifiers: Union[list[Union[str, int]], str, int]
+    def _delete_orders(
+        self, order_identifiers: list[Union[str, int]]
     ) -> click_and_drop_api.DeleteOrdersResource:
-        """Delete specific orders.
-
-        Please be aware labels generated on orders which are deleted are no longer valid and must be destroyed.
-        Cancelled label information is automatically shared with Royal Mail Revenue Protection,
-        and should a cancelled label be identified on an item in the Royal Mail Network,
-        you will be charged on your account and an additional handling fee applied.
-
-        Parameters:
-            order_identifiers:
-                One or several Order Identifiers or Order References.
-                Order Identifiers are integer numbers.
-                Order References are strings.
-                The maximum number of identifiers is 100.
-
-        https://api.parcel.royalmail.com/#tag/Orders/operation/DeleteOrdersAsync
-        """
         return self._orders_api.delete_orders_async(
             order_identifiers=order_identifiers_to_string(order_identifiers)
         )
 
-    def create_orders(
+    def _create_orders(
         self, orders: Union[list[CreateOrder], CreateOrder]
     ) -> click_and_drop_api.CreateOrdersResponse:
-        """Create a new order.
-
-        https://api.parcel.royalmail.com/#tag/Orders/operation/CreateOrdersAsync
-        """
         if not isinstance(orders, list):
             orders = [orders]
         request = click_and_drop_api.CreateOrdersRequest(items=orders)

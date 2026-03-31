@@ -1,5 +1,10 @@
 # Changelog
 
+## v3.0.3
+
+- Remove limit of 100 for `ClickAndDropAPI.create_orders`, `ClickAndDropAPI.get_orders`, `ClickAndDropAPI.delete_orders`
+- Add `country_codes` property to `PackageShippingOption`
+
 ## v3.0.2
 
 - Better formatted error message for `ClickAndDropAPI.test_shipping`

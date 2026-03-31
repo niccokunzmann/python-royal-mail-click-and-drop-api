@@ -174,3 +174,18 @@ def test_ships_to(international, country_code, expected):
 def test_ships_to_invalid_country_code(code):
     with pytest.raises(ValueError):
         _make().ships_to(code)
+
+
+def test_country_codes_national():
+    codes = _make(international=False).country_codes
+    assert set(codes) >= {"GB", "GG", "IM", "JE"}
+
+
+def test_country_codes_international_includes():
+    codes = _make(international=True).country_codes
+    assert {"DE", "FR", "US", "AU", "JP"} <= set(codes)
+
+
+def test_country_codes_international_excludes():
+    codes = _make(international=True).country_codes
+    assert not {"GB", "GG", "IM", "JE", "GS", "FM"} & set(codes)

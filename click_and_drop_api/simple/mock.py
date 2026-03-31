@@ -50,12 +50,9 @@ class MockClickAndDrop(AbstractClickAndDrop):
             release_date=datetime.now(timezone.utc),
         )
 
-    def create_orders(
-        self, orders: Union[list[CreateOrder], CreateOrder]
+    def _create_orders(
+        self, orders: list[CreateOrder]
     ) -> click_and_drop_api.CreateOrdersResponse:
-        if not isinstance(orders, list):
-            orders = [orders]
-
         now = datetime.now(timezone.utc)
         created = []
         for order in orders:
@@ -83,12 +80,9 @@ class MockClickAndDrop(AbstractClickAndDrop):
             failed_orders=[],
         )
 
-    def get_orders(
-        self, order_identifiers: Union[list[Union[str, int]], str, int]
+    def _get_orders(
+        self, order_identifiers: list[Union[str, int]]
     ) -> list[click_and_drop_api.GetOrderInfoResource]:
-        if not isinstance(order_identifiers, list):
-            order_identifiers = [order_identifiers]
-
         result = []
         for identifier in order_identifiers:
             if isinstance(identifier, int):
@@ -102,12 +96,9 @@ class MockClickAndDrop(AbstractClickAndDrop):
                         break
         return result
 
-    def delete_orders(
-        self, order_identifiers: Union[list[Union[str, int]], str, int]
+    def _delete_orders(
+        self, order_identifiers: list[Union[str, int]]
     ) -> click_and_drop_api.DeleteOrdersResource:
-        if not isinstance(order_identifiers, list):
-            order_identifiers = [order_identifiers]
-
         deleted = []
         errors = []
         for identifier in order_identifiers:
