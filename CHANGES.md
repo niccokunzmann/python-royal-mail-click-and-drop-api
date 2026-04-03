@@ -1,13 +1,17 @@
 # Changelog
 
+## v3.0.4
+
+- Add `ClickAndDrop.from_env` as a shortcut to load the API from environment variables.
+
 ## v3.0.3
 
-- Remove limit of 100 for `ClickAndDropAPI.create_orders`, `ClickAndDropAPI.get_orders`, `ClickAndDropAPI.delete_orders`
+- Remove limit of 100 for `ClickAndDrop.create_orders`, `ClickAndDrop.get_orders`, `ClickAndDrop.delete_orders`
 - Add `country_codes` property to `PackageShippingOption`
 
 ## v3.0.2
 
-- Better formatted error message for `ClickAndDropAPI.test_shipping`
+- Better formatted error message for `ClickAndDrop.test_shipping`
 - Add `any_or_none` property to `ShippingDB`
 
 ## v3.0.1
