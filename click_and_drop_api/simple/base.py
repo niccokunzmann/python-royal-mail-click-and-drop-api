@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Literal, Optional, Union
+import os
+from typing import Literal, Optional, Self, Union
 
 import click_and_drop_api
 
@@ -26,6 +27,11 @@ from click_and_drop_api.simple.addresses import get_address, get_all_country_cod
 
 class AbstractClickAndDrop(ABC):
     """Common interface shared by ClickAndDrop and MockClickAndDrop."""
+
+    @classmethod
+    def from_env(cls, api_env_var: str = "API_KEY") -> Self:
+        api_key = os.environ[api_env_var]
+        return cls(api_key)
 
     max_order_count: int = 100
 
@@ -52,7 +58,7 @@ class AbstractClickAndDrop(ABC):
         Parameters:
             orders: One or more :class:`~click_and_drop_api.simple.types.CreateOrder` instances.
         Returns:
-            A :class:`~click_and_drop_api.CreateOrdersResponse` instance containing created and failed orders.
+            A :class:`~click_and_drop_api.models.create_orders_response.CreateOrdersResponse` instance containing created and failed orders.
 
         https://api.parcel.royalmail.com/#tag/Orders/operation/CreateOrdersAsync
         """
@@ -223,7 +229,7 @@ class AbstractClickAndDrop(ABC):
                 address for every country.
 
         Returns:
-            :class:`ShippingTestResult` with ``success=True/False`` and a message.
+            :class:`~click_and_drop_api.simple.shipping_test_result.ShippingTestResult` with ``success=True/False`` and a message.
 
         Note:
             This method only seems to work for OBA accounts
