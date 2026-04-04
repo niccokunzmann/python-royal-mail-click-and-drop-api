@@ -14,6 +14,12 @@ from datetime import datetime, timezone
 from click_and_drop_api.exceptions import ApiException
 from click_and_drop_api.models.create_order_response import CreateOrderResponse
 from click_and_drop_api.models.order_field_response import OrderFieldResponse
+from click_and_drop_api.models.update_order_status_response import (
+    UpdateOrderStatusResponse,
+)
+from click_and_drop_api.models.update_orders_status_request import (
+    UpdateOrdersStatusRequest,
+)
 from click_and_drop_api.simple import (
     Address,
     CreateOrder,
@@ -23,6 +29,7 @@ from click_and_drop_api.simple import (
 )
 from click_and_drop_api.simple.shipping_test_result import ShippingTestResult
 from click_and_drop_api.simple.addresses import get_address, get_all_country_codes
+from .types import UpdateOrderStatus
 
 
 class AbstractClickAndDrop(ABC):
@@ -321,6 +328,139 @@ class AbstractClickAndDrop(ABC):
             currency_code="GBP",
             postage_details=PostageDetails(service_code=service_code),
         )
+
+    def update_order_status(
+        self, updates: list[UpdateOrderStatus]
+    ) -> UpdateOrderStatusResponse:
+        """Set the status of an order.
+
+        Parameters:
+            requests: A list of UpdateOrdersStatusRequest instances.
+
+        Returns:
+            A :class:`~click_and_drop_api.models.set_order_status_resource.SetOrderStatusResource` instance containing the updated order information.
+        """
+        result = UpdateOrderStatusResponse(updated_orders=[], errors=[])
+        for i in range(0, len(updates), self.max_order_count):
+            request = UpdateOrdersStatusRequest(
+                items=updates[i : i + self.max_order_count]
+            )
+            response = self._set_order_status(request)
+            result.updated_orders.extend(response.updated_orders)
+            result.errors.extend(response.errors)
+        return result
+
+    def update_orders(
+        self,
+        order_identifiers: list[Union[str, int]] | str | int,
+        status: Literal["new", "despatchedByOtherCourier", "despatched"] | None = None,
+        tracking_number: str | None = None,
+        despatch_date: datetime | None = None,
+        shipping_carrier: str | None = None,
+        shipping_service: str | None = None,
+    ):
+        """Update the status of multiple orders."""
+        return self.update_order_status(
+            self._get_orders_update_request(
+                order_identifiers,
+                status=status,
+                tracking_number=tracking_number,
+                despatch_date=despatch_date,
+                shipping_carrier=shipping_carrier,
+                shipping_service=shipping_service,
+            )
+        )
+
+    def set_order_status(
+        self,
+        order_identifiers: list[Union[str, int]] | str | int,
+        status: Literal["new", "despatchedByOtherCourier", "despatched"],
+    ) -> UpdateOrderStatusResponse:
+        """Set the status of orders."""
+        return self.update_order_status(
+            self._get_orders_update_request(order_identifiers, status=status)
+        )
+
+    def set_order_tracking_number(
+        self, order_identifiers: list[Union[str, int]] | str | int, tracking_number: str
+    ) -> UpdateOrderStatusResponse:
+        """Set the tracking number of a orders."""
+        return self.update_order_status(
+            self._get_orders_update_request(
+                order_identifiers, tracking_number=tracking_number
+            )
+        )
+
+    def set_order_despatch_date(
+        self,
+        order_identifiers: list[Union[str, int]] | str | int,
+        despatch_date: datetime,
+    ) -> UpdateOrderStatusResponse:
+        """Set the despatch date of a orders."""
+        return self.update_order_status(
+            self._get_orders_update_request(
+                order_identifiers, despatch_date=despatch_date
+            )
+        )
+
+    def set_order_shipping_carrier(
+        self,
+        order_identifiers: list[Union[str, int]] | str | int,
+        shipping_carrier: str,
+    ) -> UpdateOrderStatusResponse:
+        """Set the shipping carrier of a orders."""
+        return self.update_order_status(
+            self._get_orders_update_request(
+                order_identifiers, shipping_carrier=shipping_carrier
+            )
+        )
+
+    def set_order_shipping_service(
+        self,
+        order_identifiers: list[Union[str, int]] | str | int,
+        shipping_service: str,
+    ) -> UpdateOrderStatusResponse:
+        """Set the shipping service of a orders."""
+        return self.update_order_status(
+            self._get_orders_update_request(
+                order_identifiers, shipping_service=shipping_service
+            )
+        )
+
+    def _get_orders_update_request(
+        self,
+        order_identifiers: list[Union[str, int]] | str | int,
+        status: str | None = None,
+        tracking_number: str | None = None,
+        despatch_date: datetime | None = None,
+        shipping_carrier: str | None = None,
+        shipping_service: str | None = None,
+    ) -> list[UpdateOrderStatus]:
+        """Get a list of UpdateOrderStatus for the given order identifiers and attributes."""
+        if not isinstance(order_identifiers, list):
+            order_identifiers = [order_identifiers]
+        result = []
+        for identifier in order_identifiers:
+            order_id = identifier if isinstance(identifier, int) else None
+            order_ref = identifier if isinstance(identifier, str) else None
+            result.append(
+                UpdateOrderStatus(
+                    order_identifier=order_id,
+                    order_reference=order_ref,
+                    status=status,
+                    tracking_number=tracking_number,
+                    despatch_date=despatch_date,
+                    shipping_carrier=shipping_carrier,
+                    shipping_service=shipping_service,
+                )
+            )
+        return result
+
+    @abstractmethod
+    def _set_order_status(
+        self, request: UpdateOrdersStatusRequest
+    ) -> UpdateOrderStatusResponse:
+        """Set the status of an order."""
 
 
 __all__ = [

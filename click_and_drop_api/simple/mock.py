@@ -137,5 +137,26 @@ class MockClickAndDrop(AbstractClickAndDrop):
     ) -> bytearray:
         return bytearray(b"%PDF-1.4 mock label\n")
 
+    def _set_order_status(
+        self, request: click_and_drop_api.UpdateOrdersStatusRequest
+    ) -> click_and_drop_api.UpdateOrderStatusResponse:
+        # For simplicity, this mock does not actually update the orders.
+        # It just returns a successful response for all items in the request.
+        created = []
+        errors = []
+        for item in request.items or []:
+            created.append(
+                click_and_drop_api.UpdatedOrderInfo(
+                    order_identifier=item.order_identifier,
+                    order_reference=item.order_reference,
+                    status=item.status,
+                )
+            )
+
+        return click_and_drop_api.UpdateOrderStatusResponse(
+            updated_orders=created,
+            errors=errors,
+        )
+
 
 __all__ = ["MockClickAndDrop"]

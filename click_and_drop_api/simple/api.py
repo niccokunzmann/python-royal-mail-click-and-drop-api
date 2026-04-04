@@ -170,5 +170,10 @@ class ClickAndDrop(AbstractClickAndDrop):
             include_cn=include_cn,
         )
 
+    def _set_order_status(
+        self, request: click_and_drop_api.UpdateOrdersStatusRequest
+    ) -> click_and_drop_api.UpdateOrderStatusResponse:
+        return self._orders_api.update_orders_status_async(request)
+
 
 __all__ = ["ClickAndDrop"]
