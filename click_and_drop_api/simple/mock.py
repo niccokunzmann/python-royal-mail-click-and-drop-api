@@ -39,6 +39,7 @@ class MockClickAndDrop(AbstractClickAndDrop):
         self._key = key
         self._is_oba = is_oba
         self._orders: dict[int, click_and_drop_api.GetOrderInfoResource] = {}
+        self._order_statuses: dict[int, Optional[str]] = {}
         self._next_id = 1
         self._next_manifest_id = 1
 
@@ -103,6 +104,35 @@ class MockClickAndDrop(AbstractClickAndDrop):
                         break
         return result
 
+    def _get_orders_details(
+        self, order_identifiers: list[Union[str, int]]
+    ) -> list[click_and_drop_api.GetOrderDetailsResource]:
+        postal = click_and_drop_api.GetPostalDetailsResult()
+        result = []
+        for info in self._get_orders(order_identifiers):
+            status = self._order_statuses.get(info.order_identifier)
+            result.append(
+                click_and_drop_api.GetOrderDetailsResource(
+                    order_identifier=info.order_identifier,
+                    order_reference=info.order_reference,
+                    order_date=info.order_date,
+                    created_on=info.created_on,
+                    order_status=status,
+                    subtotal=0,
+                    shipping_cost_charged=0,
+                    order_discount=0,
+                    total=0,
+                    weight_in_grams=0,
+                    shipping_details=click_and_drop_api.GetShippingDetailsResult(
+                        shipping_cost=0
+                    ),
+                    shipping_info=postal,
+                    billing_info=postal,
+                    order_lines=[],
+                )
+            )
+        return result
+
     def _delete_orders(
         self, order_identifiers: list[Union[str, int]]
     ) -> click_and_drop_api.DeleteOrdersResource:
@@ -112,6 +142,7 @@ class MockClickAndDrop(AbstractClickAndDrop):
             order = self.get_order(identifier)
             if order is not None:
                 del self._orders[order.order_identifier]
+                self._order_statuses.pop(order.order_identifier, None)
                 deleted.append(
                     click_and_drop_api.DeletedOrderInfo(
                         order_identifier=order.order_identifier,
@@ -165,12 +196,17 @@ class MockClickAndDrop(AbstractClickAndDrop):
     def _set_order_status(
         self, request: click_and_drop_api.UpdateOrdersStatusRequest
     ) -> click_and_drop_api.UpdateOrderStatusResponse:
-        # For simplicity, this mock does not actually update the orders.
-        # It just returns a successful response for all items in the request.
-        created = []
+        updated = []
         errors = []
         for item in request.items or []:
-            created.append(
+            order = self.get_order(
+                item.order_identifier
+                if item.order_identifier is not None
+                else item.order_reference
+            )
+            if order is not None and item.status is not None:
+                self._order_statuses[order.order_identifier] = item.status
+            updated.append(
                 click_and_drop_api.UpdatedOrderInfo(
                     order_identifier=item.order_identifier,
                     order_reference=item.order_reference,
@@ -179,7 +215,7 @@ class MockClickAndDrop(AbstractClickAndDrop):
             )
 
         return click_and_drop_api.UpdateOrderStatusResponse(
-            updated_orders=created,
+            updated_orders=updated,
             errors=errors,
         )
 

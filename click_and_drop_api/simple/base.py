@@ -34,7 +34,7 @@ from click_and_drop_api.simple import (
 )
 from click_and_drop_api.simple.shipping_test_result import ShippingTestResult
 from click_and_drop_api.simple.addresses import get_address, get_all_country_codes
-from .types import ManifestedOrders, UpdateOrderStatus
+from .types import ManifestedOrders, OrderInfo, UpdateOrderStatus
 
 
 class AbstractClickAndDrop(ABC):
@@ -101,7 +101,7 @@ class AbstractClickAndDrop(ABC):
 
     def get_orders(
         self, order_identifiers: Union[list[Union[str, int]], str, int]
-    ) -> list[click_and_drop_api.GetOrderInfoResource]:
+    ) -> list[OrderInfo]:
         """Get specific orders.
 
         Parameters:
@@ -111,7 +111,7 @@ class AbstractClickAndDrop(ABC):
                 Order References are strings.
 
         Returns:
-            A list of orders
+            A list of :class:`~click_and_drop_api.simple.types.OrderInfo` instances.
 
         Raises:
             click_and_drop_api.exceptions.BadRequestException if an order with the same reference already exists
@@ -123,13 +123,14 @@ class AbstractClickAndDrop(ABC):
         result = []
         for i in range(0, len(order_identifiers), self.max_order_count):
             result.extend(
-                self._get_orders(order_identifiers[i : i + self.max_order_count])
+                OrderInfo.from_get_order_info_resource(o)
+                for o in self._get_orders(
+                    order_identifiers[i : i + self.max_order_count]
+                )
             )
         return result
 
-    def get_order(
-        self, order_identifier: Union[str, int]
-    ) -> Optional[click_and_drop_api.GetOrderInfoResource]:
+    def get_order(self, order_identifier: Union[str, int]) -> Optional[OrderInfo]:
         """Retrieve a single order.
 
         Parameters:
@@ -140,6 +141,71 @@ class AbstractClickAndDrop(ABC):
         """
         orders = self.get_orders(order_identifier)
         return orders[0] if orders else None
+
+    @abstractmethod
+    def _get_orders_details(
+        self, order_identifiers: list[Union[str, int]]
+    ) -> list[click_and_drop_api.GetOrderDetailsResource]:
+        """Retrieve detailed order information by identifier or reference."""
+
+    def get_orders_details(
+        self, order_identifiers: Union[list[Union[str, int]], str, int]
+    ) -> list[click_and_drop_api.GetOrderDetailsResource]:
+        """Get detailed information for specific orders, including order status.
+
+        .. note::
+            Reserved for ChannelShipper customers only.
+            Please visit https://channelshipper.com/ for more information.
+
+        Parameters:
+            order_identifiers:
+                One or several Order Identifiers or Order References.
+                Order Identifiers are integer numbers.
+                Order References are strings.
+
+        Returns:
+            A list of :class:`~click_and_drop_api.models.get_order_details_resource.GetOrderDetailsResource`
+            instances, each including ``order_status`` and timestamps such as
+            ``postage_applied_on`` and ``manifested_on``.
+
+        Raises:
+            click_and_drop_api.exceptions.ForbiddenException: If the account is not a
+                ChannelShipper account (HTTP 403).
+
+        https://api.parcel.royalmail.com/#tag/Orders/operation/GetSpecificOrdersWithDetailsAsync
+        """
+        if not isinstance(order_identifiers, list):
+            order_identifiers = [order_identifiers]
+        result = []
+        for i in range(0, len(order_identifiers), self.max_order_count):
+            result.extend(
+                self._get_orders_details(
+                    order_identifiers[i : i + self.max_order_count]
+                )
+            )
+        return result
+
+    def get_order_details(
+        self, order_identifier: Union[str, int]
+    ) -> Optional[click_and_drop_api.GetOrderDetailsResource]:
+        """Get detailed information for a single order, including order status.
+
+        .. note::
+            Reserved for ChannelShipper customers only.
+            Please visit https://channelshipper.com/ for more information.
+
+        Parameters:
+            order_identifier: Order Identifier (integer) or Order Reference (string).
+
+        Returns:
+            The order details if found, else None.
+
+        Raises:
+            click_and_drop_api.exceptions.ForbiddenException: If the account is not a
+                ChannelShipper account (HTTP 403).
+        """
+        results = self.get_orders_details(order_identifier)
+        return results[0] if results else None
 
     @abstractmethod
     def _delete_orders(

@@ -1,6 +1,8 @@
 """Renamed types for nicer reading"""
 
 import base64
+from datetime import datetime
+from enum import Enum
 
 from click_and_drop_api.models.address_request import AddressRequest as Address
 from click_and_drop_api.models.billing_details_request import (
@@ -13,6 +15,7 @@ from click_and_drop_api.models.create_orders_request import (
     CreateOrdersRequest as CreateOrders,
 )
 from click_and_drop_api.models.dimensions_request import DimensionsRequest as Dimensions
+from click_and_drop_api.models.get_order_info_resource import GetOrderInfoResource
 from click_and_drop_api.models.label_generation_request import (
     LabelGenerationRequest as LabelGeneration,
 )
@@ -59,8 +62,41 @@ class ManifestedOrders(ManifestOrdersResponse):
         return bytearray(base64.b64decode(self.document_pdf))
 
 
+class OrderInfo(GetOrderInfoResource):
+    @classmethod
+    def from_get_order_info_resource(
+        cls, get_order_info_resource: GetOrderInfoResource
+    ):
+        return cls(**get_order_info_resource.model_dump())
+
+    class STATUS(str, Enum):
+        NEW = "new"
+        LABEL_GENERATED = "label_generated"
+        MANIFESTED = "manifested"
+        DESPATCHED = "despatched"
+
+    @property
+    def status_history(self) -> list[STATUS]:
+        """Return the history of the status of the order, ordered by timestamp.
+
+        This is based on timestamps set on the order.
+        """
+        entries: list[tuple[datetime, OrderInfo.STATUS]] = []
+        if self.created_on is not None:
+            entries.append((self.created_on, self.STATUS.NEW))
+        if self.printed_on is not None:
+            entries.append((self.printed_on, self.STATUS.LABEL_GENERATED))
+        if self.manifested_on is not None:
+            entries.append((self.manifested_on, self.STATUS.MANIFESTED))
+        if self.shipped_on is not None:
+            entries.append((self.shipped_on, self.STATUS.DESPATCHED))
+        entries.sort(key=lambda e: e[0])
+        return [status for _, status in entries]
+
+
 __all__ = [
     "CreateOrder",
+    "OrderInfo",
     "RecipientDetails",
     "ManifestedOrders",
     "Address",

@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.0.5
+
+- `ClickAndDrop.get_order` and `ClickAndDrop.get_orders` now return `OrderInfo` objects that have a `status_history` property
+
 ## v3.0.4
 
 - Add `manifest_orders(carrier_name=None)` to `AbstractClickAndDrop` — manifests all eligible orders (status `Label Generated` or `Despatched`) and applies postage

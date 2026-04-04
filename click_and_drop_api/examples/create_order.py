@@ -24,7 +24,9 @@ api = ClickAndDrop(API_KEY)
 # choose a new reference or else the API will reject the order
 REFERENCE = "example-order-{now}".format(now=datetime.now(UTC).strftime("%Y%m%d%H%M%S"))
 
-service = db.get("letter", "OLP2")  # letter, 2nd class delivery
+service = db.get(
+    "letter", "OLP2" if not api.is_oba() else "BPL2"
+)  # letter, 2nd class delivery
 
 new_order = CreateOrder(
     order_reference=REFERENCE,
@@ -63,6 +65,8 @@ response = api.create_orders(new_order)
 
 print(f"Orders created: {response.created_orders}")
 print(f"Errors: {response.errors_count}")
+for error in response.failed_orders:
+    print(f"  {error.order.order_reference}: {error.errors}")
 
 print("Getting the order from the API.")
 order = api.get_order(REFERENCE)

@@ -108,6 +108,13 @@ class ClickAndDrop(AbstractClickAndDrop):
             order_identifiers=order_identifiers_to_string(order_identifiers)
         )
 
+    def _get_orders_details(
+        self, order_identifiers: list[Union[str, int]]
+    ) -> list[click_and_drop_api.GetOrderDetailsResource]:
+        return self._orders_api.get_specific_orders_with_details_async(
+            order_identifiers=order_identifiers_to_string(order_identifiers)
+        )
+
     def _delete_orders(
         self, order_identifiers: list[Union[str, int]]
     ) -> click_and_drop_api.DeleteOrdersResource:
