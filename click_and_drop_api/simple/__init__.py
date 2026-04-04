@@ -18,6 +18,8 @@ from .types import (
     UpdateOrderStatus,
     UpdateOrderStatusResponse,
     UpdateOrdersStatus,
+    ManifestedOrders,
+    OrderInfo,
 )
 from .api import ClickAndDrop
 from .mock import MockClickAndDrop
@@ -46,6 +48,8 @@ __all__ = [
     "UpdateOrderStatus",
     "UpdateOrderStatusResponse",
     "LabelGeneration",
+    "OrderInfo",
+    "ManifestedOrders",
     "ManifestEligibleOrders",
     "ManifestDetailsResponse",
     "PostageDetails",
