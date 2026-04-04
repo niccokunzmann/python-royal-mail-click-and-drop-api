@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 import os
-from typing import Literal, Optional, Self, Union
+from typing import Literal, Optional, Union
+from click_and_drop_api.simple.compatibility import Self
 
 import click_and_drop_api
 
