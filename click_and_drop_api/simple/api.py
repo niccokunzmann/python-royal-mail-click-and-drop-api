@@ -175,5 +175,10 @@ class ClickAndDrop(AbstractClickAndDrop):
     ) -> click_and_drop_api.UpdateOrderStatusResponse:
         return self._orders_api.update_orders_status_async(request)
 
+    def _manifest_orders(
+        self, request: click_and_drop_api.ManifestEligibleOrdersRequest
+    ) -> click_and_drop_api.ManifestOrdersResponse:
+        return self._manifests_api.manifest_eligible_async(request)
+
 
 __all__ = ["ClickAndDrop"]

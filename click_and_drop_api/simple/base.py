@@ -13,6 +13,10 @@ from datetime import datetime, timezone
 
 from click_and_drop_api.exceptions import ApiException
 from click_and_drop_api.models.create_order_response import CreateOrderResponse
+from click_and_drop_api.models.manifest_eligible_orders_request import (
+    ManifestEligibleOrdersRequest,
+)
+from click_and_drop_api.models.manifest_orders_response import ManifestOrdersResponse
 from click_and_drop_api.models.order_field_response import OrderFieldResponse
 from click_and_drop_api.models.update_order_status_response import (
     UpdateOrderStatusResponse,
@@ -29,7 +33,7 @@ from click_and_drop_api.simple import (
 )
 from click_and_drop_api.simple.shipping_test_result import ShippingTestResult
 from click_and_drop_api.simple.addresses import get_address, get_all_country_codes
-from .types import UpdateOrderStatus
+from .types import ManifestedOrders, UpdateOrderStatus
 
 
 class AbstractClickAndDrop(ABC):
@@ -461,6 +465,38 @@ class AbstractClickAndDrop(ABC):
         self, request: UpdateOrdersStatusRequest
     ) -> UpdateOrderStatusResponse:
         """Set the status of an order."""
+
+    @abstractmethod
+    def _manifest_orders(
+        self, request: ManifestEligibleOrdersRequest
+    ) -> ManifestOrdersResponse:
+        """Manifest eligible orders."""
+
+    def manifest_orders(self, carrier_name: str | None = None) -> ManifestedOrders:
+        """Manifest all eligible orders, applying postage.
+
+        Manifests all orders in ``Label Generated`` and ``Despatched`` statuses
+        and returns manifest paperwork where possible.
+
+        Parameters:
+            carrier_name:
+                Required when the account has multiple carriers or postage
+                location numbers. Must match the carrier name configured in the
+                account settings. Pass ``None`` for single-carrier accounts.
+
+        Returns:
+            A :class:`~click_and_drop_api.models.manifest_orders_response.ManifestOrdersResponse`
+            containing the manifest number and an optional base64-encoded PDF.
+
+        https://api.parcel.royalmail.com/#tag/Manifests/operation/ManifestEligibleAsync
+        """
+        response = self._manifest_orders(
+            ManifestEligibleOrdersRequest(carrier_name=carrier_name)
+        )
+        return ManifestedOrders(
+            manifest_number=response.manifest_number,
+            document_pdf=response.document_pdf,
+        )
 
 
 __all__ = [

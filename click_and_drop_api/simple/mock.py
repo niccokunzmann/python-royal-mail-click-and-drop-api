@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import base64
 from datetime import datetime, timezone
 from typing import Literal, Optional, Union
 
@@ -37,6 +38,7 @@ class MockClickAndDrop(AbstractClickAndDrop):
         self._key = key
         self._orders: dict[int, click_and_drop_api.GetOrderInfoResource] = {}
         self._next_id = 1
+        self._next_manifest_id = 1
 
     @property
     def key(self) -> str:
@@ -136,6 +138,16 @@ class MockClickAndDrop(AbstractClickAndDrop):
         include_cn: Optional[bool] = None,
     ) -> bytearray:
         return bytearray(b"%PDF-1.4 mock label\n")
+
+    def _manifest_orders(
+        self, request: click_and_drop_api.ManifestEligibleOrdersRequest
+    ) -> click_and_drop_api.ManifestOrdersResponse:
+        manifest_id = self._next_manifest_id
+        self._next_manifest_id += 1
+        return click_and_drop_api.ManifestOrdersResponse(
+            manifest_number=manifest_id,
+            document_pdf=base64.b64encode(b"%PDF-1.4 mock manifest\n").decode(),
+        )
 
     def _set_order_status(
         self, request: click_and_drop_api.UpdateOrdersStatusRequest

@@ -1,5 +1,7 @@
 """Renamed types for nicer reading"""
 
+import base64
+
 from click_and_drop_api.models.address_request import AddressRequest as Address
 from click_and_drop_api.models.billing_details_request import (
     BillingDetailsRequest as BillingDetails,
@@ -20,6 +22,7 @@ from click_and_drop_api.models.manifest_details_response import (
 from click_and_drop_api.models.manifest_eligible_orders_request import (
     ManifestEligibleOrdersRequest as ManifestEligibleOrders,
 )
+from click_and_drop_api.models.manifest_orders_response import ManifestOrdersResponse
 from click_and_drop_api.models.postage_details_request import (
     PostageDetailsRequest as PostageDetails,
 )
@@ -47,9 +50,19 @@ from click_and_drop_api.models.update_orders_status_request import (
 )
 
 
+class ManifestedOrders(ManifestOrdersResponse):
+    @property
+    def pdf(self) -> bytearray | None:
+        """Return the PDF content of the manifest as a bytearray, or None if unavailable."""
+        if self.document_pdf is None:
+            return None
+        return bytearray(base64.b64decode(self.document_pdf))
+
+
 __all__ = [
     "CreateOrder",
     "RecipientDetails",
+    "ManifestedOrders",
     "Address",
     "PostageDetails",
     "ShipmentPackage",
