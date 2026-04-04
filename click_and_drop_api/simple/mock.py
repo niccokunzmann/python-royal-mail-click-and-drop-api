@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import base64
+from importlib.resources import files
 from datetime import datetime, timezone
 from typing import Literal, Optional, Union
 
@@ -27,7 +28,7 @@ class MockClickAndDrop(AbstractClickAndDrop):
         assert response.success_count == 1
     """
 
-    def __init__(self, key: str = _MOCK_KEY):
+    def __init__(self, key: str = _MOCK_KEY, is_oba: bool = True):
         if not isinstance(key, str):
             raise TypeError(f"Expected str, got {key}.")
         key = key.strip()
@@ -36,9 +37,13 @@ class MockClickAndDrop(AbstractClickAndDrop):
         if "".join(key.split()) != key:
             raise ValueError(f"Expected no whitespace in {key!r}.")
         self._key = key
+        self._is_oba = is_oba
         self._orders: dict[int, click_and_drop_api.GetOrderInfoResource] = {}
         self._next_id = 1
         self._next_manifest_id = 1
+
+    def is_oba(self) -> bool:
+        return self._is_oba
 
     @property
     def key(self) -> str:
@@ -137,16 +142,24 @@ class MockClickAndDrop(AbstractClickAndDrop):
         include_returns_label: Optional[bool] = None,
         include_cn: Optional[bool] = None,
     ) -> bytearray:
-        return bytearray(b"%PDF-1.4 mock label\n")
+        data = (
+            files("click_and_drop_api.examples").joinpath("mock-label.pdf").read_bytes()
+        )
+        return bytearray(data)
 
     def _manifest_orders(
         self, request: click_and_drop_api.ManifestEligibleOrdersRequest
     ) -> click_and_drop_api.ManifestOrdersResponse:
         manifest_id = self._next_manifest_id
         self._next_manifest_id += 1
+        data = (
+            files("click_and_drop_api.examples")
+            .joinpath("mock-manifest.pdf")
+            .read_bytes()
+        )
         return click_and_drop_api.ManifestOrdersResponse(
             manifest_number=manifest_id,
-            document_pdf=base64.b64encode(b"%PDF-1.4 mock manifest\n").decode(),
+            document_pdf=base64.b64encode(data).decode(),
         )
 
     def _set_order_status(

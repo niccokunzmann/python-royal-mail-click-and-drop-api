@@ -2,6 +2,14 @@
 
 ## v3.0.4
 
+- Add `manifest_orders(carrier_name=None)` to `AbstractClickAndDrop` — manifests all eligible orders (status `Label Generated` or `Despatched`) and applies postage
+- Add `ManifestedOrders` type with a `.pdf` property that decodes the base64 manifest PDF to `bytearray`, returning `None` when no PDF is included
+- Add `update_orders(order_identifiers, *, status, tracking_number, despatch_date, shipping_carrier, shipping_service)` to update one or more order fields in one call
+- Add `set_order_status`, `set_order_tracking_number`, `set_order_despatch_date`, `set_order_shipping_carrier`, `set_order_shipping_service` convenience wrappers
+- `MockClickAndDrop` accepts `is_oba: bool = True` constructor argument; `is_oba()` returns it directly without making API calls
+- `MockClickAndDrop.get_label()` now returns the bundled `mock-label.pdf` from `click_and_drop_api.examples`
+- `MockClickAndDrop.manifest_orders()` now returns the bundled `mock-manifest.pdf` as a base64-encoded response, with an incrementing manifest number
+- Add `oba_full_workflow.py` example — end-to-end OBA flow: check account type, pick cheapest domestic service, create order with label, save label, manifest, set despatched
 - Add `ClickAndDrop.from_env` as a shortcut to load the API from environment variables.
 
 ## v3.0.3

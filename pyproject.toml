@@ -73,6 +73,9 @@ cli = [
   "tox",
 ]
 
+[tool.setuptools.package-data]
+"click_and_drop_api.examples" = ["*.pdf"]
+
 [build-system]
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
