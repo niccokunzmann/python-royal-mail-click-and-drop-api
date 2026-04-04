@@ -32,6 +32,7 @@ from click_and_drop_api.simple import (
     RecipientDetails,
     ShipmentPackage,
 )
+from click_and_drop_api.simple.shipping.db import ShippingDB
 from click_and_drop_api.simple.shipping_test_result import ShippingTestResult
 from click_and_drop_api.simple.addresses import get_address, get_all_country_codes
 from .types import ManifestedOrders, OrderInfo, UpdateOrderStatus
@@ -46,6 +47,11 @@ class AbstractClickAndDrop(ABC):
         return cls(api_key)
 
     max_order_count: int = 100
+
+    @property
+    def shipping_options(self) -> ShippingDB:
+        """Return all the shipping options that can be used."""
+        return ShippingDB.default().for_oba(self.is_oba())
 
     @property
     @abstractmethod

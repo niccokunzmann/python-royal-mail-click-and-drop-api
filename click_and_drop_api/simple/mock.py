@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import base64
 from importlib.resources import files
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Literal, Optional, Union
 
 import click_and_drop_api
@@ -28,7 +28,18 @@ class MockClickAndDrop(AbstractClickAndDrop):
         assert response.success_count == 1
     """
 
-    def __init__(self, key: str = _MOCK_KEY, is_oba: bool = True):
+    def __init__(
+        self,
+        key: str = _MOCK_KEY,
+        is_oba: bool = True,
+        despatch_when_manifested: bool = True,
+    ):
+        """Create a new API object.
+
+        Parameters:
+            key: The Click & Drop API authorisation key.
+            is_oba: Whether to treat the API as OBA.
+            despatch_when_manifested: Whether to despatch orders when they are manifested."""
         if not isinstance(key, str):
             raise TypeError(f"Expected str, got {key}.")
         key = key.strip()
@@ -42,6 +53,13 @@ class MockClickAndDrop(AbstractClickAndDrop):
         self._order_statuses: dict[int, Optional[str]] = {}
         self._next_id = 1
         self._next_manifest_id = 1
+        self.despatch_when_manifested = despatch_when_manifested
+        self.__now = datetime(2026, 4, 4, 12, 0, 0, tzinfo=timezone.utc)
+
+    def _now(self):
+        """Update the time."""
+        self.__now += timedelta(seconds=1)
+        return self.__now
 
     def is_oba(self) -> bool:
         return self._is_oba
@@ -55,13 +73,13 @@ class MockClickAndDrop(AbstractClickAndDrop):
             commit="mock",
             build="mock",
             release=_MOCK_VERSION,
-            release_date=datetime.now(timezone.utc),
+            release_date=self._now(),
         )
 
     def _create_orders(
         self, orders: list[CreateOrder]
     ) -> click_and_drop_api.CreateOrdersResponse:
-        now = datetime.now(timezone.utc)
+        now = self._now()
         created = []
         for order in orders:
             order_id = self._next_id
@@ -91,6 +109,8 @@ class MockClickAndDrop(AbstractClickAndDrop):
     def _get_orders(
         self, order_identifiers: list[Union[str, int]]
     ) -> list[click_and_drop_api.GetOrderInfoResource]:
+        if not isinstance(order_identifiers, list):
+            order_identifiers = [order_identifiers]
         result = []
         for identifier in order_identifiers:
             if isinstance(identifier, int):
@@ -173,6 +193,9 @@ class MockClickAndDrop(AbstractClickAndDrop):
         include_returns_label: Optional[bool] = None,
         include_cn: Optional[bool] = None,
     ) -> bytearray:
+        orders = self._get_orders(order_identifiers)
+        for order in orders:
+            order.printed_on = self._now()
         data = (
             files("click_and_drop_api.examples").joinpath("mock-label.pdf").read_bytes()
         )
@@ -181,6 +204,12 @@ class MockClickAndDrop(AbstractClickAndDrop):
     def _manifest_orders(
         self, request: click_and_drop_api.ManifestEligibleOrdersRequest
     ) -> click_and_drop_api.ManifestOrdersResponse:
+        for order in self._orders.values():
+            if not order.printed_on:
+                order.printed_on = self._now()
+            order.manifested_on = self._now()
+            if self.despatch_when_manifested:
+                order.shipped_on = self._now()
         manifest_id = self._next_manifest_id
         self._next_manifest_id += 1
         data = (
@@ -206,6 +235,10 @@ class MockClickAndDrop(AbstractClickAndDrop):
             )
             if order is not None and item.status is not None:
                 self._order_statuses[order.order_identifier] = item.status
+                order = self._get_orders(
+                    order.order_identifier or order.order_reference
+                )[0]
+                order.shipped_on = self._now()
             updated.append(
                 click_and_drop_api.UpdatedOrderInfo(
                     order_identifier=item.order_identifier,

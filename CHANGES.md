@@ -3,6 +3,7 @@
 ## v3.0.5
 
 - `ClickAndDrop.get_order` and `ClickAndDrop.get_orders` now return `OrderInfo` objects that have a `status_history` property
+- The mock API supports setting the status for orders correctly.
 
 ## v3.0.4
 
