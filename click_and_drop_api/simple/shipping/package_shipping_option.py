@@ -169,9 +169,7 @@ class PackageShippingOption:
     def ships_to(self, country_code: str) -> bool:
         """Return whether this option is intended for *country_code* (ISO 3166-1 alpha-2).
 
-        This is a static approximation based on the ``international`` flag: domestic
-        options (``international=False``) match ``"GB"`` only; international options
-        match every country except ``"GB"``.
+        This is based on self.country_codes.
 
         .. note::
             The Royal Mail API does **not** necessarily reject orders whose destination
@@ -182,7 +180,7 @@ class PackageShippingOption:
         country_code = country_code.upper()
         if len(country_code) != 2:
             raise ValueError(f"Invalid country code: {country_code!r}")
-        return country_code != "GB" if self.international else country_code == "GB"
+        return country_code in self.country_codes
 
     # ── API request helpers ─────────────────────────────────────────────────
 

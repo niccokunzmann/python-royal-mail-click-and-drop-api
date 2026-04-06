@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.0.8
+
+- Fix `PackageShippingOption.ships_to`.
+
 ## v3.0.7
 
 - `OrderInfo.tracking_link` returns the Royal Mail tracking URL for the order, or `None`.
