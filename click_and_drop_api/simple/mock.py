@@ -76,6 +76,11 @@ class MockClickAndDrop(AbstractClickAndDrop):
             release_date=self._now(),
         )
 
+    @staticmethod
+    def _tracking_number_for(order_id: int) -> str:
+        """Generate a mock Royal Mail tracking number embedding the order id."""
+        return f"AB{order_id:08d}GB"
+
     def _create_orders(
         self, orders: list[CreateOrder]
     ) -> click_and_drop_api.CreateOrdersResponse:
@@ -84,11 +89,27 @@ class MockClickAndDrop(AbstractClickAndDrop):
         for order in orders:
             order_id = self._next_id
             self._next_id += 1
+            service_code = (
+                order.postage_details.service_code
+                if order.postage_details is not None
+                else None
+            )
+            service = (
+                self.shipping_options.for_service(service_code).any_or_none
+                if service_code is not None
+                else None
+            )
+            tracking_number = (
+                self._tracking_number_for(order_id)
+                if service is not None and service.tracked
+                else None
+            )
             self._orders[order_id] = click_and_drop_api.GetOrderInfoResource(
                 order_identifier=order_id,
                 order_reference=order.order_reference,
                 created_on=now,
                 order_date=order.order_date,
+                tracking_number=tracking_number,
             )
             created.append(
                 click_and_drop_api.CreateOrderResponse(
@@ -96,6 +117,7 @@ class MockClickAndDrop(AbstractClickAndDrop):
                     order_reference=order.order_reference,
                     created_on=now,
                     order_date=order.order_date,
+                    tracking_number=tracking_number,
                 )
             )
 

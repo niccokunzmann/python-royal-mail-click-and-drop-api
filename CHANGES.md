@@ -3,6 +3,7 @@
 ## v3.0.6
 
 - `MockClickAndDrop.get_label` returns label with CN if `include_cn=True`.
+- `MockClickAndDrop.create_orders` now includes a tracking code in case the service includes tracking.
 
 ## v3.0.5
 
