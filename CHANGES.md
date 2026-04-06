@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.0.7
+
+- `OrderInfo.tracking_link` returns the Royal Mail tracking URL for the order, or `None`.
+
 ## v3.0.6
 
 - `MockClickAndDrop.get_label` returns label with CN if `include_cn=True`.

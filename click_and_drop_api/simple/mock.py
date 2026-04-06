@@ -78,8 +78,14 @@ class MockClickAndDrop(AbstractClickAndDrop):
 
     @staticmethod
     def _tracking_number_for(order_id: int) -> str:
-        """Generate a mock Royal Mail tracking number embedding the order id."""
-        return f"AB{order_id:08d}GB"
+        """Generate a mock Royal Mail tracking number embedding the order id.
+
+        The number follows the Royal Mail format (2 letters + 9 digits + 2 letters),
+        e.g. ``AB000000001GB``, which can be tracked at::
+
+            https://www.royalmail.com/track-your-item#/tracking-results/AB000000001GB
+        """
+        return f"AB{order_id:09d}GB"
 
     def _create_orders(
         self, orders: list[CreateOrder]

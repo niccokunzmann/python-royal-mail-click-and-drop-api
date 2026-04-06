@@ -93,6 +93,15 @@ class OrderInfo(GetOrderInfoResource):
         entries.sort(key=lambda e: e[0])
         return [status for _, status in entries]
 
+    @property
+    def tracking_link(self) -> str | None:
+        """Return a link to the Royal Mail tracking page for the order, or None if unavailable."""
+        return (
+            f"https://www.royalmail.com/track-your-item#/tracking-results/{self.tracking_number}"
+            if self.tracking_number is not None
+            else None
+        )
+
 
 __all__ = [
     "CreateOrder",

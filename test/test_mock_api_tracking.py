@@ -73,7 +73,7 @@ def test_tracking_number_presence(is_oba: bool, tracked: bool):
 def test_tracking_number_format(is_oba: bool):
     api = MockClickAndDrop(is_oba=is_oba)
     created = _create_one(api, service_code=_SERVICE[is_oba, True])
-    assert created.tracking_number == f"AB{created.order_identifier:08d}GB"
+    assert created.tracking_number == f"AB{created.order_identifier:09d}GB"
 
 
 # --- no postage details ---
