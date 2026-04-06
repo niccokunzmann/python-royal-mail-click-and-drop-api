@@ -11,6 +11,7 @@ from click_and_drop_api.simple import (
     RecipientDetails,
     Address,
     db,
+    LabelGeneration,
 )
 import os
 from datetime import datetime, UTC
@@ -54,11 +55,13 @@ new_order = CreateOrder(
     postage_details=service.as_postage_details(),
     packages=[service.as_package_request(weight_in_grams=80)],
     ## Label generation is only possible for OBA customers
-    # label=LabelGeneration(
-    #     include_label_in_response=True,
-    #     include_cn=False,
-    #     include_returns_label=False,
-    # ),
+    label=LabelGeneration(
+        include_label_in_response=False,
+        include_cn=False,
+        include_returns_label=False,
+    )
+    if api.is_oba()
+    else None,
 )
 
 response = api.create_orders(new_order)

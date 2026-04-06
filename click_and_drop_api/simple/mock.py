@@ -156,6 +156,7 @@ class MockClickAndDrop(AbstractClickAndDrop):
     def _delete_orders(
         self, order_identifiers: list[Union[str, int]]
     ) -> click_and_drop_api.DeleteOrdersResource:
+        # TODO: make sure that manifested orders cannot be deleted.
         deleted = []
         errors = []
         for identifier in order_identifiers:
@@ -196,9 +197,8 @@ class MockClickAndDrop(AbstractClickAndDrop):
         orders = self._get_orders(order_identifiers)
         for order in orders:
             order.printed_on = self._now()
-        data = (
-            files("click_and_drop_api.examples").joinpath("mock-label.pdf").read_bytes()
-        )
+        labels_file = "mock-label-cn.pdf" if include_cn else "mock-label.pdf"
+        data = files("click_and_drop_api.examples").joinpath(labels_file).read_bytes()
         return bytearray(data)
 
     def _manifest_orders(

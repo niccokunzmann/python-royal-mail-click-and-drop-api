@@ -44,7 +44,7 @@ def _make_order(reference: str = "test-ref-001") -> CreateOrder:
 # --- Constructor ---
 
 
-def test_default_key(api):
+def test_default_key(api: MockClickAndDrop):
     assert api.key == "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
 
 
@@ -72,7 +72,7 @@ def test_invalid_key_whitespace():
 # --- get_version ---
 
 
-def test_get_version_returns_mock_release(api):
+def test_get_version_returns_mock_release(api: MockClickAndDrop):
     version = api.get_version()
     assert version.release == "1.0.0-mock"
     assert version.commit == "mock"
@@ -83,7 +83,7 @@ def test_get_version_returns_mock_release(api):
 # --- create_order / create_orders ---
 
 
-def test_create_order_single(api):
+def test_create_order_single(api: MockClickAndDrop):
     response = api.create_order(_make_order())
     assert response.success_count == 1
     assert response.errors_count == 0
@@ -91,23 +91,23 @@ def test_create_order_single(api):
     assert len(response.failed_orders) == 0
 
 
-def test_create_orders_batch(api):
+def test_create_orders_batch(api: MockClickAndDrop):
     response = api.create_orders([_make_order("ref-a"), _make_order("ref-b")])
     assert response.success_count == 2
     assert len(response.created_orders) == 2
 
 
-def test_created_order_has_correct_reference(api):
+def test_created_order_has_correct_reference(api: MockClickAndDrop):
     response = api.create_order(_make_order("my-ref"))
     assert response.created_orders[0].order_reference == "my-ref"
 
 
-def test_created_order_has_integer_identifier(api):
+def test_created_order_has_integer_identifier(api: MockClickAndDrop):
     response = api.create_order(_make_order())
     assert isinstance(response.created_orders[0].order_identifier, int)
 
 
-def test_order_identifiers_increment(api):
+def test_order_identifiers_increment(api: MockClickAndDrop):
     r1 = api.create_order(_make_order("ref-1"))
     r2 = api.create_order(_make_order("ref-2"))
     id1 = r1.created_orders[0].order_identifier
@@ -118,7 +118,7 @@ def test_order_identifiers_increment(api):
 # --- get_order / get_orders ---
 
 
-def test_get_order_by_id(api):
+def test_get_order_by_id(api: MockClickAndDrop):
     response = api.create_order(_make_order("ref-x"))
     order_id = response.created_orders[0].order_identifier
     order = api.get_order(order_id)
@@ -126,26 +126,26 @@ def test_get_order_by_id(api):
     assert order.order_reference == "ref-x"
 
 
-def test_get_order_by_reference(api):
+def test_get_order_by_reference(api: MockClickAndDrop):
     api.create_order(_make_order("ref-y"))
     order = api.get_order("ref-y")
     assert order is not None
     assert order.order_reference == "ref-y"
 
 
-def test_get_order_not_found_returns_none(api):
+def test_get_order_not_found_returns_none(api: MockClickAndDrop):
     assert api.get_order(9999) is None
     assert api.get_order("nonexistent") is None
 
 
-def test_get_orders_multiple(api):
+def test_get_orders_multiple(api: MockClickAndDrop):
     r = api.create_orders([_make_order("r1"), _make_order("r2")])
     ids = [o.order_identifier for o in r.created_orders]
     orders = api.get_orders(ids)
     assert len(orders) == 2
 
 
-def test_get_orders_mixed_id_and_ref(api):
+def test_get_orders_mixed_id_and_ref(api: MockClickAndDrop):
     r = api.create_orders([_make_order("alpha"), _make_order("beta")])
     id1 = r.created_orders[0].order_identifier
     orders = api.get_orders([id1, "beta"])
@@ -155,7 +155,7 @@ def test_get_orders_mixed_id_and_ref(api):
 # --- delete_order / delete_orders ---
 
 
-def test_delete_order_by_id(api):
+def test_delete_order_by_id(api: MockClickAndDrop):
     response = api.create_order(_make_order())
     order_id = response.created_orders[0].order_identifier
     result = api.delete_order(order_id)
@@ -164,21 +164,21 @@ def test_delete_order_by_id(api):
     assert api.get_order(order_id) is None
 
 
-def test_delete_order_by_reference(api):
+def test_delete_order_by_reference(api: MockClickAndDrop):
     api.create_order(_make_order("del-ref"))
     result = api.delete_order("del-ref")
     assert len(result.deleted_orders) == 1
     assert api.get_order("del-ref") is None
 
 
-def test_delete_order_not_found_returns_error(api):
+def test_delete_order_not_found_returns_error(api: MockClickAndDrop):
     result = api.delete_order(9999)
     assert len(result.deleted_orders) == 0
     assert len(result.errors) == 1
     assert result.errors[0].code == "NOT_FOUND"
 
 
-def test_delete_orders_batch(api):
+def test_delete_orders_batch(api: MockClickAndDrop):
     r = api.create_orders([_make_order("d1"), _make_order("d2")])
     ids = [o.order_identifier for o in r.created_orders]
     result = api.delete_orders(ids)
@@ -186,7 +186,7 @@ def test_delete_orders_batch(api):
     assert len(result.errors) == 0
 
 
-def test_delete_orders_partial_not_found(api):
+def test_delete_orders_partial_not_found(api: MockClickAndDrop):
     r = api.create_order(_make_order())
     order_id = r.created_orders[0].order_identifier
     result = api.delete_orders([order_id, 9999])
@@ -197,10 +197,22 @@ def test_delete_orders_partial_not_found(api):
 # --- get_label ---
 
 
-def test_get_label_returns_pdf_bytes(api):
+@pytest.mark.parametrize(
+    "document_type", ["postageLabel", "despatchNote", "CN22", "CN23"]
+)
+@pytest.mark.parametrize("include_returns_label", [True, False, None])
+@pytest.mark.parametrize("include_cn", [True, False, None])
+def test_get_label_returns_pdf_bytes(
+    api: MockClickAndDrop, document_type, include_returns_label, include_cn
+):
     r = api.create_order(_make_order())
     order_id = r.created_orders[0].order_identifier
-    label = api.get_label(order_id, document_type="postageLabel")
+    label = api.get_label(
+        order_id,
+        document_type=document_type,
+        include_returns_label=include_returns_label,
+        include_cn=include_cn,
+    )
     assert isinstance(label, bytearray)
     assert label[:4] == bytearray(b"%PDF")
 
@@ -208,52 +220,52 @@ def test_get_label_returns_pdf_bytes(api):
 # --- test_shipping ---
 
 
-def test_test_shipping_returns_named_tuple(api):
+def test_test_shipping_returns_named_tuple(api: MockClickAndDrop):
     result = api.test_shipping("smallParcel", "TPN24")
     assert isinstance(result, ShippingTestResult)
 
 
-def test_test_shipping_succeeds_with_mock(api):
+def test_test_shipping_succeeds_with_mock(api: MockClickAndDrop):
     result = api.test_shipping("smallParcel", "TPN24")
     assert result.is_success is True
     assert isinstance(result.message, str)
 
 
-def test_test_shipping_cleans_up_order(api):
+def test_test_shipping_cleans_up_order(api: MockClickAndDrop):
     api.test_shipping("smallParcel", "TPN24")
     # Mock starts empty and test_shipping deletes its own order — store stays empty.
     assert len(api._orders) == 0
 
 
-def test_test_shipping_default_weight(api):
+def test_test_shipping_default_weight(api: MockClickAndDrop):
     # weight_in_grams defaults to 1 — should not raise
     result = api.test_shipping("letter", "BPL1")
     assert result.is_success is True
 
 
-def test_test_shipping_address_by_country_code(api):
+def test_test_shipping_address_by_country_code(api: MockClickAndDrop):
     result = api.test_shipping("smallParcel", "TPN24", address="DE")
     assert result.is_success is True
 
 
-def test_test_shipping_address_object(api):
+def test_test_shipping_address_object(api: MockClickAndDrop):
     from click_and_drop_api.simple.addresses import ADDRESSES
 
     result = api.test_shipping("smallParcel", "TPN24", address=ADDRESSES["FR"])
     assert result.is_success is True
 
 
-def test_test_shipping_custom_weight(api):
+def test_test_shipping_custom_weight(api: MockClickAndDrop):
     result = api.test_shipping("smallParcel", "TPN24", weight_in_grams=500)
     assert result.is_success is True
 
 
-def test_test_shipping_message_is_empty_on_success(api):
+def test_test_shipping_message_is_empty_on_success(api: MockClickAndDrop):
     result = api.test_shipping("smallParcel", "TPN24")
     assert result.message == ""
 
 
-def test_test_shipping_multiple_calls_stay_clean(api):
+def test_test_shipping_multiple_calls_stay_clean(api: MockClickAndDrop):
     for service_code in ("BPL1", "TPN24", "TPS48"):
         result = api.test_shipping("smallParcel", service_code)
         assert result.is_success is True
@@ -282,18 +294,18 @@ def _field(name: str, value: str | None) -> OrderFieldResponse:
     return OrderFieldResponse(fieldName=name, value=value)
 
 
-def test_format_fields_empty(api):
+def test_format_fields_empty(api: MockClickAndDrop):
     assert api.format_fields_for_error_message([]) == ""
 
 
-def test_format_fields_single(api):
+def test_format_fields_single(api: MockClickAndDrop):
     assert (
         api.format_fields_for_error_message([_field("postcode", "INVALID")])
         == "postcode=INVALID"
     )
 
 
-def test_format_fields_multiple(api):
+def test_format_fields_multiple(api: MockClickAndDrop):
     fields = [_field("postcode", "INVALID"), _field("countryCode", "XX")]
     assert (
         api.format_fields_for_error_message(fields)
@@ -301,7 +313,7 @@ def test_format_fields_multiple(api):
     )
 
 
-def test_format_fields_none_value(api):
+def test_format_fields_none_value(api: MockClickAndDrop):
     assert (
         api.format_fields_for_error_message([_field("postcode", None)])
         == "postcode=None"
