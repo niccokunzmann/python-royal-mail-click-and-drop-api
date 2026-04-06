@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.0.6
+
+- `MockClickAndDrop.get_label` returns label with CN if `include_cn=True`.
+
 ## v3.0.5
 
 - `ClickAndDrop.get_order` and `ClickAndDrop.get_orders` now return `OrderInfo` objects that have a `status_history` property
