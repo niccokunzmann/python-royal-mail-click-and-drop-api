@@ -1,43 +1,13 @@
 """Tests for get_order_details and get_orders_details."""
 
-from datetime import datetime, timezone
-
-import pytest
-
 from click_and_drop_api.models.get_order_details_resource import GetOrderDetailsResource
 from click_and_drop_api.simple.mock import MockClickAndDrop
-from click_and_drop_api.simple.types import Address, CreateOrder, RecipientDetails
 
-
-@pytest.fixture(params=[1, 100])
-def api(request: pytest.FixtureRequest) -> MockClickAndDrop:
-    api = MockClickAndDrop()
-    api.max_order_count = request.param
-    return api
-
-
-def _make_order(reference: str = "test-ref-001") -> CreateOrder:
-    return CreateOrder(
-        order_reference=reference,
-        order_date=datetime.now(timezone.utc),
-        subtotal=10.00,
-        shipping_cost_charged=0.00,
-        total=10.00,
-        currency_code="GBP",
-        recipient=RecipientDetails(
-            address=Address(
-                full_name="Test User",
-                address_line1="1 Test Street",
-                city="London",
-                postcode="SW1A 1AA",
-                country_code="GB",
-            )
-        ),
-    )
+from .helpers import make_order
 
 
 def _create(api: MockClickAndDrop, *references: str) -> list[int]:
-    response = api.create_orders([_make_order(ref) for ref in references])
+    response = api.create_orders([make_order(ref) for ref in references])
     return [o.order_identifier for o in response.created_orders]
 
 
