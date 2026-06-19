@@ -7,9 +7,11 @@ import pytest
 from click_and_drop_api.models.order_field_response import OrderFieldResponse
 from click_and_drop_api.simple.shipping_test_result import ShippingTestResult
 from click_and_drop_api.simple.mock import MockClickAndDrop
+from click_and_drop_api.exceptions import BadRequestException
 from click_and_drop_api.simple.types import (
     Address,
     CreateOrder,
+    LabelGeneration,
     RecipientDetails,
 )
 
@@ -285,6 +287,65 @@ def test_is_oba_true():
 
 def test_is_oba_false():
     assert MockClickAndDrop(is_oba=False).is_oba() is False
+
+
+# --- label count validation ---
+
+
+def _make_order_with_label(
+    reference: str, include_returns_label: bool = False
+) -> CreateOrder:
+    return CreateOrder(
+        order_reference=reference,
+        order_date=__import__("datetime").datetime.now(
+            __import__("datetime").timezone.utc
+        ),
+        subtotal=10.00,
+        shipping_cost_charged=0.00,
+        total=10.00,
+        currency_code="GBP",
+        recipient=RecipientDetails(
+            address=Address(
+                full_name="Test User",
+                address_line1="1 Test Street",
+                city="London",
+                postcode="SW1A 1AA",
+                country_code="GB",
+            )
+        ),
+        label=LabelGeneration(
+            include_label_in_response=True,
+            include_returns_label=include_returns_label,
+        ),
+    )
+
+
+def test_single_label_request_succeeds():
+    api = MockClickAndDrop()
+    response = api.create_order(_make_order_with_label("ref-label-1"))
+    assert response.success_count == 1
+
+
+def test_two_orders_with_labels_raises_bad_request():
+    api = MockClickAndDrop()
+    with pytest.raises(BadRequestException) as exc_info:
+        api.create_orders(
+            [
+                _make_order_with_label("ref-label-2a"),
+                _make_order_with_label("ref-label-2b"),
+            ]
+        )
+    assert "Amount of labels across all items must not exceed '1', was '2'" in str(
+        exc_info.value
+    )
+
+
+def test_label_and_returns_label_succeeds():
+    api = MockClickAndDrop()
+    response = api.create_order(
+        _make_order_with_label("ref-label-3", include_returns_label=True)
+    )
+    assert response.success_count == 1
 
 
 # --- format_fields_for_error_message ---

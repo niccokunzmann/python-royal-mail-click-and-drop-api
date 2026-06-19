@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.1.0
+
+- `MockClickAndDrop.create_orders` raises `BadRequestException` when more than one order in the batch requests a label (`include_label_in_response=True`), matching the real API behaviour.
+
 ## v3.0.8
 
 - Fix `PackageShippingOption.ships_to`.

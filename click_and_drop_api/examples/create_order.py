@@ -55,6 +55,7 @@ new_order = CreateOrder(
     postage_details=service.as_postage_details(),
     packages=[service.as_package_request(weight_in_grams=80)],
     ## Label generation is only possible for OBA customers
+    ## You can also only have one CreateOrder in the request if you want to generate a label
     label=LabelGeneration(
         include_label_in_response=False,
         include_cn=False,

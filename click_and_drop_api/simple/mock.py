@@ -11,6 +11,8 @@ import click_and_drop_api
 
 from .base import AbstractClickAndDrop
 from .types import CreateOrder
+from click_and_drop_api.exceptions import BadRequestException
+from click_and_drop_api.models.error_response import ErrorResponse
 
 _MOCK_KEY = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
 _MOCK_VERSION = "1.0.0-mock"
@@ -90,6 +92,17 @@ class MockClickAndDrop(AbstractClickAndDrop):
     def _create_orders(
         self, orders: list[CreateOrder]
     ) -> click_and_drop_api.CreateOrdersResponse:
+        label_count = sum(
+            (1 if o.label and o.label.include_label_in_response else 0) for o in orders
+        )
+        if label_count > 1:
+            msg = f"Amount of labels across all items must not exceed '1', was '{label_count}'"
+            raise BadRequestException(
+                status=400,
+                reason="Bad Request",
+                body=f'{{"message":"{msg}"}}',
+                data=ErrorResponse(message=msg),
+            )
         now = self._now()
         created = []
         for order in orders:
