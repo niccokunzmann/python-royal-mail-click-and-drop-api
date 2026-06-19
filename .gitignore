@@ -68,3 +68,4 @@ site
 
 # repo ignored
 api-key*.txt
+/.prompts/
