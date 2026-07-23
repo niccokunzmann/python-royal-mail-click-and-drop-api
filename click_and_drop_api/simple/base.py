@@ -545,7 +545,18 @@ class AbstractClickAndDrop(ABC):
     ) -> ManifestOrdersResponse:
         """Manifest eligible orders."""
 
-    def manifest_orders(self, carrier_name: str | None = None) -> ManifestedOrders:
+    CARRIER_NAME_OBA = "Royal Mail OBA"
+    CARRIER_NAME_OLP = "Royal Mail OLP"
+
+    def get_default_carrier_name(self) -> str:
+        """Return the carrier name for this account.
+
+        Returns ``"Royal Mail OBA"`` for OBA accounts and ``"Royal Mail OLP"``
+        for standard accounts.  Override to use a custom carrier name.
+        """
+        return self.CARRIER_NAME_OBA if self.is_oba() else self.CARRIER_NAME_OLP
+
+    def manifest_orders(self, carrier_name: str | None  = ...) -> ManifestedOrders:
         """Manifest all eligible orders, applying postage.
 
         Manifests all orders in ``Label Generated`` and ``Despatched`` statuses
@@ -553,12 +564,12 @@ class AbstractClickAndDrop(ABC):
 
         Parameters:
             carrier_name:
-                Required when the account has multiple carriers or postage
-                location numbers. Must match the carrier name configured in
-                **Settings → Carrier settings** in the Click & Drop website.
-                A typical value for an OBA account is ``"Royal Mail OBA"``.
-                Pass ``None`` for single-carrier accounts (the API will
-                manifest all eligible orders regardless of carrier).
+                The carrier name to manifest for.  Must match the name
+                configured in **Settings → Carrier settings** on the Click &
+                Drop website.  When omitted, :meth:`get_default_carrier_name` is called
+                to select the name automatically (``"Royal Mail OBA"`` for OBA
+                accounts, ``"Royal Mail OLP"`` for standard accounts).  Pass
+                ``None`` explicitly for single-carrier accounts.
 
         Returns:
             A :class:`~click_and_drop_api.models.manifest_orders_response.ManifestOrdersResponse`
@@ -566,6 +577,8 @@ class AbstractClickAndDrop(ABC):
 
         https://api.parcel.royalmail.com/#tag/Manifests/operation/ManifestEligibleAsync
         """
+        if carrier_name is ...:
+            carrier_name = self.get_default_carrier_name()
         response = self._manifest_orders(
             ManifestEligibleOrdersRequest(carrier_name=carrier_name)
         )

@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.1.1
+
+- Set default `carrier_name` to `"Royal Mail OLP"` or `"Royal Mail OBA"` in `manifest_orders`. This is the default or OBA and non-OBA accounts.
+  Check in the settings of your Royal Mail Account if this applies.
+
 ## 3.1.0
 
 - `MockClickAndDrop.create_orders` raises `BadRequestException` when more than one order in the batch requests a label (`include_label_in_response=True`), matching the real API behaviour.
