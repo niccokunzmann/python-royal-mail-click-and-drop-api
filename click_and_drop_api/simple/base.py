@@ -554,8 +554,11 @@ class AbstractClickAndDrop(ABC):
         Parameters:
             carrier_name:
                 Required when the account has multiple carriers or postage
-                location numbers. Must match the carrier name configured in the
-                account settings. Pass ``None`` for single-carrier accounts.
+                location numbers. Must match the carrier name configured in
+                **Settings → Carrier settings** in the Click & Drop website.
+                A typical value for an OBA account is ``"Royal Mail OBA"``.
+                Pass ``None`` for single-carrier accounts (the API will
+                manifest all eligible orders regardless of carrier).
 
         Returns:
             A :class:`~click_and_drop_api.models.manifest_orders_response.ManifestOrdersResponse`

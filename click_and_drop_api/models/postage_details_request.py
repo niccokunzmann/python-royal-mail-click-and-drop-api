@@ -30,7 +30,7 @@ class PostageDetailsRequest(BaseModel):
     """ # noqa: E501
     send_notifications_to: Optional[StrictStr] = Field(default=None, alias="sendNotificationsTo")
     service_code: Optional[Annotated[str, Field(strict=True, max_length=10)]] = Field(default=None, alias="serviceCode")
-    carrier_name: Optional[Annotated[str, Field(strict=True, max_length=50)]] = Field(default=None, alias="carrierName")
+    carrier_name: Optional[Annotated[str, Field(strict=True, max_length=50)]] = Field(default=None, description="The name of the carrier to use for this order. Required when the account has multiple carriers or postage location numbers; must match the name configured in Settings → Carrier settings on the Click & Drop website (e.g. \"Royal Mail OBA\").", alias="carrierName")
     service_register_code: Optional[Annotated[str, Field(strict=True, max_length=2)]] = Field(default=None, alias="serviceRegisterCode")
     consequential_loss: Optional[Annotated[int, Field(le=10000, strict=True, ge=0)]] = Field(default=None, alias="consequentialLoss")
     receive_email_notification: Optional[StrictBool] = Field(default=None, alias="receiveEmailNotification")
