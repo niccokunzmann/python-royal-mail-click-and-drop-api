@@ -15,6 +15,7 @@ Read about Royal Mail's Click & Drop API:
 
 - [Royal Mail Help Centre](https://help.parcel.royalmail.com/hc/en-gb/sections/360003305257-Click-Drop-API)
 - [Click & Drop API Specification](https://api.parcel.royalmail.com/)
+- [Click & Drop User Voice](https://clickanddrop.uservoice.com/)
 
 Links for this package:
 
