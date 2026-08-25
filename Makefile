@@ -1,11 +1,18 @@
 
+API_URL	= "https://api.parcel.royalmail.com/doc/v1/click-and-drop-api-v1.yaml"
+
 .PHONY: stubs api-definition stubs-help image
 
 #
 # Download the API definition file
 #
 api-definition:
-	wget -O click-and-drop-api-v1.yaml https://api.parcel.royalmail.com/doc/v1/click-and-drop-api-v1.yaml
+	wget -O click-and-drop-api-v1.yaml $(API_URL)
+	cp click-and-drop-api-v1.yaml click-and-drop-api-v1-original.yaml
+
+check-update:
+	wget -O /tmp/click-and-drop-api-v1.yaml $(API_URL)
+	diff click-and-drop-api-v1-original.yaml /tmp/click-and-drop-api-v1.yaml
 
 image:
 	docker pull openapitools/openapi-generator-cli
