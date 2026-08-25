@@ -19,6 +19,7 @@ Name | Type | Description | Notes
 **vat_number** | **str** |  | [optional] 
 **tax_code** | **str** |  | [optional] 
 **eori_number** | **str** |  | [optional] 
+**is_a_business** | **bool** |  | [optional] 
 
 ## Example
 

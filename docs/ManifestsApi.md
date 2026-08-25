@@ -47,7 +47,7 @@ configuration.api_key['Bearer'] = os.environ["API_KEY"]
 with click_and_drop_api.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = click_and_drop_api.ManifestsApi(api_client)
-    manifest_identifier = 56 # int | The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call. E.g. 12345
+    manifest_identifier = 56 # int | The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call
 
     try:
         # Get manifest
@@ -65,7 +65,7 @@ with click_and_drop_api.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **manifest_identifier** | **int**| The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call. E.g. 12345 | 
+ **manifest_identifier** | **int**| The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call | 
 
 ### Return type
 
@@ -219,7 +219,7 @@ configuration.api_key['Bearer'] = os.environ["API_KEY"]
 with click_and_drop_api.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = click_and_drop_api.ManifestsApi(api_client)
-    manifest_identifier = 56 # int | The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call. E.g. 12345
+    manifest_identifier = 56 # int | The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call
 
     try:
         # Retry manifest
@@ -237,7 +237,7 @@ with click_and_drop_api.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **manifest_identifier** | **int**| The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call. E.g. 12345 | 
+ **manifest_identifier** | **int**| The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call | 
 
 ### Return type
 

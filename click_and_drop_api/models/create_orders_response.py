@@ -23,6 +23,7 @@ from click_and_drop_api.models.create_order_response import CreateOrderResponse
 from click_and_drop_api.models.failed_order_response import FailedOrderResponse
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class CreateOrdersResponse(BaseModel):
     """
@@ -35,7 +36,8 @@ class CreateOrdersResponse(BaseModel):
     __properties: ClassVar[List[str]] = ["successCount", "errorsCount", "createdOrders", "failedOrders"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -47,8 +49,7 @@ class CreateOrdersResponse(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -77,15 +78,13 @@ class CreateOrdersResponse(BaseModel):
         _items = []
         if self.created_orders:
             for _item_created_orders in self.created_orders:
-                if _item_created_orders:
-                    _items.append(_item_created_orders.to_dict())
+                _items.append(_item_created_orders.to_dict() if _item_created_orders is not None else None)
             _dict['createdOrders'] = _items
         # override the default output from pydantic by calling `to_dict()` of each item in failed_orders (list)
         _items = []
         if self.failed_orders:
             for _item_failed_orders in self.failed_orders:
-                if _item_failed_orders:
-                    _items.append(_item_failed_orders.to_dict())
+                _items.append(_item_failed_orders.to_dict() if _item_failed_orders is not None else None)
             _dict['failedOrders'] = _items
         return _dict
 

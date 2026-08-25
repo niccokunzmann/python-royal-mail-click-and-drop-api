@@ -1,5 +1,3 @@
-# coding: utf-8
-
 """
     ChannelShipper & Royal Mail Public API
 
@@ -10,6 +8,7 @@
 
     Do not edit the class manually.
 """  # noqa: E501
+
 
 import warnings
 from pydantic import validate_call, Field, StrictFloat, StrictStr, StrictInt
@@ -41,7 +40,7 @@ class LabelsApi:
     @validate_call
     def get_orders_label_async(
         self,
-        order_identifiers: Annotated[StrictStr, Field(description="One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/")],
+        order_identifiers: Annotated[StrictStr, Field(description="One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100.")],
         document_type: Annotated[StrictStr, Field(description="Document generation mode. When documentType is set to \"postageLabel\" the additional parameters below must be used. These additional parameters will be ignored when documentType is not set to \"postageLabel\"")],
         include_returns_label: Annotated[Optional[StrictBool], Field(description="Include returns label. Required when documentType is set to 'postageLabel'")] = None,
         include_cn: Annotated[Optional[StrictBool], Field(description="Include CN22/CN23 with label. Optional parameter. If this parameter is used the setting will override the default account behaviour specified in the \"Label format\" setting \"Generate customs declarations with orders\"")] = None,
@@ -57,12 +56,12 @@ class LabelsApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> bytearray:
+    ) -> bytes:
         """Return a single PDF file with generated label and/or associated document(s)
 
         <b>Reserved for OBA customers only</b>  The account \"Label format\" settings page will control the page format settings used to print the postage label and associated documents. Certain combinations of these settings may prevent associated documents from being printed together with the postage label within a single document. If this occurs the documentType option can be used in a separate call to print missing documents. 
 
-        :param order_identifiers: One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/ (required)
+        :param order_identifiers: One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. (required)
         :type order_identifiers: str
         :param document_type: Document generation mode. When documentType is set to \"postageLabel\" the additional parameters below must be used. These additional parameters will be ignored when documentType is not set to \"postageLabel\" (required)
         :type document_type: str
@@ -104,7 +103,7 @@ class LabelsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "bytearray",
+            '200': "bytes",
             '400': "List[OrderErrorResponse]",
             '401': None,
             '403': None,
@@ -125,7 +124,7 @@ class LabelsApi:
     @validate_call
     def get_orders_label_async_with_http_info(
         self,
-        order_identifiers: Annotated[StrictStr, Field(description="One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/")],
+        order_identifiers: Annotated[StrictStr, Field(description="One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100.")],
         document_type: Annotated[StrictStr, Field(description="Document generation mode. When documentType is set to \"postageLabel\" the additional parameters below must be used. These additional parameters will be ignored when documentType is not set to \"postageLabel\"")],
         include_returns_label: Annotated[Optional[StrictBool], Field(description="Include returns label. Required when documentType is set to 'postageLabel'")] = None,
         include_cn: Annotated[Optional[StrictBool], Field(description="Include CN22/CN23 with label. Optional parameter. If this parameter is used the setting will override the default account behaviour specified in the \"Label format\" setting \"Generate customs declarations with orders\"")] = None,
@@ -141,12 +140,12 @@ class LabelsApi:
         _content_type: Optional[StrictStr] = None,
         _headers: Optional[Dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
-    ) -> ApiResponse[bytearray]:
+    ) -> ApiResponse[bytes]:
         """Return a single PDF file with generated label and/or associated document(s)
 
         <b>Reserved for OBA customers only</b>  The account \"Label format\" settings page will control the page format settings used to print the postage label and associated documents. Certain combinations of these settings may prevent associated documents from being printed together with the postage label within a single document. If this occurs the documentType option can be used in a separate call to print missing documents. 
 
-        :param order_identifiers: One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/ (required)
+        :param order_identifiers: One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. (required)
         :type order_identifiers: str
         :param document_type: Document generation mode. When documentType is set to \"postageLabel\" the additional parameters below must be used. These additional parameters will be ignored when documentType is not set to \"postageLabel\" (required)
         :type document_type: str
@@ -188,7 +187,7 @@ class LabelsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "bytearray",
+            '200': "bytes",
             '400': "List[OrderErrorResponse]",
             '401': None,
             '403': None,
@@ -209,7 +208,7 @@ class LabelsApi:
     @validate_call
     def get_orders_label_async_without_preload_content(
         self,
-        order_identifiers: Annotated[StrictStr, Field(description="One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/")],
+        order_identifiers: Annotated[StrictStr, Field(description="One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100.")],
         document_type: Annotated[StrictStr, Field(description="Document generation mode. When documentType is set to \"postageLabel\" the additional parameters below must be used. These additional parameters will be ignored when documentType is not set to \"postageLabel\"")],
         include_returns_label: Annotated[Optional[StrictBool], Field(description="Include returns label. Required when documentType is set to 'postageLabel'")] = None,
         include_cn: Annotated[Optional[StrictBool], Field(description="Include CN22/CN23 with label. Optional parameter. If this parameter is used the setting will override the default account behaviour specified in the \"Label format\" setting \"Generate customs declarations with orders\"")] = None,
@@ -230,7 +229,7 @@ class LabelsApi:
 
         <b>Reserved for OBA customers only</b>  The account \"Label format\" settings page will control the page format settings used to print the postage label and associated documents. Certain combinations of these settings may prevent associated documents from being printed together with the postage label within a single document. If this occurs the documentType option can be used in a separate call to print missing documents. 
 
-        :param order_identifiers: One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/ (required)
+        :param order_identifiers: One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. (required)
         :type order_identifiers: str
         :param document_type: Document generation mode. When documentType is set to \"postageLabel\" the additional parameters below must be used. These additional parameters will be ignored when documentType is not set to \"postageLabel\" (required)
         :type document_type: str
@@ -272,7 +271,7 @@ class LabelsApi:
         )
 
         _response_types_map: Dict[str, Optional[str]] = {
-            '200': "bytearray",
+            '200': "bytes",
             '400': "List[OrderErrorResponse]",
             '401': None,
             '403': None,

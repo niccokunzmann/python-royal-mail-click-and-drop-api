@@ -31,6 +31,7 @@ from click_and_drop_api.models.shipment_package_request import ShipmentPackageRe
 from click_and_drop_api.models.tag_request import TagRequest
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class CreateOrderRequest(BaseModel):
     """
@@ -51,6 +52,7 @@ class CreateOrderRequest(BaseModel):
     customs_duty_costs: Optional[Union[Annotated[float, Field(multiple_of=0.01, le=99999.99, strict=True, ge=0)], Annotated[int, Field(le=99999, strict=True, ge=0)]]] = Field(default=None, description="Customs Duty Costs is only supported in DDP (Delivery Duty Paid) services", alias="customsDutyCosts")
     total: Union[Annotated[float, Field(multiple_of=0.01, le=999999, strict=True, ge=0)], Annotated[int, Field(le=999999, strict=True, ge=0)]] = Field(description="The sum of order subtotal, tax and retail shipping costs")
     currency_code: Optional[Annotated[str, Field(strict=True, max_length=3)]] = Field(default=None, alias="currencyCode")
+    delivery_term: Optional[Annotated[str, Field(strict=True, max_length=20)]] = Field(default=None, description="Specifies how customs duties, taxes, and handling fees are paid for international shipments.<p>Required for shipments to the EU and USA.</p><p>Accepted values are <b>DDP, IOSS_DDP, DDU_DAP, IOSS_DDU, DTP, IOSS_DTP</b>.</p><p><b>N.B. If no value is provided in this field then the delivery terms will be defaulted to DDU_DAP.</b></p>", alias="deliveryTerm")
     postage_details: Optional[PostageDetailsRequest] = Field(default=None, alias="postageDetails")
     tags: Optional[List[TagRequest]] = None
     label: Optional[LabelGenerationRequest] = None
@@ -60,10 +62,11 @@ class CreateOrderRequest(BaseModel):
     dangerous_goods_description: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, description="Description of the dangerous goods", alias="dangerousGoodsDescription")
     dangerous_goods_quantity: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, description="Quantity or volume of the dangerous goods", alias="dangerousGoodsQuantity")
     importer: Optional[Importer] = None
-    __properties: ClassVar[List[str]] = ["orderReference", "isRecipientABusiness", "recipient", "sender", "billing", "packages", "orderDate", "plannedDespatchDate", "specialInstructions", "subtotal", "shippingCostCharged", "otherCosts", "customsDutyCosts", "total", "currencyCode", "postageDetails", "tags", "label", "orderTax", "containsDangerousGoods", "dangerousGoodsUnCode", "dangerousGoodsDescription", "dangerousGoodsQuantity", "importer"]
+    __properties: ClassVar[List[str]] = ["orderReference", "isRecipientABusiness", "recipient", "sender", "billing", "packages", "orderDate", "plannedDespatchDate", "specialInstructions", "subtotal", "shippingCostCharged", "otherCosts", "customsDutyCosts", "total", "currencyCode", "deliveryTerm", "postageDetails", "tags", "label", "orderTax", "containsDangerousGoods", "dangerousGoodsUnCode", "dangerousGoodsDescription", "dangerousGoodsQuantity", "importer"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -75,8 +78,7 @@ class CreateOrderRequest(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -114,8 +116,7 @@ class CreateOrderRequest(BaseModel):
         _items = []
         if self.packages:
             for _item_packages in self.packages:
-                if _item_packages:
-                    _items.append(_item_packages.to_dict())
+                _items.append(_item_packages.to_dict() if _item_packages is not None else None)
             _dict['packages'] = _items
         # override the default output from pydantic by calling `to_dict()` of postage_details
         if self.postage_details:
@@ -124,8 +125,7 @@ class CreateOrderRequest(BaseModel):
         _items = []
         if self.tags:
             for _item_tags in self.tags:
-                if _item_tags:
-                    _items.append(_item_tags.to_dict())
+                _items.append(_item_tags.to_dict() if _item_tags is not None else None)
             _dict['tags'] = _items
         # override the default output from pydantic by calling `to_dict()` of label
         if self.label:
@@ -160,6 +160,7 @@ class CreateOrderRequest(BaseModel):
             "customsDutyCosts": obj.get("customsDutyCosts"),
             "total": obj.get("total"),
             "currencyCode": obj.get("currencyCode"),
+            "deliveryTerm": obj.get("deliveryTerm"),
             "postageDetails": PostageDetailsRequest.from_dict(obj["postageDetails"]) if obj.get("postageDetails") is not None else None,
             "tags": [TagRequest.from_dict(_item) for _item in obj["tags"]] if obj.get("tags") is not None else None,
             "label": LabelGenerationRequest.from_dict(obj["label"]) if obj.get("label") is not None else None,

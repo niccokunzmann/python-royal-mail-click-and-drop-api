@@ -27,6 +27,8 @@ stubs: image
 		--server-variables "host=api.parcel.royalmail.com"
 	make fix-stubs
 # 	sudo chown -R $(id -u):$(id -g) .
+	git add click_and_drop_api docs
+	git checkout tox.ini
 
 stubs-help: image
 	docker run --rm openapitools/openapi-generator-cli help generate	

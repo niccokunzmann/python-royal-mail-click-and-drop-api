@@ -69,3 +69,11 @@ site
 # repo ignored
 api-key*.txt
 /.prompts/
+
+# Generator Ignored
+/.gitlab-ci.yml
+/.travis.yml
+/git_push.sh
+/setup.py
+/requirements.txt
+/test-requirements.txt

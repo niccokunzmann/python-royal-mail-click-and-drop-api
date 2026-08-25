@@ -18,9 +18,11 @@ __version__ = "1.0.0"
 
 # Define package exports
 __all__ = [
+    "CarriersApi",
     "LabelsApi",
     "ManifestsApi",
     "OrdersApi",
+    "ReturnsApi",
     "VersionApi",
     "ApiResponse",
     "ApiClient",
@@ -31,6 +33,7 @@ __all__ = [
     "ApiKeyError",
     "ApiAttributeError",
     "ApiException",
+    "Address",
     "AddressRequest",
     "BillingDetailsRequest",
     "CreateOrderErrorResponse",
@@ -40,17 +43,23 @@ __all__ = [
     "CreateOrdersRequest",
     "CreateOrdersResponse",
     "CreatePackagesResponse",
+    "CreateReturnRequest",
+    "CreateReturnResponse",
+    "CreateReturnResponseShipment",
+    "CustomerReference",
     "DeleteOrdersResource",
     "DeletedOrderInfo",
     "DimensionsRequest",
     "ErrorResponse",
     "FailedOrderResponse",
+    "GetCarrierResource",
     "GetOrderDetailsResource",
     "GetOrderInfoResource",
     "GetOrderLineResult",
     "GetOrdersDetailsResponse",
     "GetOrdersResponse",
     "GetPostalDetailsResult",
+    "GetServicesResponse",
     "GetShippingDetailsResult",
     "GetTagDetailsResult",
     "GetVersionResource",
@@ -69,6 +78,9 @@ __all__ = [
     "ProductItemRequest",
     "RecipientDetailsRequest",
     "SenderDetailsRequest",
+    "ServiceCode",
+    "ServiceItem",
+    "Shipment",
     "ShipmentPackageRequest",
     "TagRequest",
     "UpdateOrderStatusRequest",
@@ -78,9 +90,11 @@ __all__ = [
 ]
 
 # import apis into sdk package
+from click_and_drop_api.api.carriers_api import CarriersApi as CarriersApi
 from click_and_drop_api.api.labels_api import LabelsApi as LabelsApi
 from click_and_drop_api.api.manifests_api import ManifestsApi as ManifestsApi
 from click_and_drop_api.api.orders_api import OrdersApi as OrdersApi
+from click_and_drop_api.api.returns_api import ReturnsApi as ReturnsApi
 from click_and_drop_api.api.version_api import VersionApi as VersionApi
 
 # import ApiClient
@@ -95,6 +109,7 @@ from click_and_drop_api.exceptions import ApiAttributeError as ApiAttributeError
 from click_and_drop_api.exceptions import ApiException as ApiException
 
 # import models into sdk package
+from click_and_drop_api.models.address import Address as Address
 from click_and_drop_api.models.address_request import AddressRequest as AddressRequest
 from click_and_drop_api.models.billing_details_request import BillingDetailsRequest as BillingDetailsRequest
 from click_and_drop_api.models.create_order_error_response import CreateOrderErrorResponse as CreateOrderErrorResponse
@@ -104,17 +119,23 @@ from click_and_drop_api.models.create_order_response import CreateOrderResponse 
 from click_and_drop_api.models.create_orders_request import CreateOrdersRequest as CreateOrdersRequest
 from click_and_drop_api.models.create_orders_response import CreateOrdersResponse as CreateOrdersResponse
 from click_and_drop_api.models.create_packages_response import CreatePackagesResponse as CreatePackagesResponse
+from click_and_drop_api.models.create_return_request import CreateReturnRequest as CreateReturnRequest
+from click_and_drop_api.models.create_return_response import CreateReturnResponse as CreateReturnResponse
+from click_and_drop_api.models.create_return_response_shipment import CreateReturnResponseShipment as CreateReturnResponseShipment
+from click_and_drop_api.models.customer_reference import CustomerReference as CustomerReference
 from click_and_drop_api.models.delete_orders_resource import DeleteOrdersResource as DeleteOrdersResource
 from click_and_drop_api.models.deleted_order_info import DeletedOrderInfo as DeletedOrderInfo
 from click_and_drop_api.models.dimensions_request import DimensionsRequest as DimensionsRequest
 from click_and_drop_api.models.error_response import ErrorResponse as ErrorResponse
 from click_and_drop_api.models.failed_order_response import FailedOrderResponse as FailedOrderResponse
+from click_and_drop_api.models.get_carrier_resource import GetCarrierResource as GetCarrierResource
 from click_and_drop_api.models.get_order_details_resource import GetOrderDetailsResource as GetOrderDetailsResource
 from click_and_drop_api.models.get_order_info_resource import GetOrderInfoResource as GetOrderInfoResource
 from click_and_drop_api.models.get_order_line_result import GetOrderLineResult as GetOrderLineResult
 from click_and_drop_api.models.get_orders_details_response import GetOrdersDetailsResponse as GetOrdersDetailsResponse
 from click_and_drop_api.models.get_orders_response import GetOrdersResponse as GetOrdersResponse
 from click_and_drop_api.models.get_postal_details_result import GetPostalDetailsResult as GetPostalDetailsResult
+from click_and_drop_api.models.get_services_response import GetServicesResponse as GetServicesResponse
 from click_and_drop_api.models.get_shipping_details_result import GetShippingDetailsResult as GetShippingDetailsResult
 from click_and_drop_api.models.get_tag_details_result import GetTagDetailsResult as GetTagDetailsResult
 from click_and_drop_api.models.get_version_resource import GetVersionResource as GetVersionResource
@@ -133,6 +154,9 @@ from click_and_drop_api.models.postage_details_request import PostageDetailsRequ
 from click_and_drop_api.models.product_item_request import ProductItemRequest as ProductItemRequest
 from click_and_drop_api.models.recipient_details_request import RecipientDetailsRequest as RecipientDetailsRequest
 from click_and_drop_api.models.sender_details_request import SenderDetailsRequest as SenderDetailsRequest
+from click_and_drop_api.models.service_code import ServiceCode as ServiceCode
+from click_and_drop_api.models.service_item import ServiceItem as ServiceItem
+from click_and_drop_api.models.shipment import Shipment as Shipment
 from click_and_drop_api.models.shipment_package_request import ShipmentPackageRequest as ShipmentPackageRequest
 from click_and_drop_api.models.tag_request import TagRequest as TagRequest
 from click_and_drop_api.models.update_order_status_request import UpdateOrderStatusRequest as UpdateOrderStatusRequest

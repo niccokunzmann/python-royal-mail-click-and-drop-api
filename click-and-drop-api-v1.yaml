@@ -171,6 +171,28 @@ paths:
       security:
       - Bearer: []
 
+  /carriers:
+    get:
+      tags:
+        - Carriers
+      summary: Retrieve list of carriers for the account
+      operationId: GetCarriersAsync
+      responses:
+        '200':
+          description: Return list of carriers
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/GetCarrierResource'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      security:
+      - Bearer: []
+
   /orders:
     get:
       tags:
@@ -317,7 +339,7 @@ paths:
       summary: Manifest eligible orders
       description: |
         Manifest all orders in 'Label Generated' and 'Despatched' statuses and return manifest paperwork where possible.
-        
+
       operationId: ManifestEligibleAsync
       parameters:
         - name: request
@@ -427,6 +449,61 @@ paths:
       security:
       - Bearer: []
 
+  /returns/services:
+    get:
+      tags:
+          - Returns
+      summary: List available return services
+      description: Returns a list of return services that can be used when creating return shipments.
+      security:
+        - Bearer: []
+      responses:
+        '200':
+          description: Lists all available return services for generating return labels
+          schema:
+            $ref: '#/definitions/GetServicesResponse'
+            example:
+              services:
+                - carrierGuid: "e90e87c8-4ea6-49ec-a387-64ba37f66d84"
+                  carrierServiceGuid: "3824a10c-1a2b-4e66-b82f-efa236a86cd9"
+                  serviceName: "Tracked Returns 24"
+                  serviceCode: "TSN"
+                - carrierGuid: "e90e87c8-4ea6-49ec-a387-64ba37f66d84"
+                  carrierServiceGuid: "262a663e-633c-4507-a834-fa69a6b7d112"
+                  serviceName: "Tracked Returns 48"
+                  serviceCode: "TSS"
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
+
+  /returns:
+    post:
+      tags:
+          - Returns
+      summary: Create a return shipment
+      description: Creates a return label and returns shipment details including tracking number, QR code, and label.
+      security:
+        - Bearer: []
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            $ref: '#/definitions/CreateReturnRequest'
+          description: Return creation request
+      responses:
+        '200':
+          description: Successfully created return shipment
+          schema:
+            $ref: '#/definitions/CreateReturnResponse'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
+
 tags:
   - name: Rate Limits
     description: <p>Exceeding the rate limit of 5 calls per second will result in a 429 error.</p>
@@ -434,6 +511,8 @@ tags:
   - name: Orders
   - name: Labels
   - name: Manifests
+  - name: Returns
+    description: <p><b>Reserved for OBA customers only</b></p>
 
 parameters:
 
@@ -442,8 +521,8 @@ parameters:
     name: orderIdentifiers
     required: true
     type: string
-    description: One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/"ref";1001;"Reference%3BWith%3BSpecial%3BSymbols!";2345/
-    # example: /orders/"ref";1001;"Reference%3BWith%3BSpecial%3BSymbols!";2345/
+    description: One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100.
+    #example: /orders/"ref";1001;"Reference%3BWith%3BSpecial%3BSymbols!";2345/
 
   includeCN:
     in: query
@@ -527,8 +606,8 @@ parameters:
     name: manifestIdentifier
     required: true
     type: integer
-    description: The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call. E.g. 12345
-    # example: 12345
+    description: The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call
+   # example: 12345
 
 definitions:
 
@@ -557,6 +636,22 @@ definitions:
       message:
         type: string
       details:
+        type: string
+
+  GetCarrierResource:
+    required:
+      - carrierGuid
+      - carrierName
+    type: object
+    properties:
+      carrierGuid:
+        type: string
+        format: uuid
+      carrierName:
+        type: string
+      carrierStatus:
+        type: string
+      carrierType:
         type: string
 
   GetOrderInfoResource:
@@ -787,6 +882,10 @@ definitions:
       currencyCode:
         type: string
         maxLength: 3
+      deliveryTerm:
+        type: string
+        description: Specifies how customs duties, taxes, and handling fees are paid for international shipments.<p>Required for shipments to the EU and USA.</p><p>Accepted values are <b>DDP, IOSS_DDP, DDU_DAP, IOSS_DDU, DTP, IOSS_DTP</b>.</p><p><b>N.B. If no value is provided in this field then the delivery terms will be defaulted to DDU_DAP.</b></p>
+        maxLength: 20
       postageDetails:
         $ref: '#/definitions/PostageDetailsRequest'
       tags:
@@ -961,6 +1060,7 @@ definitions:
       carrierName:
         type: string
         maxLength: 50
+        description: The name of the carrier you would like to manifest orders for. This is required if the account has multiple carriers or multiple postage location numbers, and must match the name configured in the carrier settings within the main website.
       serviceRegisterCode:
         type: string
         maxLength: 2
@@ -1032,8 +1132,16 @@ definitions:
         maxLength: 800
       SKU:
         type: string
-        description: The presence or not of field <b>SKU</b> and other fields in the request body will determine which of the following behaviours occur:- <br>1) A minimum of <b>SKU</b>, <b>unitValue</b>, <b>unitWeightInGrams</b> and <b>quantity</b> provided - In addition to the provided product fields being used for the order creation, an existing account Product with matching SKU will be overwritten with all provided product parameters. If no existing account Product with matching SKU can be found then a new product will be created with the provided SKU and product parameters.<br>2) <b>SKU</b>, <b>quantity</b> provided and <b>no other fields</b> provided - An account Product with the provided SKU will be used for the order if it exists.<br>3) <b>SKU not provided</b> and a minimum of <b>unitValue</b>, <b>unitWeightInGrams</b> and <b>quantity</b> provided - All provided product fields will be used for the order creation.<br>4) All other scenarios will result in a validation error.
+        description: The presence or not of field <b>SKU</b> and other fields in the request body will determine which of the following behaviours occur:- <br>1) A minimum of <b>SKU</b>, <b>unitValue</b>, <b>unitWeightInGrams</b> and <b>quantity</b> provided - In addition to the provided product fields being used for the order creation, an existing account Product with matching SKU will be overwritten with all provided product parameters. If no existing account Product with matching SKU can be found then a new product will be created with the provided SKU and product parameters.<br>2) <b>SKU</b>, <b>quantity</b> provided and <b>no other fields</b> provided - An account Product with the provided SKU will be used for the order if it exists.<br>3) <b>SKU not provided</b> and a minimum of <b>unitValue</b>, <b>unitWeightInGrams</b> and <b>quantity</b> provided - All provided product fields will be used for the order creation.<br>4) All other scenarios will result in a validation error.<p>Optional for EU and USA shipments (may become mandatory in the future).</p>
         maxLength: 100
+      ReferenceId:
+        type: string
+        description: The manufacturer's product reference code for the item (e.g. GTIN, EAN, UPC). <p>Optional for EU and USA shipments (may become mandatory in the future).</p>
+        maxLength: 50
+      ContentsPieceURL:
+        type: string
+        description: A URL linking directly to the specific product page for the item being shipped. Must point to an individual product listing, not a general shop homepage or category page. <p>Optional for USA shipments (may become mandatory in the future).</p>
+        maxLength: 250
       quantity:
         format: int32
         type: integer
@@ -1072,8 +1180,8 @@ definitions:
           - documents
           - other
           - returnedGoods
-          - saleOfGoods
-          - mixedContent
+          - commercialSaleOfGoods
+          - eCommerceSaleOfGoods
       requiresExportLicence:
           type: boolean
       stockLocation:
@@ -1136,6 +1244,8 @@ definitions:
         eoriNumber:
             type: string
             maxLength: 18
+        isABusiness:
+            type: boolean
 
   DimensionsRequest:
     type: object
@@ -1558,6 +1668,138 @@ definitions:
       manifestNumber: 1001
       status: 'Completed'
       documentPdf: 'Base64 encoded PDF document'
+
+  ServiceItem:
+    type: object
+    properties:
+      carrierGuid:
+        type: string
+        format: uuid
+        example: e90e87c8-4ea6-49ec-a387-64ba37f66d84
+      carrierServiceGuid:
+        type: string
+        format: uuid
+        example: 3824a10c-1a2b-4e66-b82f-efa236a86cd9
+      serviceName:
+        type: string
+        example: Tracked Returns 24
+      serviceCode:
+        type: string
+        example: TSN
+  GetServicesResponse:
+    type: object
+    properties:
+      services:
+        type: array
+        items:
+          $ref: '#/definitions/ServiceItem'
+  Address:
+    required:
+      - firstName
+      - lastName
+      - addressLine1
+      - city
+      - postcode
+      - country
+      - countryIsoCode
+    type: object
+    properties:
+      title:
+        maxLength: 25
+        type: string
+      firstName:
+        maxLength: 150
+        type: string
+      lastName:
+        maxLength: 150
+        type: string
+      companyName:
+        maxLength: 250
+        type: string
+      addressLine1:
+        maxLength: 250
+        type: string
+      addressLine2:
+        maxLength: 250
+        type: string
+      addressLine3:
+        maxLength: 250
+        type: string
+      city:
+        maxLength: 100
+        type: string
+      county:
+        maxLength: 250
+        type: string
+      postcode:
+        maxLength: 25
+        type: string
+      country:
+        maxLength: 50
+        type: string
+      countryIsoCode:
+        maxLength: 3
+        type: string
+        description: ISO 3166-1 alpha-3 country code (e.g. GBR, USA)
+
+  CustomerReference:
+    required:
+      - reference
+    type: object
+    properties:
+      reference:
+        maxLength: 50
+        type: string
+
+  Shipment:
+    required:
+      - shippingAddress
+      - returnAddress
+    type: object
+    properties:
+      shippingAddress:
+        $ref: '#/definitions/Address'
+      returnAddress:
+        $ref: '#/definitions/Address'
+      customerReference:
+        $ref: '#/definitions/CustomerReference'
+
+  ServiceCode:
+    required:
+      - serviceCode
+    type: object
+    properties:
+      serviceCode:
+        type: string
+        description: Return service code. Obtain available values from GET /returns/services.
+      serviceRegisterCode:
+        type: string
+
+  CreateReturnRequest:
+    required:
+      - service
+      - shipment
+    type: object
+    properties:
+      service:
+        $ref: '#/definitions/ServiceCode'
+      shipment:
+        $ref: '#/definitions/Shipment'
+
+  CreateReturnResponse:
+    type: object
+    properties:
+      shipment:
+        type: object
+        properties:
+          trackingNumber:
+            type: string
+          uniqueItemId:
+            type: string
+      qrCode:
+        type: string
+      label:
+        type: string
 
 securityDefinitions:
   Bearer:

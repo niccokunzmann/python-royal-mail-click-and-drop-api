@@ -23,6 +23,7 @@ from typing import Any, ClassVar, Dict, List, Optional
 from typing_extensions import Annotated
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class PostageDetailsRequest(BaseModel):
     """
@@ -30,7 +31,7 @@ class PostageDetailsRequest(BaseModel):
     """ # noqa: E501
     send_notifications_to: Optional[StrictStr] = Field(default=None, alias="sendNotificationsTo")
     service_code: Optional[Annotated[str, Field(strict=True, max_length=10)]] = Field(default=None, alias="serviceCode")
-    carrier_name: Optional[Annotated[str, Field(strict=True, max_length=50)]] = Field(default=None, description="The name of the carrier to use for this order. Required when the account has multiple carriers or postage location numbers; must match the name configured in Settings → Carrier settings on the Click & Drop website (e.g. \"Royal Mail OBA\").", alias="carrierName")
+    carrier_name: Optional[Annotated[str, Field(strict=True, max_length=50)]] = Field(default=None, description="The name of the carrier you would like to manifest orders for. This is required if the account has multiple carriers or multiple postage location numbers, and must match the name configured in the carrier settings within the main website.", alias="carrierName")
     service_register_code: Optional[Annotated[str, Field(strict=True, max_length=2)]] = Field(default=None, alias="serviceRegisterCode")
     consequential_loss: Optional[Annotated[int, Field(le=10000, strict=True, ge=0)]] = Field(default=None, alias="consequentialLoss")
     receive_email_notification: Optional[StrictBool] = Field(default=None, alias="receiveEmailNotification")
@@ -59,7 +60,8 @@ class PostageDetailsRequest(BaseModel):
         return value
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -71,8 +73,7 @@ class PostageDetailsRequest(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:

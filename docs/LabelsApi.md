@@ -8,7 +8,7 @@ Method | HTTP request | Description
 
 
 # **get_orders_label_async**
-> bytearray get_orders_label_async(order_identifiers, document_type, include_returns_label=include_returns_label, include_cn=include_cn)
+> bytes get_orders_label_async(order_identifiers, document_type, include_returns_label=include_returns_label, include_cn=include_cn)
 
 Return a single PDF file with generated label and/or associated document(s)
 
@@ -50,7 +50,7 @@ configuration.api_key['Bearer'] = os.environ["API_KEY"]
 with click_and_drop_api.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = click_and_drop_api.LabelsApi(api_client)
-    order_identifiers = 'order_identifiers_example' # str | One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/
+    order_identifiers = 'order_identifiers_example' # str | One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100.
     document_type = 'document_type_example' # str | Document generation mode. When documentType is set to \"postageLabel\" the additional parameters below must be used. These additional parameters will be ignored when documentType is not set to \"postageLabel\"
     include_returns_label = True # bool | Include returns label. Required when documentType is set to 'postageLabel' (optional)
     include_cn = True # bool | Include CN22/CN23 with label. Optional parameter. If this parameter is used the setting will override the default account behaviour specified in the \"Label format\" setting \"Generate customs declarations with orders\" (optional)
@@ -71,14 +71,14 @@ with click_and_drop_api.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **order_identifiers** | **str**| One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\&quot;ref\&quot;;1001;\&quot;Reference%3BWith%3BSpecial%3BSymbols!\&quot;;2345/ | 
+ **order_identifiers** | **str**| One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. | 
  **document_type** | **str**| Document generation mode. When documentType is set to \&quot;postageLabel\&quot; the additional parameters below must be used. These additional parameters will be ignored when documentType is not set to \&quot;postageLabel\&quot; | 
  **include_returns_label** | **bool**| Include returns label. Required when documentType is set to &#39;postageLabel&#39; | [optional] 
  **include_cn** | **bool**| Include CN22/CN23 with label. Optional parameter. If this parameter is used the setting will override the default account behaviour specified in the \&quot;Label format\&quot; setting \&quot;Generate customs declarations with orders\&quot; | [optional] 
 
 ### Return type
 
-**bytearray**
+**bytes**
 
 ### Authorization
 

@@ -7,7 +7,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **send_notifications_to** | **str** |  | [optional] 
 **service_code** | **str** |  | [optional] 
-**carrier_name** | **str** |  | [optional] 
+**carrier_name** | **str** | The name of the carrier you would like to manifest orders for. This is required if the account has multiple carriers or multiple postage location numbers, and must match the name configured in the carrier settings within the main website. | [optional] 
 **service_register_code** | **str** |  | [optional] 
 **consequential_loss** | **int** |  | [optional] 
 **receive_email_notification** | **bool** |  | [optional] 

@@ -13,6 +13,7 @@
 """  # noqa: E501
 
 # import models into model package
+from click_and_drop_api.models.address import Address
 from click_and_drop_api.models.address_request import AddressRequest
 from click_and_drop_api.models.billing_details_request import BillingDetailsRequest
 from click_and_drop_api.models.create_order_error_response import CreateOrderErrorResponse
@@ -22,17 +23,23 @@ from click_and_drop_api.models.create_order_response import CreateOrderResponse
 from click_and_drop_api.models.create_orders_request import CreateOrdersRequest
 from click_and_drop_api.models.create_orders_response import CreateOrdersResponse
 from click_and_drop_api.models.create_packages_response import CreatePackagesResponse
+from click_and_drop_api.models.create_return_request import CreateReturnRequest
+from click_and_drop_api.models.create_return_response import CreateReturnResponse
+from click_and_drop_api.models.create_return_response_shipment import CreateReturnResponseShipment
+from click_and_drop_api.models.customer_reference import CustomerReference
 from click_and_drop_api.models.delete_orders_resource import DeleteOrdersResource
 from click_and_drop_api.models.deleted_order_info import DeletedOrderInfo
 from click_and_drop_api.models.dimensions_request import DimensionsRequest
 from click_and_drop_api.models.error_response import ErrorResponse
 from click_and_drop_api.models.failed_order_response import FailedOrderResponse
+from click_and_drop_api.models.get_carrier_resource import GetCarrierResource
 from click_and_drop_api.models.get_order_details_resource import GetOrderDetailsResource
 from click_and_drop_api.models.get_order_info_resource import GetOrderInfoResource
 from click_and_drop_api.models.get_order_line_result import GetOrderLineResult
 from click_and_drop_api.models.get_orders_details_response import GetOrdersDetailsResponse
 from click_and_drop_api.models.get_orders_response import GetOrdersResponse
 from click_and_drop_api.models.get_postal_details_result import GetPostalDetailsResult
+from click_and_drop_api.models.get_services_response import GetServicesResponse
 from click_and_drop_api.models.get_shipping_details_result import GetShippingDetailsResult
 from click_and_drop_api.models.get_tag_details_result import GetTagDetailsResult
 from click_and_drop_api.models.get_version_resource import GetVersionResource
@@ -51,6 +58,9 @@ from click_and_drop_api.models.postage_details_request import PostageDetailsRequ
 from click_and_drop_api.models.product_item_request import ProductItemRequest
 from click_and_drop_api.models.recipient_details_request import RecipientDetailsRequest
 from click_and_drop_api.models.sender_details_request import SenderDetailsRequest
+from click_and_drop_api.models.service_code import ServiceCode
+from click_and_drop_api.models.service_item import ServiceItem
+from click_and_drop_api.models.shipment import Shipment
 from click_and_drop_api.models.shipment_package_request import ShipmentPackageRequest
 from click_and_drop_api.models.tag_request import TagRequest
 from click_and_drop_api.models.update_order_status_request import UpdateOrderStatusRequest

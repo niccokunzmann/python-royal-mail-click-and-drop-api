@@ -17,11 +17,12 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, StrictBool
 from typing import Any, ClassVar, Dict, List, Optional
 from typing_extensions import Annotated
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class Importer(BaseModel):
     """
@@ -41,10 +42,12 @@ class Importer(BaseModel):
     vat_number: Optional[Annotated[str, Field(strict=True, max_length=15)]] = Field(default=None, alias="vatNumber")
     tax_code: Optional[Annotated[str, Field(strict=True, max_length=25)]] = Field(default=None, alias="taxCode")
     eori_number: Optional[Annotated[str, Field(strict=True, max_length=18)]] = Field(default=None, alias="eoriNumber")
-    __properties: ClassVar[List[str]] = ["companyName", "addressLine1", "addressLine2", "addressLine3", "city", "postcode", "country", "businessName", "contactName", "phoneNumber", "emailAddress", "vatNumber", "taxCode", "eoriNumber"]
+    is_a_business: Optional[StrictBool] = Field(default=None, alias="isABusiness")
+    __properties: ClassVar[List[str]] = ["companyName", "addressLine1", "addressLine2", "addressLine3", "city", "postcode", "country", "businessName", "contactName", "phoneNumber", "emailAddress", "vatNumber", "taxCode", "eoriNumber", "isABusiness"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -56,8 +59,7 @@ class Importer(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -107,7 +109,8 @@ class Importer(BaseModel):
             "emailAddress": obj.get("emailAddress"),
             "vatNumber": obj.get("vatNumber"),
             "taxCode": obj.get("taxCode"),
-            "eoriNumber": obj.get("eoriNumber")
+            "eoriNumber": obj.get("eoriNumber"),
+            "isABusiness": obj.get("isABusiness")
         })
         return _obj
 

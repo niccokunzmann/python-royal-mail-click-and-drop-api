@@ -20,6 +20,7 @@ Name | Type | Description | Notes
 **customs_duty_costs** | **float** | Customs Duty Costs is only supported in DDP (Delivery Duty Paid) services | [optional] 
 **total** | **float** | The sum of order subtotal, tax and retail shipping costs | 
 **currency_code** | **str** |  | [optional] 
+**delivery_term** | **str** | Specifies how customs duties, taxes, and handling fees are paid for international shipments.&lt;p&gt;Required for shipments to the EU and USA.&lt;/p&gt;&lt;p&gt;Accepted values are &lt;b&gt;DDP, IOSS_DDP, DDU_DAP, IOSS_DDU, DTP, IOSS_DTP&lt;/b&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;N.B. If no value is provided in this field then the delivery terms will be defaulted to DDU_DAP.&lt;/b&gt;&lt;/p&gt; | [optional] 
 **postage_details** | [**PostageDetailsRequest**](PostageDetailsRequest.md) |  | [optional] 
 **tags** | [**List[TagRequest]**](TagRequest.md) |  | [optional] 
 **label** | [**LabelGenerationRequest**](LabelGenerationRequest.md) |  | [optional] 

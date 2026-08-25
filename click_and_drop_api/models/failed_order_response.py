@@ -23,6 +23,7 @@ from click_and_drop_api.models.create_order_error_response import CreateOrderErr
 from click_and_drop_api.models.create_order_request import CreateOrderRequest
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class FailedOrderResponse(BaseModel):
     """
@@ -33,7 +34,8 @@ class FailedOrderResponse(BaseModel):
     __properties: ClassVar[List[str]] = ["order", "errors"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -45,8 +47,7 @@ class FailedOrderResponse(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -78,8 +79,7 @@ class FailedOrderResponse(BaseModel):
         _items = []
         if self.errors:
             for _item_errors in self.errors:
-                if _item_errors:
-                    _items.append(_item_errors.to_dict())
+                _items.append(_item_errors.to_dict() if _item_errors is not None else None)
             _dict['errors'] = _items
         return _dict
 

@@ -137,7 +137,7 @@ configuration.api_key['Bearer'] = os.environ["API_KEY"]
 with click_and_drop_api.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = click_and_drop_api.OrdersApi(api_client)
-    order_identifiers = 'order_identifiers_example' # str | One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/
+    order_identifiers = 'order_identifiers_example' # str | One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100.
 
     try:
         # Delete orders
@@ -155,7 +155,7 @@ with click_and_drop_api.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **order_identifiers** | **str**| One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\&quot;ref\&quot;;1001;\&quot;Reference%3BWith%3BSpecial%3BSymbols!\&quot;;2345/ | 
+ **order_identifiers** | **str**| One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. | 
 
 ### Return type
 
@@ -396,7 +396,7 @@ configuration.api_key['Bearer'] = os.environ["API_KEY"]
 with click_and_drop_api.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = click_and_drop_api.OrdersApi(api_client)
-    order_identifiers = 'order_identifiers_example' # str | One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/
+    order_identifiers = 'order_identifiers_example' # str | One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100.
 
     try:
         # Retrieve specific orders
@@ -414,7 +414,7 @@ with click_and_drop_api.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **order_identifiers** | **str**| One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\&quot;ref\&quot;;1001;\&quot;Reference%3BWith%3BSpecial%3BSymbols!\&quot;;2345/ | 
+ **order_identifiers** | **str**| One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. | 
 
 ### Return type
 
@@ -479,7 +479,7 @@ configuration.api_key['Bearer'] = os.environ["API_KEY"]
 with click_and_drop_api.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = click_and_drop_api.OrdersApi(api_client)
-    order_identifiers = 'order_identifiers_example' # str | One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/
+    order_identifiers = 'order_identifiers_example' # str | One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100.
 
     try:
         # Retrieve details of the specific orders
@@ -497,7 +497,7 @@ with click_and_drop_api.ApiClient(configuration) as api_client:
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **order_identifiers** | **str**| One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\&quot;ref\&quot;;1001;\&quot;Reference%3BWith%3BSpecial%3BSymbols!\&quot;;2345/ | 
+ **order_identifiers** | **str**| One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. | 
 
 ### Return type
 

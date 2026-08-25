@@ -1,5 +1,3 @@
-# coding: utf-8
-
 """
     ChannelShipper & Royal Mail Public API
 
@@ -10,6 +8,7 @@
 
     Do not edit the class manually.
 """  # noqa: E501
+
 
 import warnings
 from pydantic import validate_call, Field, StrictFloat, StrictStr, StrictInt
@@ -44,7 +43,7 @@ class ManifestsApi:
     @validate_call
     def get_manifest_async(
         self,
-        manifest_identifier: Annotated[StrictInt, Field(description="The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call. E.g. 12345")],
+        manifest_identifier: Annotated[StrictInt, Field(description="The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call")],
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -62,7 +61,7 @@ class ManifestsApi:
 
         Retrieve manifest paperwork for a previously successful ‘Manifest eligible orders’ endpoint call
 
-        :param manifest_identifier: The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call. E.g. 12345 (required)
+        :param manifest_identifier: The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call (required)
         :type manifest_identifier: int
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
@@ -116,7 +115,7 @@ class ManifestsApi:
     @validate_call
     def get_manifest_async_with_http_info(
         self,
-        manifest_identifier: Annotated[StrictInt, Field(description="The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call. E.g. 12345")],
+        manifest_identifier: Annotated[StrictInt, Field(description="The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call")],
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -134,7 +133,7 @@ class ManifestsApi:
 
         Retrieve manifest paperwork for a previously successful ‘Manifest eligible orders’ endpoint call
 
-        :param manifest_identifier: The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call. E.g. 12345 (required)
+        :param manifest_identifier: The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call (required)
         :type manifest_identifier: int
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
@@ -188,7 +187,7 @@ class ManifestsApi:
     @validate_call
     def get_manifest_async_without_preload_content(
         self,
-        manifest_identifier: Annotated[StrictInt, Field(description="The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call. E.g. 12345")],
+        manifest_identifier: Annotated[StrictInt, Field(description="The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call")],
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -206,7 +205,7 @@ class ManifestsApi:
 
         Retrieve manifest paperwork for a previously successful ‘Manifest eligible orders’ endpoint call
 
-        :param manifest_identifier: The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call. E.g. 12345 (required)
+        :param manifest_identifier: The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call (required)
         :type manifest_identifier: int
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
@@ -612,7 +611,7 @@ class ManifestsApi:
     @validate_call
     def retry_manifest_async(
         self,
-        manifest_identifier: Annotated[StrictInt, Field(description="The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call. E.g. 12345")],
+        manifest_identifier: Annotated[StrictInt, Field(description="The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call")],
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -630,7 +629,7 @@ class ManifestsApi:
 
         Retry a manifest operation if the eligible orders were not able to be successfully processed in the initial ‘Manifest eligible orders’ endpoint call and return manifest paperwork where possible 
 
-        :param manifest_identifier: The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call. E.g. 12345 (required)
+        :param manifest_identifier: The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call (required)
         :type manifest_identifier: int
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
@@ -685,7 +684,7 @@ class ManifestsApi:
     @validate_call
     def retry_manifest_async_with_http_info(
         self,
-        manifest_identifier: Annotated[StrictInt, Field(description="The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call. E.g. 12345")],
+        manifest_identifier: Annotated[StrictInt, Field(description="The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call")],
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -703,7 +702,7 @@ class ManifestsApi:
 
         Retry a manifest operation if the eligible orders were not able to be successfully processed in the initial ‘Manifest eligible orders’ endpoint call and return manifest paperwork where possible 
 
-        :param manifest_identifier: The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call. E.g. 12345 (required)
+        :param manifest_identifier: The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call (required)
         :type manifest_identifier: int
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
@@ -758,7 +757,7 @@ class ManifestsApi:
     @validate_call
     def retry_manifest_async_without_preload_content(
         self,
-        manifest_identifier: Annotated[StrictInt, Field(description="The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call. E.g. 12345")],
+        manifest_identifier: Annotated[StrictInt, Field(description="The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call")],
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -776,7 +775,7 @@ class ManifestsApi:
 
         Retry a manifest operation if the eligible orders were not able to be successfully processed in the initial ‘Manifest eligible orders’ endpoint call and return manifest paperwork where possible 
 
-        :param manifest_identifier: The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call. E.g. 12345 (required)
+        :param manifest_identifier: The manifest number returned from the initial ‘Manifest eligible orders’ endpoint call (required)
         :type manifest_identifier: int
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request

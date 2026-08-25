@@ -1,5 +1,3 @@
-# coding: utf-8
-
 """
     ChannelShipper & Royal Mail Public API
 
@@ -10,6 +8,7 @@
 
     Do not edit the class manually.
 """  # noqa: E501
+
 
 import warnings
 from pydantic import validate_call, Field, StrictFloat, StrictStr, StrictInt
@@ -331,7 +330,7 @@ class OrdersApi:
     @validate_call
     def delete_orders_async(
         self,
-        order_identifiers: Annotated[StrictStr, Field(description="One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/")],
+        order_identifiers: Annotated[StrictStr, Field(description="One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100.")],
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -349,7 +348,7 @@ class OrdersApi:
 
         Please be aware labels generated on orders which are deleted are no longer valid and must be destroyed.  Cancelled label information is automatically shared with Royal Mail Revenue Protection, and should a cancelled label be identified on an item in the Royal Mail Network, you will be charged on your account and an additional handling fee applied. 
 
-        :param order_identifiers: One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/ (required)
+        :param order_identifiers: One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. (required)
         :type order_identifiers: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
@@ -403,7 +402,7 @@ class OrdersApi:
     @validate_call
     def delete_orders_async_with_http_info(
         self,
-        order_identifiers: Annotated[StrictStr, Field(description="One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/")],
+        order_identifiers: Annotated[StrictStr, Field(description="One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100.")],
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -421,7 +420,7 @@ class OrdersApi:
 
         Please be aware labels generated on orders which are deleted are no longer valid and must be destroyed.  Cancelled label information is automatically shared with Royal Mail Revenue Protection, and should a cancelled label be identified on an item in the Royal Mail Network, you will be charged on your account and an additional handling fee applied. 
 
-        :param order_identifiers: One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/ (required)
+        :param order_identifiers: One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. (required)
         :type order_identifiers: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
@@ -475,7 +474,7 @@ class OrdersApi:
     @validate_call
     def delete_orders_async_without_preload_content(
         self,
-        order_identifiers: Annotated[StrictStr, Field(description="One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/")],
+        order_identifiers: Annotated[StrictStr, Field(description="One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100.")],
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -493,7 +492,7 @@ class OrdersApi:
 
         Please be aware labels generated on orders which are deleted are no longer valid and must be destroyed.  Cancelled label information is automatically shared with Royal Mail Revenue Protection, and should a cancelled label be identified on an item in the Royal Mail Network, you will be charged on your account and an additional handling fee applied. 
 
-        :param order_identifiers: One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/ (required)
+        :param order_identifiers: One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. (required)
         :type order_identifiers: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
@@ -1295,7 +1294,7 @@ class OrdersApi:
     @validate_call
     def get_specific_orders_async(
         self,
-        order_identifiers: Annotated[StrictStr, Field(description="One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/")],
+        order_identifiers: Annotated[StrictStr, Field(description="One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100.")],
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1312,7 +1311,7 @@ class OrdersApi:
         """Retrieve specific orders
 
 
-        :param order_identifiers: One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/ (required)
+        :param order_identifiers: One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. (required)
         :type order_identifiers: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
@@ -1365,7 +1364,7 @@ class OrdersApi:
     @validate_call
     def get_specific_orders_async_with_http_info(
         self,
-        order_identifiers: Annotated[StrictStr, Field(description="One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/")],
+        order_identifiers: Annotated[StrictStr, Field(description="One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100.")],
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1382,7 +1381,7 @@ class OrdersApi:
         """Retrieve specific orders
 
 
-        :param order_identifiers: One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/ (required)
+        :param order_identifiers: One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. (required)
         :type order_identifiers: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
@@ -1435,7 +1434,7 @@ class OrdersApi:
     @validate_call
     def get_specific_orders_async_without_preload_content(
         self,
-        order_identifiers: Annotated[StrictStr, Field(description="One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/")],
+        order_identifiers: Annotated[StrictStr, Field(description="One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100.")],
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1452,7 +1451,7 @@ class OrdersApi:
         """Retrieve specific orders
 
 
-        :param order_identifiers: One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/ (required)
+        :param order_identifiers: One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. (required)
         :type order_identifiers: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
@@ -1565,7 +1564,7 @@ class OrdersApi:
     @validate_call
     def get_specific_orders_with_details_async(
         self,
-        order_identifiers: Annotated[StrictStr, Field(description="One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/")],
+        order_identifiers: Annotated[StrictStr, Field(description="One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100.")],
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1583,7 +1582,7 @@ class OrdersApi:
 
         <b>Reserved for ChannelShipper customers only - please visit <a href=\"https://channelshipper.com/\" target=\"_self\">ChannelShipper.com</a> for more information</b>
 
-        :param order_identifiers: One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/ (required)
+        :param order_identifiers: One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. (required)
         :type order_identifiers: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
@@ -1637,7 +1636,7 @@ class OrdersApi:
     @validate_call
     def get_specific_orders_with_details_async_with_http_info(
         self,
-        order_identifiers: Annotated[StrictStr, Field(description="One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/")],
+        order_identifiers: Annotated[StrictStr, Field(description="One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100.")],
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1655,7 +1654,7 @@ class OrdersApi:
 
         <b>Reserved for ChannelShipper customers only - please visit <a href=\"https://channelshipper.com/\" target=\"_self\">ChannelShipper.com</a> for more information</b>
 
-        :param order_identifiers: One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/ (required)
+        :param order_identifiers: One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. (required)
         :type order_identifiers: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
@@ -1709,7 +1708,7 @@ class OrdersApi:
     @validate_call
     def get_specific_orders_with_details_async_without_preload_content(
         self,
-        order_identifiers: Annotated[StrictStr, Field(description="One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/")],
+        order_identifiers: Annotated[StrictStr, Field(description="One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100.")],
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1727,7 +1726,7 @@ class OrdersApi:
 
         <b>Reserved for ChannelShipper customers only - please visit <a href=\"https://channelshipper.com/\" target=\"_self\">ChannelShipper.com</a> for more information</b>
 
-        :param order_identifiers: One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. E.g. /orders/\"ref\";1001;\"Reference%3BWith%3BSpecial%3BSymbols!\";2345/ (required)
+        :param order_identifiers: One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. (required)
         :type order_identifiers: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request

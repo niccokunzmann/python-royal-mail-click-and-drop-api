@@ -24,6 +24,7 @@ from click_and_drop_api.models.create_order_label_error_response import CreateOr
 from click_and_drop_api.models.create_packages_response import CreatePackagesResponse
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class CreateOrderResponse(BaseModel):
     """
@@ -44,7 +45,8 @@ class CreateOrderResponse(BaseModel):
     __properties: ClassVar[List[str]] = ["orderIdentifier", "orderReference", "createdOn", "orderDate", "printedOn", "manifestedOn", "shippedOn", "trackingNumber", "packages", "label", "labelErrors", "generatedDocuments"]
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -56,8 +58,7 @@ class CreateOrderResponse(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -86,15 +87,13 @@ class CreateOrderResponse(BaseModel):
         _items = []
         if self.packages:
             for _item_packages in self.packages:
-                if _item_packages:
-                    _items.append(_item_packages.to_dict())
+                _items.append(_item_packages.to_dict() if _item_packages is not None else None)
             _dict['packages'] = _items
         # override the default output from pydantic by calling `to_dict()` of each item in label_errors (list)
         _items = []
         if self.label_errors:
             for _item_label_errors in self.label_errors:
-                if _item_label_errors:
-                    _items.append(_item_label_errors.to_dict())
+                _items.append(_item_label_errors.to_dict() if _item_label_errors is not None else None)
             _dict['labelErrors'] = _items
         return _dict
 

@@ -22,13 +22,16 @@ from typing import Any, ClassVar, Dict, List, Optional, Union
 from typing_extensions import Annotated
 from typing import Optional, Set
 from typing_extensions import Self
+from pydantic_core import to_jsonable_python
 
 class ProductItemRequest(BaseModel):
     """
     ProductItemRequest
     """ # noqa: E501
     name: Optional[Annotated[str, Field(strict=True, max_length=800)]] = None
-    sku: Optional[Annotated[str, Field(strict=True, max_length=100)]] = Field(default=None, description="The presence or not of field <b>SKU</b> and other fields in the request body will determine which of the following behaviours occur:- <br>1) A minimum of <b>SKU</b>, <b>unitValue</b>, <b>unitWeightInGrams</b> and <b>quantity</b> provided - In addition to the provided product fields being used for the order creation, an existing account Product with matching SKU will be overwritten with all provided product parameters. If no existing account Product with matching SKU can be found then a new product will be created with the provided SKU and product parameters.<br>2) <b>SKU</b>, <b>quantity</b> provided and <b>no other fields</b> provided - An account Product with the provided SKU will be used for the order if it exists.<br>3) <b>SKU not provided</b> and a minimum of <b>unitValue</b>, <b>unitWeightInGrams</b> and <b>quantity</b> provided - All provided product fields will be used for the order creation.<br>4) All other scenarios will result in a validation error.", alias="SKU")
+    sku: Optional[Annotated[str, Field(strict=True, max_length=100)]] = Field(default=None, description="The presence or not of field <b>SKU</b> and other fields in the request body will determine which of the following behaviours occur:- <br>1) A minimum of <b>SKU</b>, <b>unitValue</b>, <b>unitWeightInGrams</b> and <b>quantity</b> provided - In addition to the provided product fields being used for the order creation, an existing account Product with matching SKU will be overwritten with all provided product parameters. If no existing account Product with matching SKU can be found then a new product will be created with the provided SKU and product parameters.<br>2) <b>SKU</b>, <b>quantity</b> provided and <b>no other fields</b> provided - An account Product with the provided SKU will be used for the order if it exists.<br>3) <b>SKU not provided</b> and a minimum of <b>unitValue</b>, <b>unitWeightInGrams</b> and <b>quantity</b> provided - All provided product fields will be used for the order creation.<br>4) All other scenarios will result in a validation error.<p>Optional for EU and USA shipments (may become mandatory in the future).</p>", alias="SKU")
+    reference_id: Optional[Annotated[str, Field(strict=True, max_length=50)]] = Field(default=None, description="The manufacturer's product reference code for the item (e.g. GTIN, EAN, UPC). <p>Optional for EU and USA shipments (may become mandatory in the future).</p>", alias="ReferenceId")
+    contents_piece_url: Optional[Annotated[str, Field(strict=True, max_length=250)]] = Field(default=None, description="A URL linking directly to the specific product page for the item being shipped. Must point to an individual product listing, not a general shop homepage or category page. <p>Optional for USA shipments (may become mandatory in the future).</p>", alias="ContentsPieceURL")
     quantity: Annotated[int, Field(le=999999, strict=True, ge=1)] = Field(description="The number of units in a given line")
     unit_value: Optional[Union[Annotated[float, Field(multiple_of=0.01, le=999999, strict=True, ge=0)], Annotated[int, Field(le=999999, strict=True, ge=0)]]] = Field(default=None, description="The price of a single unit excluding tax", alias="unitValue")
     unit_weight_in_grams: Optional[Annotated[int, Field(le=999999, strict=True, ge=0)]] = Field(default=None, alias="unitWeightInGrams")
@@ -43,7 +46,7 @@ class ProductItemRequest(BaseModel):
     supplementary_units: Optional[Annotated[str, Field(strict=True, max_length=17)]] = Field(default=None, alias="supplementaryUnits")
     license_number: Optional[Annotated[str, Field(strict=True, max_length=41)]] = Field(default=None, alias="licenseNumber")
     certificate_number: Optional[Annotated[str, Field(strict=True, max_length=41)]] = Field(default=None, alias="certificateNumber")
-    __properties: ClassVar[List[str]] = ["name", "SKU", "quantity", "unitValue", "unitWeightInGrams", "customsDescription", "extendedCustomsDescription", "customsCode", "originCountryCode", "customsDeclarationCategory", "requiresExportLicence", "stockLocation", "useOriginPreference", "supplementaryUnits", "licenseNumber", "certificateNumber"]
+    __properties: ClassVar[List[str]] = ["name", "SKU", "ReferenceId", "ContentsPieceURL", "quantity", "unitValue", "unitWeightInGrams", "customsDescription", "extendedCustomsDescription", "customsCode", "originCountryCode", "customsDeclarationCategory", "requiresExportLicence", "stockLocation", "useOriginPreference", "supplementaryUnits", "licenseNumber", "certificateNumber"]
 
     @field_validator('customs_declaration_category')
     def customs_declaration_category_validate_enum(cls, value):
@@ -51,12 +54,13 @@ class ProductItemRequest(BaseModel):
         if value is None:
             return value
 
-        if value not in set(['none', 'gift', 'commercialSample', 'documents', 'other', 'returnedGoods', 'saleOfGoods', 'mixedContent']):
-            raise ValueError("must be one of enum values ('none', 'gift', 'commercialSample', 'documents', 'other', 'returnedGoods', 'saleOfGoods', 'mixedContent')")
+        if value not in set(['none', 'gift', 'commercialSample', 'documents', 'other', 'returnedGoods', 'commercialSaleOfGoods', 'eCommerceSaleOfGoods']):
+            raise ValueError("must be one of enum values ('none', 'gift', 'commercialSample', 'documents', 'other', 'returnedGoods', 'commercialSaleOfGoods', 'eCommerceSaleOfGoods')")
         return value
 
     model_config = ConfigDict(
-        populate_by_name=True,
+        validate_by_name=True,
+        validate_by_alias=True,
         validate_assignment=True,
         protected_namespaces=(),
     )
@@ -68,8 +72,7 @@ class ProductItemRequest(BaseModel):
 
     def to_json(self) -> str:
         """Returns the JSON representation of the model using alias"""
-        # TODO: pydantic v2: use .model_dump_json(by_alias=True, exclude_unset=True) instead
-        return json.dumps(self.to_dict())
+        return json.dumps(to_jsonable_python(self.to_dict()))
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
@@ -108,6 +111,8 @@ class ProductItemRequest(BaseModel):
         _obj = cls.model_validate({
             "name": obj.get("name"),
             "SKU": obj.get("SKU"),
+            "ReferenceId": obj.get("ReferenceId"),
+            "ContentsPieceURL": obj.get("ContentsPieceURL"),
             "quantity": obj.get("quantity"),
             "unitValue": obj.get("unitValue"),
             "unitWeightInGrams": obj.get("unitWeightInGrams"),
