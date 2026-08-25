@@ -44,7 +44,7 @@ tox
 
 ## Publish a new version
 
-Edit CHANGES.md
+Edit `CHANGES.md`.
 
 ```sh
 git tag v1.0.2

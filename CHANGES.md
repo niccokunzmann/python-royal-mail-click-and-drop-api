@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.2.0
+
+- Update Click & Drop API v1. (2026-08-25)
+
 ## 3.1.1
 
 - Set default `carrier_name` to `"Royal Mail OLP"` or `"Royal Mail OBA"` in `manifest_orders`. This is the default or OBA and non-OBA accounts.
