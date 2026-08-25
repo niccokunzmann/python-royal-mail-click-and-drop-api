@@ -146,5 +146,17 @@ nav:
     - UpdateOrdersStatusRequest.md
     - UpdatedOrderInfo.md
     - VersionApi.md
+    - Address.md
+    - CarriersApi.md
+    - CreateReturnRequest.md
+    - CreateReturnResponse.md
+    - CreateReturnResponseShipment.md
+    - CustomerReference.md
+    - GetCarrierResource.md
+    - GetServicesResponse.md
+    - ReturnsApi.md
+    - ServiceCode.md
+    - ServiceItem.md
+    - Shipment.md
   - maintenance.md
   - LICENSE.md
