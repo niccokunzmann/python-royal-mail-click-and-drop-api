@@ -40,10 +40,9 @@ class Importer(BaseModel):
     phone_number: Optional[Annotated[str, Field(strict=True, max_length=25)]] = Field(default=None, alias="phoneNumber")
     email_address: Optional[Annotated[str, Field(strict=True, max_length=254)]] = Field(default=None, alias="emailAddress")
     vat_number: Optional[Annotated[str, Field(strict=True, max_length=15)]] = Field(default=None, alias="vatNumber")
-    tax_code: Optional[Annotated[str, Field(strict=True, max_length=25)]] = Field(default=None, alias="taxCode")
     eori_number: Optional[Annotated[str, Field(strict=True, max_length=18)]] = Field(default=None, alias="eoriNumber")
     is_a_business: Optional[StrictBool] = Field(default=None, alias="isABusiness")
-    __properties: ClassVar[List[str]] = ["companyName", "addressLine1", "addressLine2", "addressLine3", "city", "postcode", "country", "businessName", "contactName", "phoneNumber", "emailAddress", "vatNumber", "taxCode", "eoriNumber", "isABusiness"]
+    __properties: ClassVar[List[str]] = ["companyName", "addressLine1", "addressLine2", "addressLine3", "city", "postcode", "country", "businessName", "contactName", "phoneNumber", "emailAddress", "vatNumber", "eoriNumber", "isABusiness"]
 
     model_config = ConfigDict(
         validate_by_name=True,
@@ -108,7 +107,6 @@ class Importer(BaseModel):
             "phoneNumber": obj.get("phoneNumber"),
             "emailAddress": obj.get("emailAddress"),
             "vatNumber": obj.get("vatNumber"),
-            "taxCode": obj.get("taxCode"),
             "eoriNumber": obj.get("eoriNumber"),
             "isABusiness": obj.get("isABusiness")
         })

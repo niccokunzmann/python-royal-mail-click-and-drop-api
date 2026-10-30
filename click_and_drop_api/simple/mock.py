@@ -17,6 +17,15 @@ from click_and_drop_api.models.error_response import ErrorResponse
 _MOCK_KEY = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
 _MOCK_VERSION = "1.0.0-mock"
 
+EU_COUNTRY_CODES = frozenset(
+    "AT BE BG HR CY CZ DK EE FI FR DE GR HU IE IT LV LT LU MT NL PL PT RO SK SI ES SE".split()
+)
+"""ISO 3166-1 alpha-2 codes of the EU member states."""
+
+# Items declared as these categories need a manufacturer ID for EU shipments.
+# Royal Mail also rejects items without a category.
+_SALE_OF_GOODS_CATEGORIES = (None, "commercialSaleOfGoods", "eCommerceSaleOfGoods")
+
 
 class MockClickAndDrop(AbstractClickAndDrop):
     """Drop-in replacement for ClickAndDrop that stores orders in memory.
@@ -105,7 +114,14 @@ class MockClickAndDrop(AbstractClickAndDrop):
             )
         now = self._now()
         created = []
+        failed = []
         for order in orders:
+            errors = self._validate_order(order)
+            if errors:
+                failed.append(
+                    click_and_drop_api.FailedOrderResponse(order=order, errors=errors)
+                )
+                continue
             order_id = self._next_id
             self._next_id += 1
             service_code = (
@@ -142,10 +158,42 @@ class MockClickAndDrop(AbstractClickAndDrop):
 
         return click_and_drop_api.CreateOrdersResponse(
             success_count=len(created),
-            errors_count=0,
+            errors_count=len(failed),
             created_orders=created,
-            failed_orders=[],
+            failed_orders=failed,
         )
+
+    @staticmethod
+    def _validate_order(
+        order: CreateOrder,
+    ) -> list[click_and_drop_api.CreateOrderErrorResponse]:
+        """Return the errors Royal Mail would report for this order."""
+        errors = []
+        if order.recipient.address.country_code in EU_COUNTRY_CODES:
+            for package in order.packages or []:
+                for item in package.contents or []:
+                    if (
+                        item.customs_declaration_category in _SALE_OF_GOODS_CATEGORIES
+                        and not item.non_standardised_manufacturer_id
+                        and not item.standardised_manufacturer_id
+                    ):
+                        errors.append(
+                            click_and_drop_api.CreateOrderErrorResponse(
+                                error_code=119,
+                                error_message=(
+                                    "Mandatory fields are missing from an order that is"
+                                    " being sent to the EU or USA. Please ensure all"
+                                    " fields are provided and re-submit order."
+                                ),
+                                fields=[
+                                    click_and_drop_api.OrderFieldResponse(
+                                        field_name="Packages.Contents.NonStandardisedManufacturerId",
+                                        value=None,
+                                    )
+                                ],
+                            )
+                        )
+        return errors
 
     def _get_orders(
         self, order_identifiers: list[Union[str, int]]

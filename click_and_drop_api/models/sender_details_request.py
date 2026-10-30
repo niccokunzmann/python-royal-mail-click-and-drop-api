@@ -29,8 +29,8 @@ class SenderDetailsRequest(BaseModel):
     SenderDetailsRequest
     """ # noqa: E501
     trading_name: Optional[Annotated[str, Field(strict=True, max_length=250)]] = Field(default=None, alias="tradingName")
-    phone_number: Optional[Annotated[str, Field(strict=True, max_length=25)]] = Field(default=None, alias="phoneNumber")
-    email_address: Optional[Annotated[str, Field(strict=True, max_length=254)]] = Field(default=None, alias="emailAddress")
+    phone_number: Optional[Annotated[str, Field(strict=True, max_length=25)]] = Field(default=None, description="<p>Either phoneNumber or emailAddress is required for USA shipments.</p>", alias="phoneNumber")
+    email_address: Optional[Annotated[str, Field(strict=True, max_length=254)]] = Field(default=None, description="<p>Either phoneNumber or emailAddress is required for USA shipments.</p>", alias="emailAddress")
     __properties: ClassVar[List[str]] = ["tradingName", "phoneNumber", "emailAddress"]
 
     model_config = ConfigDict(

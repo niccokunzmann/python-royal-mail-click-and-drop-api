@@ -17,7 +17,6 @@ Name | Type | Description | Notes
 **phone_number** | **str** |  | [optional] 
 **email_address** | **str** |  | [optional] 
 **vat_number** | **str** |  | [optional] 
-**tax_code** | **str** |  | [optional] 
 **eori_number** | **str** |  | [optional] 
 **is_a_business** | **bool** |  | [optional] 
 

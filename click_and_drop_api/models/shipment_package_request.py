@@ -17,6 +17,7 @@ import pprint
 import re  # noqa: F401
 import json
 
+from datetime import datetime
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
 from typing_extensions import Annotated
@@ -35,7 +36,11 @@ class ShipmentPackageRequest(BaseModel):
     custom_package_format_identifier: Optional[StrictStr] = Field(default=None, description="This field will be deprecated in the future. Please use 'packageFormatIdentifier' for custom package formats from ChannelShipper.", alias="customPackageFormatIdentifier")
     dimensions: Optional[DimensionsRequest] = None
     contents: Optional[List[ProductItemRequest]] = None
-    __properties: ClassVar[List[str]] = ["weightInGrams", "packageFormatIdentifier", "customPackageFormatIdentifier", "dimensions", "contents"]
+    commercial_invoice: Optional[StrictStr] = Field(default=None, description="Commercial invoice encoded as a base64 PDF string, under 2MB. ", alias="commercialInvoice")
+    supporting_documents: Optional[List[StrictStr]] = Field(default=None, description="Optional supporting documents, each encoded as a base64 PDF string, under 2MB. ", alias="supportingDocuments")
+    commercial_invoice_number: Optional[Annotated[str, Field(strict=True, max_length=35)]] = Field(default=None, description="Commercial invoice number for this package. ", alias="commercialInvoiceNumber")
+    commercial_invoice_date: Optional[datetime] = Field(default=None, description="Date of the commercial invoice for this package. If a commercial invoice is provided without a date, the current date is used. The current date is also used if the minimum value '0001-01-01' is supplied. ", alias="commercialInvoiceDate")
+    __properties: ClassVar[List[str]] = ["weightInGrams", "packageFormatIdentifier", "customPackageFormatIdentifier", "dimensions", "contents", "commercialInvoice", "supportingDocuments", "commercialInvoiceNumber", "commercialInvoiceDate"]
 
     model_config = ConfigDict(
         validate_by_name=True,
@@ -101,7 +106,11 @@ class ShipmentPackageRequest(BaseModel):
             "packageFormatIdentifier": obj.get("packageFormatIdentifier"),
             "customPackageFormatIdentifier": obj.get("customPackageFormatIdentifier"),
             "dimensions": DimensionsRequest.from_dict(obj["dimensions"]) if obj.get("dimensions") is not None else None,
-            "contents": [ProductItemRequest.from_dict(_item) for _item in obj["contents"]] if obj.get("contents") is not None else None
+            "contents": [ProductItemRequest.from_dict(_item) for _item in obj["contents"]] if obj.get("contents") is not None else None,
+            "commercialInvoice": obj.get("commercialInvoice"),
+            "supportingDocuments": obj.get("supportingDocuments"),
+            "commercialInvoiceNumber": obj.get("commercialInvoiceNumber"),
+            "commercialInvoiceDate": obj.get("commercialInvoiceDate")
         })
         return _obj
 

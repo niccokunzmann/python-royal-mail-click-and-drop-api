@@ -1,7 +1,7 @@
 
 API_URL	= "https://api.parcel.royalmail.com/doc/v1/click-and-drop-api-v1.yaml"
 
-.PHONY: stubs api-definition stubs-help image
+.PHONY: stubs api-definition fix-spec stubs-help image
 
 #
 # Download the API definition file
@@ -9,6 +9,15 @@ API_URL	= "https://api.parcel.royalmail.com/doc/v1/click-and-drop-api-v1.yaml"
 api-definition:
 	wget -O click-and-drop-api-v1.yaml $(API_URL)
 	cp click-and-drop-api-v1.yaml click-and-drop-api-v1-original.yaml
+	make fix-spec
+
+# Make the API definition acceptable for the generator.
+# - set the host
+# - comment out the examples of parameters in paths and parameters, the generator rejects them
+fix-spec:
+	grep -q "^host:" click-and-drop-api-v1.yaml || \
+		sed -i "/^basePath:/i host: api.parcel.royalmail.com" click-and-drop-api-v1.yaml
+	sed -i "/^paths:/,/^definitions:/ s|^\(\s*\)example: \(.\)|\1# example: \2|" click-and-drop-api-v1.yaml
 
 check-update:
 	wget -O /tmp/click-and-drop-api-v1.yaml $(API_URL)
@@ -57,6 +66,8 @@ fix-stubs:
 	sed -i "s|\[default to 25\]|default to 25|g" docs/OrdersApi.md
 	git checkout -- .gitignore
 	git checkout -- README.md || true
+	git checkout -- pyproject.toml
+	git checkout -- .github/workflows/python.yml
 
 html: .venv
 	.venv/bin/mkdocs build

@@ -8,7 +8,7 @@ Method | HTTP request | Description
 
 
 # **get_orders_label_async**
-> bytes get_orders_label_async(order_identifiers, document_type, include_returns_label=include_returns_label, include_cn=include_cn)
+> bytes get_orders_label_async(order_identifiers, document_type, include_returns_label=include_returns_label, include_cn=include_cn, include_commercial_invoice=include_commercial_invoice)
 
 Return a single PDF file with generated label and/or associated document(s)
 
@@ -51,13 +51,14 @@ with click_and_drop_api.ApiClient(configuration) as api_client:
     # Create an instance of the API class
     api_instance = click_and_drop_api.LabelsApi(api_client)
     order_identifiers = 'order_identifiers_example' # str | One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100.
-    document_type = 'document_type_example' # str | Document generation mode. When documentType is set to \"postageLabel\" the additional parameters below must be used. These additional parameters will be ignored when documentType is not set to \"postageLabel\"
+    document_type = 'document_type_example' # str | Document generation mode. When documentType is set to \"postageLabel\" the additional parameters below must be used. These additional parameters will be ignored when documentType is not set to \"postageLabel\". When documentType is set to \"commercialInvoice\" the includeCommercialInvoice parameter applies. 
     include_returns_label = True # bool | Include returns label. Required when documentType is set to 'postageLabel' (optional)
     include_cn = True # bool | Include CN22/CN23 with label. Optional parameter. If this parameter is used the setting will override the default account behaviour specified in the \"Label format\" setting \"Generate customs declarations with orders\" (optional)
+    include_commercial_invoice = True # bool | Includes the commercial invoice with the label. Only applies when documentType is \"commercialInvoice\".  (optional)
 
     try:
         # Return a single PDF file with generated label and/or associated document(s)
-        api_response = api_instance.get_orders_label_async(order_identifiers, document_type, include_returns_label=include_returns_label, include_cn=include_cn)
+        api_response = api_instance.get_orders_label_async(order_identifiers, document_type, include_returns_label=include_returns_label, include_cn=include_cn, include_commercial_invoice=include_commercial_invoice)
         print("The response of LabelsApi->get_orders_label_async:\n")
         pprint(api_response)
     except Exception as e:
@@ -72,9 +73,10 @@ with click_and_drop_api.ApiClient(configuration) as api_client:
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **order_identifiers** | **str**| One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. | 
- **document_type** | **str**| Document generation mode. When documentType is set to \&quot;postageLabel\&quot; the additional parameters below must be used. These additional parameters will be ignored when documentType is not set to \&quot;postageLabel\&quot; | 
+ **document_type** | **str**| Document generation mode. When documentType is set to \&quot;postageLabel\&quot; the additional parameters below must be used. These additional parameters will be ignored when documentType is not set to \&quot;postageLabel\&quot;. When documentType is set to \&quot;commercialInvoice\&quot; the includeCommercialInvoice parameter applies.  | 
  **include_returns_label** | **bool**| Include returns label. Required when documentType is set to &#39;postageLabel&#39; | [optional] 
  **include_cn** | **bool**| Include CN22/CN23 with label. Optional parameter. If this parameter is used the setting will override the default account behaviour specified in the \&quot;Label format\&quot; setting \&quot;Generate customs declarations with orders\&quot; | [optional] 
+ **include_commercial_invoice** | **bool**| Includes the commercial invoice with the label. Only applies when documentType is \&quot;commercialInvoice\&quot;.  | [optional] 
 
 ### Return type
 

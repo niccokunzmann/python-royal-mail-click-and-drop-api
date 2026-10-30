@@ -6,8 +6,8 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **trading_name** | **str** |  | [optional] 
-**phone_number** | **str** |  | [optional] 
-**email_address** | **str** |  | [optional] 
+**phone_number** | **str** | &lt;p&gt;Either phoneNumber or emailAddress is required for USA shipments.&lt;/p&gt; | [optional] 
+**email_address** | **str** | &lt;p&gt;Either phoneNumber or emailAddress is required for USA shipments.&lt;/p&gt; | [optional] 
 
 ## Example
 

@@ -10,6 +10,10 @@ Name | Type | Description | Notes
 **custom_package_format_identifier** | **str** | This field will be deprecated in the future. Please use &#39;packageFormatIdentifier&#39; for custom package formats from ChannelShipper. | [optional] 
 **dimensions** | [**DimensionsRequest**](DimensionsRequest.md) |  | [optional] 
 **contents** | [**List[ProductItemRequest]**](ProductItemRequest.md) |  | [optional] 
+**commercial_invoice** | **str** | Commercial invoice encoded as a base64 PDF string, under 2MB.  | [optional] 
+**supporting_documents** | **List[str]** | Optional supporting documents, each encoded as a base64 PDF string, under 2MB.  | [optional] 
+**commercial_invoice_number** | **str** | Commercial invoice number for this package.  | [optional] 
+**commercial_invoice_date** | **datetime** | Date of the commercial invoice for this package. If a commercial invoice is provided without a date, the current date is used. The current date is also used if the minimum value &#39;0001-01-01&#39; is supplied.  | [optional] 
 
 ## Example
 

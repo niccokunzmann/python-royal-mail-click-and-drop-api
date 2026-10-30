@@ -44,8 +44,8 @@ class PostageDetailsRequest(BaseModel):
     air_number: Optional[Annotated[str, Field(strict=True, max_length=50)]] = Field(default=None, description="For B2B orders shipping from Great Britain to Northern Ireland, this field can be used to provide the Recipient UKIMs number.", alias="AIRNumber")
     ioss_number: Optional[Annotated[str, Field(strict=True, max_length=50)]] = Field(default=None, alias="IOSSNumber")
     requires_export_license: Optional[StrictBool] = Field(default=None, alias="requiresExportLicense")
-    commercial_invoice_number: Optional[Annotated[str, Field(strict=True, max_length=35)]] = Field(default=None, alias="commercialInvoiceNumber")
-    commercial_invoice_date: Optional[datetime] = Field(default=None, alias="commercialInvoiceDate")
+    commercial_invoice_number: Optional[Annotated[str, Field(strict=True, max_length=35)]] = Field(default=None, description="This field has been deprecated. Use commercialInvoiceNumber at the package level instead. ", alias="commercialInvoiceNumber")
+    commercial_invoice_date: Optional[datetime] = Field(default=None, description="This field has been deprecated. Use commercialInvoiceDate at the package level instead. ", alias="commercialInvoiceDate")
     recipient_eori_number: Optional[StrictStr] = Field(default=None, alias="recipientEoriNumber")
     __properties: ClassVar[List[str]] = ["sendNotificationsTo", "serviceCode", "carrierName", "serviceRegisterCode", "consequentialLoss", "receiveEmailNotification", "receiveSmsNotification", "guaranteedSaturdayDelivery", "requestSignatureUponDelivery", "isLocalCollect", "safePlace", "department", "AIRNumber", "IOSSNumber", "requiresExportLicense", "commercialInvoiceNumber", "commercialInvoiceDate", "recipientEoriNumber"]
 

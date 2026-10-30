@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.3.0
+
+- Update Click & Drop API v1. (2026-10-29)
+  - `ProductItem` has `non_standardised_manufacturer_id`, `standardised_manufacturer_id` and `pga_reference_number`.
+    Royal Mail requires a manufacturer ID for EU shipments of goods (error 119).
+  - `ProductItem.customs_description` allows up to 255 characters.
+  - `ShipmentPackageRequest` has `commercial_invoice`, `commercial_invoice_number` and `supporting_documents`.
+  - New `ServicesApi` and `OlpServicesApi` list the services available for a destination.
+
 ## 3.2.0
 
 - Update Click & Drop API v1. (2026-08-25)

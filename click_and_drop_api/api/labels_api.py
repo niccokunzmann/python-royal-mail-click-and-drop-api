@@ -41,9 +41,10 @@ class LabelsApi:
     def get_orders_label_async(
         self,
         order_identifiers: Annotated[StrictStr, Field(description="One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100.")],
-        document_type: Annotated[StrictStr, Field(description="Document generation mode. When documentType is set to \"postageLabel\" the additional parameters below must be used. These additional parameters will be ignored when documentType is not set to \"postageLabel\"")],
+        document_type: Annotated[StrictStr, Field(description="Document generation mode. When documentType is set to \"postageLabel\" the additional parameters below must be used. These additional parameters will be ignored when documentType is not set to \"postageLabel\". When documentType is set to \"commercialInvoice\" the includeCommercialInvoice parameter applies. ")],
         include_returns_label: Annotated[Optional[StrictBool], Field(description="Include returns label. Required when documentType is set to 'postageLabel'")] = None,
         include_cn: Annotated[Optional[StrictBool], Field(description="Include CN22/CN23 with label. Optional parameter. If this parameter is used the setting will override the default account behaviour specified in the \"Label format\" setting \"Generate customs declarations with orders\"")] = None,
+        include_commercial_invoice: Annotated[Optional[StrictBool], Field(description="Includes the commercial invoice with the label. Only applies when documentType is \"commercialInvoice\". ")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -63,12 +64,14 @@ class LabelsApi:
 
         :param order_identifiers: One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. (required)
         :type order_identifiers: str
-        :param document_type: Document generation mode. When documentType is set to \"postageLabel\" the additional parameters below must be used. These additional parameters will be ignored when documentType is not set to \"postageLabel\" (required)
+        :param document_type: Document generation mode. When documentType is set to \"postageLabel\" the additional parameters below must be used. These additional parameters will be ignored when documentType is not set to \"postageLabel\". When documentType is set to \"commercialInvoice\" the includeCommercialInvoice parameter applies.  (required)
         :type document_type: str
         :param include_returns_label: Include returns label. Required when documentType is set to 'postageLabel'
         :type include_returns_label: bool
         :param include_cn: Include CN22/CN23 with label. Optional parameter. If this parameter is used the setting will override the default account behaviour specified in the \"Label format\" setting \"Generate customs declarations with orders\"
         :type include_cn: bool
+        :param include_commercial_invoice: Includes the commercial invoice with the label. Only applies when documentType is \"commercialInvoice\". 
+        :type include_commercial_invoice: bool
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -96,6 +99,7 @@ class LabelsApi:
             document_type=document_type,
             include_returns_label=include_returns_label,
             include_cn=include_cn,
+            include_commercial_invoice=include_commercial_invoice,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -125,9 +129,10 @@ class LabelsApi:
     def get_orders_label_async_with_http_info(
         self,
         order_identifiers: Annotated[StrictStr, Field(description="One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100.")],
-        document_type: Annotated[StrictStr, Field(description="Document generation mode. When documentType is set to \"postageLabel\" the additional parameters below must be used. These additional parameters will be ignored when documentType is not set to \"postageLabel\"")],
+        document_type: Annotated[StrictStr, Field(description="Document generation mode. When documentType is set to \"postageLabel\" the additional parameters below must be used. These additional parameters will be ignored when documentType is not set to \"postageLabel\". When documentType is set to \"commercialInvoice\" the includeCommercialInvoice parameter applies. ")],
         include_returns_label: Annotated[Optional[StrictBool], Field(description="Include returns label. Required when documentType is set to 'postageLabel'")] = None,
         include_cn: Annotated[Optional[StrictBool], Field(description="Include CN22/CN23 with label. Optional parameter. If this parameter is used the setting will override the default account behaviour specified in the \"Label format\" setting \"Generate customs declarations with orders\"")] = None,
+        include_commercial_invoice: Annotated[Optional[StrictBool], Field(description="Includes the commercial invoice with the label. Only applies when documentType is \"commercialInvoice\". ")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -147,12 +152,14 @@ class LabelsApi:
 
         :param order_identifiers: One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. (required)
         :type order_identifiers: str
-        :param document_type: Document generation mode. When documentType is set to \"postageLabel\" the additional parameters below must be used. These additional parameters will be ignored when documentType is not set to \"postageLabel\" (required)
+        :param document_type: Document generation mode. When documentType is set to \"postageLabel\" the additional parameters below must be used. These additional parameters will be ignored when documentType is not set to \"postageLabel\". When documentType is set to \"commercialInvoice\" the includeCommercialInvoice parameter applies.  (required)
         :type document_type: str
         :param include_returns_label: Include returns label. Required when documentType is set to 'postageLabel'
         :type include_returns_label: bool
         :param include_cn: Include CN22/CN23 with label. Optional parameter. If this parameter is used the setting will override the default account behaviour specified in the \"Label format\" setting \"Generate customs declarations with orders\"
         :type include_cn: bool
+        :param include_commercial_invoice: Includes the commercial invoice with the label. Only applies when documentType is \"commercialInvoice\". 
+        :type include_commercial_invoice: bool
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -180,6 +187,7 @@ class LabelsApi:
             document_type=document_type,
             include_returns_label=include_returns_label,
             include_cn=include_cn,
+            include_commercial_invoice=include_commercial_invoice,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -209,9 +217,10 @@ class LabelsApi:
     def get_orders_label_async_without_preload_content(
         self,
         order_identifiers: Annotated[StrictStr, Field(description="One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100.")],
-        document_type: Annotated[StrictStr, Field(description="Document generation mode. When documentType is set to \"postageLabel\" the additional parameters below must be used. These additional parameters will be ignored when documentType is not set to \"postageLabel\"")],
+        document_type: Annotated[StrictStr, Field(description="Document generation mode. When documentType is set to \"postageLabel\" the additional parameters below must be used. These additional parameters will be ignored when documentType is not set to \"postageLabel\". When documentType is set to \"commercialInvoice\" the includeCommercialInvoice parameter applies. ")],
         include_returns_label: Annotated[Optional[StrictBool], Field(description="Include returns label. Required when documentType is set to 'postageLabel'")] = None,
         include_cn: Annotated[Optional[StrictBool], Field(description="Include CN22/CN23 with label. Optional parameter. If this parameter is used the setting will override the default account behaviour specified in the \"Label format\" setting \"Generate customs declarations with orders\"")] = None,
+        include_commercial_invoice: Annotated[Optional[StrictBool], Field(description="Includes the commercial invoice with the label. Only applies when documentType is \"commercialInvoice\". ")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -231,12 +240,14 @@ class LabelsApi:
 
         :param order_identifiers: One or several Order Identifiers or Order References separated by semicolon. Order Identifiers are integer numbers. Order References are strings - each must be percent-encoded and surrounded by double quotation marks. The maximum number of identifiers is 100. (required)
         :type order_identifiers: str
-        :param document_type: Document generation mode. When documentType is set to \"postageLabel\" the additional parameters below must be used. These additional parameters will be ignored when documentType is not set to \"postageLabel\" (required)
+        :param document_type: Document generation mode. When documentType is set to \"postageLabel\" the additional parameters below must be used. These additional parameters will be ignored when documentType is not set to \"postageLabel\". When documentType is set to \"commercialInvoice\" the includeCommercialInvoice parameter applies.  (required)
         :type document_type: str
         :param include_returns_label: Include returns label. Required when documentType is set to 'postageLabel'
         :type include_returns_label: bool
         :param include_cn: Include CN22/CN23 with label. Optional parameter. If this parameter is used the setting will override the default account behaviour specified in the \"Label format\" setting \"Generate customs declarations with orders\"
         :type include_cn: bool
+        :param include_commercial_invoice: Includes the commercial invoice with the label. Only applies when documentType is \"commercialInvoice\". 
+        :type include_commercial_invoice: bool
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -264,6 +275,7 @@ class LabelsApi:
             document_type=document_type,
             include_returns_label=include_returns_label,
             include_cn=include_cn,
+            include_commercial_invoice=include_commercial_invoice,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -291,6 +303,7 @@ class LabelsApi:
         document_type,
         include_returns_label,
         include_cn,
+        include_commercial_invoice,
         _request_auth,
         _content_type,
         _headers,
@@ -304,7 +317,7 @@ class LabelsApi:
 
         _path_params: Dict[str, str] = {}
         _query_params: List[Tuple[str, str]] = []
-        _header_params: Dict[str, Optional[str]] = _headers or {}
+        _header_params: Dict[str, Any] = self.api_client._merge_headers(_headers)
         _form_params: List[Tuple[str, str]] = []
         _files: Dict[
             str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
@@ -327,13 +340,17 @@ class LabelsApi:
             
             _query_params.append(('includeCN', include_cn))
             
+        if include_commercial_invoice is not None:
+            
+            _query_params.append(('includeCommercialInvoice', include_commercial_invoice))
+            
         # process the header parameters
         # process the form parameters
         # process the body parameter
 
 
         # set the HTTP header `Accept`
-        if 'Accept' not in _header_params:
+        if not any(key.lower() == 'accept' for key in _header_params):
             _header_params['Accept'] = self.api_client.select_header_accept(
                 [
                     'application/pdf', 

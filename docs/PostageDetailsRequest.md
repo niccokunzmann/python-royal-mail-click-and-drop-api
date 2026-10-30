@@ -20,8 +20,8 @@ Name | Type | Description | Notes
 **air_number** | **str** | For B2B orders shipping from Great Britain to Northern Ireland, this field can be used to provide the Recipient UKIMs number. | [optional] 
 **ioss_number** | **str** |  | [optional] 
 **requires_export_license** | **bool** |  | [optional] 
-**commercial_invoice_number** | **str** |  | [optional] 
-**commercial_invoice_date** | **datetime** |  | [optional] 
+**commercial_invoice_number** | **str** | This field has been deprecated. Use commercialInvoiceNumber at the package level instead.  | [optional] 
+**commercial_invoice_date** | **datetime** | This field has been deprecated. Use commercialInvoiceDate at the package level instead.  | [optional] 
 **recipient_eori_number** | **str** |  | [optional] 
 
 ## Example
