@@ -158,5 +158,11 @@ nav:
     - ServiceCode.md
     - ServiceItem.md
     - Shipment.md
+    - GetCarrierServicesResource.md
+    - GetServiceResource.md
+    - OlpServiceOption.md
+    - OlpServicesApi.md
+    - OlpServicesResult.md
+    - ServicesApi.md
   - maintenance.md
   - LICENSE.md

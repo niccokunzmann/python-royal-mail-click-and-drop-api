@@ -8,6 +8,8 @@ repos:
       - id: check-json
       - id: check-toml
       - id: check-yaml
+        # mkdocs.yml uses Python tags, only check the syntax
+        args: [--unsafe]
       - id: destroyed-symlinks
       - id: detect-private-key
       - id: end-of-file-fixer
