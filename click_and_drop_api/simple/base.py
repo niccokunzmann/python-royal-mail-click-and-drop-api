@@ -36,7 +36,7 @@ from click_and_drop_api.simple.shipping.db import ShippingDB
 from click_and_drop_api.simple.shipping_test_result import ShippingTestResult
 from click_and_drop_api.simple.addresses import get_address, get_all_country_codes
 from .types import ManifestedOrders, OrderInfo, ReferenceLookup, UpdateOrderStatus
-from .strategy import CreateOrderStrategy, NullStrategy
+from .strategy import CreateOrderStrategy, NullStrategy, delete_copies, failed_order
 
 
 class AbstractClickAndDrop(ABC):
@@ -111,6 +111,67 @@ class AbstractClickAndDrop(ABC):
             result.success_count += response.success_count
             result.errors_count += response.errors_count
         return result
+
+    def replace_orders(
+        self,
+        orders: Union[list[CreateOrder], CreateOrder],
+        delete_printed: bool = False,
+        lookback: Optional[timedelta] = None,
+    ) -> click_and_drop_api.CreateOrdersResponse:
+        """Create orders and delete the other orders with the same references.
+
+        This assumes that the references do not exist yet:
+        the orders are uploaded in as few requests as possible
+        and then the references are looked up in one request.
+        Only if a reference now has several orders, the older ones are deleted.
+
+        If an older order cannot be deleted, the new order is deleted instead,
+        so that the reference is not duplicated.  It is in ``failed_orders``
+        with a :class:`~click_and_drop_api.simple.strategy.StrategyErrorCode`:
+
+        - ``ORDER_MANIFESTED``: Manifested orders cannot be deleted.
+        - ``LABEL_ALREADY_PRINTED``: The label is printed and ``delete_printed`` is false.
+        - ``DELETE_FAILED``: Click & Drop did not delete it.
+
+        Parameters:
+            orders: The orders to create.
+            delete_printed: Also delete older orders with a printed label.
+                This cancels the label.  Royal Mail charges for parcels sent
+                with a cancelled label.
+            lookback: Only search the orders uploaded in this time for older orders.
+                ``None`` searches all orders.
+
+        Returns:
+            The created and the failed orders, like :meth:`create_orders`.
+        """
+        if isinstance(orders, CreateOrder):
+            orders = [orders]
+        response = self.create_orders(orders, strategy=NullStrategy())
+        new = {o.order_reference: o.order_identifier for o in response.created_orders}
+        ambiguous = self.lookup_references(list(new)).ambiguous
+        if not ambiguous:
+            return response
+        since = None if lookback is None else self.now() - lookback
+        rejected = delete_copies(
+            self,
+            sorted(ambiguous),
+            self.iter_recent_orders(until=since),
+            delete_printed=delete_printed,
+            keep=set(new.values()),
+        )
+        if rejected:
+            self.delete_orders([new[reference] for reference in rejected])
+            requests = {order.order_reference: order for order in orders}
+            response.created_orders = [
+                o for o in response.created_orders if o.order_reference not in rejected
+            ]
+            response.failed_orders.extend(
+                failed_order(requests[reference], code, message)
+                for reference, (code, message) in rejected.items()
+            )
+            response.success_count -= len(rejected)
+            response.errors_count += len(rejected)
+        return response
 
     def create_order(
         self, order: CreateOrder

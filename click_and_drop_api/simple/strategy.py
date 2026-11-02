@@ -21,7 +21,7 @@ from collections import Counter
 from dataclasses import dataclass, field
 from datetime import timedelta
 from enum import IntEnum
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Collection, Iterator, Optional
 
 import click_and_drop_api
 from click_and_drop_api.exceptions import BadRequestException
@@ -69,24 +69,27 @@ class PreparedOrders:
             return
         rejected = [o for o in self.upload if o.order_reference in references]
         self.upload = [o for o in self.upload if o.order_reference not in references]
-        for order in rejected:
-            self.failed.append(
-                click_and_drop_api.FailedOrderResponse(
-                    order=order,
-                    errors=[
-                        click_and_drop_api.CreateOrderErrorResponse(
-                            error_code=int(code),
-                            error_message=message,
-                            fields=[
-                                click_and_drop_api.OrderFieldResponse(
-                                    field_name="orderReference",
-                                    value=order.order_reference,
-                                )
-                            ],
-                        )
-                    ],
-                )
+        self.failed.extend(failed_order(order, code, message) for order in rejected)
+
+
+def failed_order(
+    order: CreateOrder, code: StrategyErrorCode, message: str
+) -> click_and_drop_api.FailedOrderResponse:
+    """A failed order with an error of a strategy."""
+    return click_and_drop_api.FailedOrderResponse(
+        order=order,
+        errors=[
+            click_and_drop_api.CreateOrderErrorResponse(
+                error_code=int(code),
+                error_message=message,
+                fields=[
+                    click_and_drop_api.OrderFieldResponse(
+                        field_name="orderReference", value=order.order_reference
+                    )
+                ],
             )
+        ],
+    )
 
 
 class CreateOrderStrategy(ABC):
@@ -200,48 +203,70 @@ class ReplaceDuplicateReferences(_DuplicateReferenceStrategy):
 
     def handle_existing(self, api, prepared):
         since = None if self.lookback is None else api.now() - self.lookback
-        orders = api.iter_recent_orders(until=since)
-        references = self.references(prepared)
-        while references:
-            existing = api.find_orders_by_reference(references, orders=orders)
-            existing = {ref: infos for ref, infos in existing.items() if infos}
-            self._reject_undeletable(prepared, existing)
-            deleted = self._delete(api, prepared, existing)
-            # References with several orders may have more of them.
-            references = [
-                ref for ref in deleted if len(existing[ref]) >= 2
-            ]
-
-    def _reject_undeletable(self, prepared, existing):
-        def references_where(condition) -> set[str]:
-            return {ref for ref, infos in existing.items() if any(map(condition, infos))}
-
-        prepared.reject(
-            references_where(lambda info: info.manifested_on is not None),
-            StrategyErrorCode.ORDER_MANIFESTED,
-            "An order with this reference is manifested and cannot be deleted.",
+        rejected = delete_copies(
+            api,
+            self.references(prepared),
+            api.iter_recent_orders(until=since),
+            delete_printed=self.delete_printed,
         )
-        if not self.delete_printed:
-            prepared.reject(
-                references_where(lambda info: info.printed_on is not None),
-                StrategyErrorCode.LABEL_ALREADY_PRINTED,
-                "An order with this reference has a printed label."
-                " Deleting it would cancel the label.",
-            )
+        for reference, (code, message) in rejected.items():
+            prepared.reject({reference}, code, message)
 
-    def _delete(self, api, prepared, existing) -> set[str]:
-        """Delete the existing orders of the orders to upload.
 
-        Returns:
-            The references whose orders were all deleted.
-        """
+def delete_copies(
+    api: AbstractClickAndDrop,
+    references: list[str],
+    orders: Iterator[OrderInfo],
+    delete_printed: bool = False,
+    keep: Collection[int] = (),
+) -> dict[str, tuple[StrategyErrorCode, str]]:
+    """Delete all orders with these references, except the ones to keep.
+
+    Click & Drop cannot look up a reference with several orders,
+    so ``orders`` are listed until two of them are found.
+    These are deleted and the reference is looked up again,
+    until all of its orders are deleted.
+    The orders of a reference are only deleted if all of them can be deleted.
+
+    Parameters:
+        api: The API to use.
+        references: The references whose orders to delete.
+        orders: The orders to search, usually :meth:`~AbstractClickAndDrop.iter_recent_orders`.
+            Continue the same iterator so that no orders are listed twice.
+        delete_printed: Also delete orders with a printed label.
+        keep: The identifiers of the orders not to delete.
+
+    Returns:
+        The references whose orders could not be deleted, with the reason.
+    """
+    rejected: dict[str, tuple[StrategyErrorCode, str]] = {}
+    pending = list(references)
+    while pending:
+        existing = api.find_orders_by_reference(pending, orders=orders)
+        copies = {
+            reference: [info for info in infos if info.order_identifier not in keep]
+            for reference, infos in existing.items()
+        }
+        for reference, infos in copies.items():
+            if any(info.manifested_on is not None for info in infos):
+                rejected[reference] = (
+                    StrategyErrorCode.ORDER_MANIFESTED,
+                    "An order with this reference is manifested and cannot be deleted.",
+                )
+            elif not delete_printed and any(info.printed_on is not None for info in infos):
+                rejected[reference] = (
+                    StrategyErrorCode.LABEL_ALREADY_PRINTED,
+                    "An order with this reference has a printed label."
+                    " Deleting it would cancel the label.",
+                )
         to_delete = {
-            info.order_identifier: info.order_reference
-            for order in prepared.upload
-            for info in existing.get(order.order_reference, [])
+            info.order_identifier: reference
+            for reference, infos in copies.items()
+            if reference not in rejected
+            for info in infos
         }
         if not to_delete:
-            return set()
+            break
         try:
             error_list = api.delete_orders(list(to_delete)).errors
         except BadRequestException as error:
@@ -249,20 +274,25 @@ class ReplaceDuplicateReferences(_DuplicateReferenceStrategy):
             if not isinstance(error.data, list):
                 raise
             error_list = error.data
-        errors: dict[str, list[str]] = {}
+        messages: dict[str, list[str]] = {}
         for error in error_list:
             if error.code == "1":
                 continue  # repeats all identifiers of the request
             reference = to_delete.get(error.order_identifier, error.order_reference)
-            errors.setdefault(reference, []).append(f"{error.code}: {error.message}")
-        for reference, messages in errors.items():
-            prepared.reject(
-                {reference},
+            messages.setdefault(reference, []).append(f"{error.code}: {error.message}")
+        for reference, texts in messages.items():
+            rejected[reference] = (
                 StrategyErrorCode.DELETE_FAILED,
                 "Could not delete the existing order with this reference: "
-                + "; ".join(messages),
+                + "; ".join(texts),
             )
-        return set(to_delete.values()) - set(errors)
+        # References with several orders may have more of them.
+        pending = [
+            reference
+            for reference in set(to_delete.values())
+            if reference not in rejected and len(existing[reference]) >= 2
+        ]
+    return rejected
 
 
 __all__ = [
@@ -272,4 +302,5 @@ __all__ = [
     "RejectDuplicateReferences",
     "ReplaceDuplicateReferences",
     "StrategyErrorCode",
+    "delete_copies",
 ]

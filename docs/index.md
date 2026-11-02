@@ -115,6 +115,17 @@ Click & Drop accepts several orders with the same reference.
 Afterwards, these orders cannot be retrieved or deleted by their reference:
 the API answers with error code `5`, "Ambiguous reference".
 
+If the references usually do not exist yet, `replace_orders()` needs the fewest requests:
+it uploads the orders, looks the references up in one request, and only if a reference
+now has several orders, it deletes the older ones.
+
+```python
+response = api.replace_orders(orders)
+```
+
+If an older order cannot be deleted (manifested, a printed label unless `delete_printed=True`),
+the new order is deleted instead and is in `response.failed_orders`.
+
 Pass a strategy to the API to check orders before they are created.
 `ReplaceDuplicateReferences` deletes existing orders with the same references before the upload:
 

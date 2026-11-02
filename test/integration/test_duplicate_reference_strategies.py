@@ -215,3 +215,52 @@ def test_replace_several_references_with_duplicates(api, reference, create):
     for ref in (duplicated, single, new):
         [identifier] = copies(api, ref)
         assert identifier not in old
+
+
+# ── replace_orders ─────────────────────────────────────────────────────────────
+
+
+def test_replace_orders_without_duplicates_needs_two_requests(api, reference):
+    refs = [reference() for _ in range(3)]
+    api.requests.clear()
+    response = api.replace_orders([order(ref) for ref in refs])
+    assert created(response) == sorted(refs)
+    assert api.requests == {"create": 1, "get": 1}, "one upload, one lookup"
+
+
+def test_replace_orders_in_batches(api, reference):
+    api.max_order_count = 2
+    refs = [reference() for _ in range(5)]
+    api.requests.clear()
+    response = api.replace_orders([order(ref) for ref in refs])
+    assert created(response) == sorted(refs)
+    assert api.requests == {"create": 3, "get": 3}
+
+
+def test_replace_orders_replaces_existing_order(api, reference, create):
+    ref, new = reference(), reference()
+    [old] = create(ref)
+    response = api.replace_orders([order(ref), order(new)])
+    assert created(response) == sorted([ref, new])
+    [kept] = copies(api, ref)
+    assert kept != old
+    assert kept in [o.order_identifier for o in response.created_orders]
+
+
+@pytest.mark.parametrize("number", [2, 3])
+def test_replace_orders_removes_all_duplicates(api, reference, create, number):
+    ref, other = reference(), reference()
+    old = create(*[ref] * number, other)
+    response = api.replace_orders([order(ref)])
+    assert created(response) == [ref]
+    [kept] = copies(api, ref)
+    assert kept not in old
+    assert copies(api, other) == [old[-1]], "other orders are not touched"
+
+
+def test_replace_orders_same_reference_twice(api, reference):
+    ref, other = reference(), reference()
+    response = api.replace_orders([order(ref), order(ref), order(other)])
+    assert created(response) == [other]
+    assert failed(response) == {ref: 76}
+    assert api.lookup_references([ref]).absent == {ref}

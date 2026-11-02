@@ -9,6 +9,9 @@
     It does not delete manifested orders, nor orders with a printed label unless `delete_printed=True`.
   - Orders rejected by a strategy are in `failed_orders` of the result with a negative error code of `StrategyErrorCode`.
     The other orders are uploaded.
+- Add `replace_orders()`: upload the orders in as few requests as possible
+  and delete older orders with the same references afterwards.
+- Add `delete_copies()` to delete all orders of references, including duplicates.
 - Add `ClickAndDropError` as the base class of `InvalidWeight` and `InvalidDimensions`.
 - Add `lookup_references()` to look up references without listing the orders.
   It returns a `ReferenceLookup` with the sets `absent`, `unique`, `ambiguous` and the property `existent`.

@@ -541,3 +541,44 @@ def test_errors_have_common_base(error):
 
 def test_strategy_error_codes_differ_from_click_and_drop():
     assert all(code < 0 for code in StrategyErrorCode)
+
+
+# ── replace_orders: older copies that cannot be deleted ────────────────────────
+
+
+def test_replace_orders_keeps_manifested_order(api: MockClickAndDrop):
+    api.create_order(make_order("ref"))
+    [old] = identifiers(api, "ref")
+    api._orders[old].manifested_on = api.now()
+    response = api.replace_orders([make_order("ref"), make_order("other")])
+    assert failed(response) == {"ref": StrategyErrorCode.ORDER_MANIFESTED}
+    assert created(response) == ["other"]
+    assert identifiers(api, "ref") == [old], "the new order is deleted again"
+    assert response.success_count == 1
+    assert response.errors_count == 1
+
+
+def test_replace_orders_keeps_printed_order(api: MockClickAndDrop):
+    api.create_order(make_order("ref"))
+    [old] = identifiers(api, "ref")
+    label(api, "ref")
+    response = api.replace_orders([make_order("ref")])
+    assert failed(response) == {"ref": StrategyErrorCode.LABEL_ALREADY_PRINTED}
+    assert identifiers(api, "ref") == [old]
+
+
+def test_replace_orders_deletes_printed_order_if_allowed(api: MockClickAndDrop):
+    api.create_order(make_order("ref"))
+    [old] = identifiers(api, "ref")
+    label(api, "ref")
+    response = api.replace_orders([make_order("ref")], delete_printed=True)
+    assert created(response) == ["ref"]
+    [new] = identifiers(api, "ref")
+    assert new != old
+
+
+def test_replace_orders_without_duplicates_lists_no_orders(api: MockClickAndDrop):
+    api.create_orders([make_order(f"old-{i}") for i in range(5)])
+    api.page_requests.clear()
+    api.replace_orders([make_order("new")])
+    assert api.page_requests == []

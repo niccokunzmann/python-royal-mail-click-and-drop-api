@@ -40,31 +40,36 @@ class Throttle:
 
 
 class RecordingMixin:
-    """Remember the created orders to delete them after the test."""
+    """Remember the created orders to delete them after the test, and count the requests."""
 
     def _create_orders(self, orders):
-        self._throttle()
+        self._request("create")
         response = super()._create_orders(orders)
         self.created_identifiers.extend(o.order_identifier for o in response.created_orders)
         return response
 
     def _get_orders(self, order_identifiers):
-        self._throttle()
+        self._request("get")
         return super()._get_orders(order_identifiers)
 
     def _get_orders_page(self, *args):
-        self._throttle()
+        self._request("page")
         return super()._get_orders_page(*args)
 
     def _delete_orders(self, order_identifiers):
-        self._throttle()
+        self._request("delete")
         return super()._delete_orders(order_identifiers)
+
+    def _request(self, kind: str):
+        self._throttle()
+        self.requests[kind] += 1
 
 
 class RealAPI(RecordingMixin, ClickAndDrop):
     def __init__(self, key):
         super().__init__(key)
         self.created_identifiers = []
+        self.requests = Counter()
         self._throttle = Throttle().wait
 
 
@@ -74,6 +79,7 @@ class MockAPI(RecordingMixin, MockClickAndDrop):
     def __init__(self):
         super().__init__(is_oba=False, channel_shipper=False)
         self.created_identifiers = []
+        self.requests = Counter()
         self._throttle = lambda: None
 
 
