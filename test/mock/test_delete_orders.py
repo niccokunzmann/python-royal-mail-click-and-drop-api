@@ -1,5 +1,8 @@
 """Tests for MockClickAndDrop.delete_order / delete_orders."""
 
+import pytest
+
+from click_and_drop_api.exceptions import BadRequestException
 from click_and_drop_api.simple.mock import MockClickAndDrop
 
 from .helpers import make_order
@@ -21,11 +24,28 @@ def test_delete_order_by_reference(api: MockClickAndDrop):
     assert api.get_order("del-ref") is None
 
 
-def test_delete_order_not_found_returns_error(api: MockClickAndDrop):
+def test_delete_order_not_found_returns_errors(api: MockClickAndDrop):
     result = api.delete_order(9999)
-    assert len(result.deleted_orders) == 0
-    assert len(result.errors) == 1
-    assert result.errors[0].code == "NOT_FOUND"
+    assert result.deleted_orders == []
+    assert [(e.code, e.order_identifier, e.order_reference) for e in result.errors] == [
+        ("2", 9999, None),
+        ("1", None, "9999"),
+    ]
+
+
+def test_delete_reference_not_found_returns_errors(api: MockClickAndDrop):
+    result = api.delete_order("test-missing")
+    assert [(e.code, e.order_reference) for e in result.errors] == [
+        ("3", "test-missing"),
+        ("1", '"test-missing"'),
+    ]
+
+
+def test_mock_answers_400_if_nothing_is_deleted(api: MockClickAndDrop):
+    """Like Click & Drop.  delete_orders() puts these errors into the result."""
+    with pytest.raises(BadRequestException) as error:
+        api._delete_orders([9999])
+    assert [e.code for e in error.value.data] == ["2", "1"]
 
 
 def test_delete_orders_batch(api: MockClickAndDrop):
@@ -41,4 +61,5 @@ def test_delete_orders_partial_not_found(api: MockClickAndDrop):
     order_id = r.created_orders[0].order_identifier
     result = api.delete_orders([order_id, 9999])
     assert len(result.deleted_orders) == 1
-    assert len(result.errors) == 1
+    codes = [e.code for e in result.errors]
+    assert codes == ["2", "1"]

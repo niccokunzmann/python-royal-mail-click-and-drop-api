@@ -20,6 +20,7 @@ from .types import (
     UpdateOrdersStatus,
     ManifestedOrders,
     OrderInfo,
+    ReferenceLookup,
 )
 from .api import ClickAndDrop
 from .mock import MockClickAndDrop
@@ -29,7 +30,15 @@ from .shipping.db import (
     db,
 )
 from .shipping import check_service_codes
-from .errors import InvalidWeight, InvalidDimensions
+from .errors import ClickAndDropError, InvalidDimensions, InvalidWeight
+from .strategy import (
+    CreateOrderStrategy,
+    NullStrategy,
+    PreparedOrders,
+    RejectDuplicateReferences,
+    ReplaceDuplicateReferences,
+    StrategyErrorCode,
+)
 
 __all__ = [
     "ClickAndDrop",
@@ -37,6 +46,13 @@ __all__ = [
     "CreateOrder",
     "InvalidWeight",
     "InvalidDimensions",
+    "ClickAndDropError",
+    "CreateOrderStrategy",
+    "NullStrategy",
+    "PreparedOrders",
+    "RejectDuplicateReferences",
+    "ReplaceDuplicateReferences",
+    "StrategyErrorCode",
     "check_service_codes",
     "RecipientDetails",
     "Address",
@@ -49,6 +65,7 @@ __all__ = [
     "UpdateOrderStatusResponse",
     "LabelGeneration",
     "OrderInfo",
+    "ReferenceLookup",
     "ManifestedOrders",
     "ManifestEligibleOrders",
     "ManifestDetailsResponse",

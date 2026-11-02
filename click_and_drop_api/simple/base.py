@@ -4,15 +4,15 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 import os
-from typing import Literal, Optional, Union
+from typing import Iterator, Literal, Optional, Union
 from click_and_drop_api.simple.compatibility import Self
 
 import click_and_drop_api
 
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
-from click_and_drop_api.exceptions import ApiException
+from click_and_drop_api.exceptions import ApiException, BadRequestException
 from click_and_drop_api.models.create_order_response import CreateOrderResponse
 from click_and_drop_api.models.manifest_eligible_orders_request import (
     ManifestEligibleOrdersRequest,
@@ -35,7 +35,8 @@ from click_and_drop_api.simple import (
 from click_and_drop_api.simple.shipping.db import ShippingDB
 from click_and_drop_api.simple.shipping_test_result import ShippingTestResult
 from click_and_drop_api.simple.addresses import get_address, get_all_country_codes
-from .types import ManifestedOrders, OrderInfo, UpdateOrderStatus
+from .types import ManifestedOrders, OrderInfo, ReferenceLookup, UpdateOrderStatus
+from .strategy import CreateOrderStrategy, NullStrategy
 
 
 class AbstractClickAndDrop(ABC):
@@ -47,6 +48,12 @@ class AbstractClickAndDrop(ABC):
         return cls(api_key)
 
     max_order_count: int = 100
+
+    create_order_strategy: CreateOrderStrategy = NullStrategy()
+    """The strategy that checks the orders before :meth:`create_orders` uploads them."""
+
+    AMBIGUOUS_REFERENCE = "5"
+    """Error code of Click & Drop: the reference has several orders."""
 
     @property
     def shipping_options(self) -> ShippingDB:
@@ -69,21 +76,33 @@ class AbstractClickAndDrop(ABC):
         """Create one or more orders."""
 
     def create_orders(
-        self, orders: Union[list[CreateOrder], CreateOrder]
+        self,
+        orders: Union[list[CreateOrder], CreateOrder],
+        strategy: Optional[CreateOrderStrategy] = None,
     ) -> click_and_drop_api.CreateOrdersResponse:
         """Create a new orders.
 
         Parameters:
             orders: One or more :class:`~click_and_drop_api.simple.types.CreateOrder` instances.
+            strategy: The strategy to check the orders before the upload.
+                Defaults to :attr:`create_order_strategy`.
         Returns:
             A :class:`~click_and_drop_api.models.create_orders_response.CreateOrdersResponse` instance containing created and failed orders.
+
+            Orders rejected by the strategy are in ``failed_orders``,
+            see :class:`~click_and_drop_api.simple.strategy.StrategyErrorCode`.
 
         https://api.parcel.royalmail.com/#tag/Orders/operation/CreateOrdersAsync
         """
         if isinstance(orders, CreateOrder):
             orders = [orders]
+        prepared = (strategy or self.create_order_strategy).prepare(self, orders)
+        orders = prepared.upload
         result = click_and_drop_api.CreateOrdersResponse(
-            created_orders=[], failed_orders=[], success_count=0, errors_count=0
+            created_orders=[],
+            failed_orders=list(prepared.failed),
+            success_count=0,
+            errors_count=len(prepared.failed),
         )
         for i in range(0, len(orders), self.max_order_count):
             response = self._create_orders(orders[i : i + self.max_order_count])
@@ -120,7 +139,9 @@ class AbstractClickAndDrop(ABC):
             A list of :class:`~click_and_drop_api.simple.types.OrderInfo` instances.
 
         Raises:
-            click_and_drop_api.exceptions.BadRequestException if an order with the same reference already exists
+            click_and_drop_api.exceptions.BadRequestException: A reference does not exist,
+                or it has several orders (error code ``"5"``).
+                Use :meth:`find_orders_by_reference` to find these orders.
 
         https://api.parcel.royalmail.com/#tag/Orders/operation/GetSpecificOrdersAsync
         """
@@ -136,6 +157,170 @@ class AbstractClickAndDrop(ABC):
             )
         return result
 
+    def lookup_references(self, references: list[str]) -> ReferenceLookup:
+        """Look up orders by reference without listing the orders.
+
+        Parameters:
+            references: The order references to look for. May be empty.
+
+        Returns:
+            Which references are absent, unique or ambiguous,
+            and the orders of the unique references.
+        """
+        lookup = ReferenceLookup()
+        references = list(dict.fromkeys(references))
+        for i in range(0, len(references), self.max_order_count):
+            self._lookup_batch(references[i : i + self.max_order_count], lookup)
+        return lookup
+
+    def _lookup_batch(self, references: list[str], lookup: ReferenceLookup) -> None:
+        """Look up references with one request each round.
+
+        Click & Drop leaves out missing and ambiguous references next to
+        unique ones without an error.  These are looked up again without the
+        unique ones: then Click & Drop reports each of them with an error.
+        """
+        unknown = references
+        while unknown:
+            try:
+                infos = self.get_orders(unknown)
+            except BadRequestException as error:
+                if not isinstance(error.data, list):
+                    raise
+                codes = {
+                    e.channel_order_reference: e.code
+                    for e in error.data
+                    if e.code in (self.AMBIGUOUS_REFERENCE, *self.NOT_FOUND)
+                }
+                for reference in unknown:
+                    if codes.get(reference) == self.AMBIGUOUS_REFERENCE:
+                        lookup.ambiguous.add(reference)
+                    elif reference in codes:
+                        lookup.absent.add(reference)
+                still_unknown = [r for r in unknown if r not in codes]
+                if len(still_unknown) == len(unknown):
+                    raise
+                unknown = still_unknown
+                continue
+            for info in infos:
+                lookup.orders[info.order_reference] = info
+                lookup.unique.add(info.order_reference)
+            still_unknown = [r for r in unknown if r not in lookup.orders]
+            if len(still_unknown) == len(unknown):
+                lookup.absent.update(unknown)  # no error, no order
+                return
+            unknown = still_unknown
+
+    def find_orders_by_reference(
+        self,
+        references: list[str],
+        since: Optional[datetime] = None,
+        orders: Optional[Iterator[OrderInfo]] = None,
+    ) -> dict[str, list[OrderInfo]]:
+        """Find the orders on Click & Drop for each reference.
+
+        A reference with one order is looked up directly.
+        Click & Drop accepts several orders with the same reference
+        but cannot look them up by that reference.
+        These orders are found with :meth:`iter_orders` instead.
+        Click & Drop does not tell how many orders a reference has,
+        so the search stops as soon as two orders are found for each of these
+        references.  There may be more: delete the found orders and search again
+        with the same ``orders`` so that no orders are listed twice.
+
+        The orders are searched from the newest to the oldest,
+        see :meth:`iter_recent_orders`, so recent duplicates are found fast.
+
+        Parameters:
+            references: The order references to look for. May be empty.
+            since: Only search orders created after this time for references
+                that have several orders.
+            orders: Continue searching in these orders, e.g. the iterator of a
+                previous search, instead of starting a new :meth:`iter_recent_orders`.
+
+        Returns:
+            A dictionary mapping each reference to its orders.
+            The list is empty if the reference does not exist.
+            It has two or more orders if the reference has several orders.
+        """
+        result: dict[str, list[OrderInfo]] = {reference: [] for reference in references}
+        lookup = self.lookup_references(references)
+        for reference, info in lookup.orders.items():
+            result[reference].append(info)
+        ambiguous = lookup.ambiguous
+        if ambiguous:
+            if orders is None:
+                orders = self.iter_recent_orders(until=since)
+            # How many more orders to find for each reference.
+            missing = {reference: 2 for reference in ambiguous}
+            for info in orders:
+                if info.order_reference in ambiguous:
+                    result[info.order_reference].append(info)
+                    if missing.get(info.order_reference) == 1:
+                        del missing[info.order_reference]
+                        if not missing:
+                            break
+                    elif info.order_reference in missing:
+                        missing[info.order_reference] -= 1
+        return result
+
+    def now(self) -> datetime:
+        """The current time of Click & Drop."""
+        return datetime.now(timezone.utc)
+
+    @abstractmethod
+    def _get_orders_page(
+        self,
+        page_size: int,
+        start: Optional[datetime],
+        end: Optional[datetime],
+        continuation_token: Optional[str],
+    ) -> click_and_drop_api.GetOrdersResponse:
+        """Retrieve one page of orders."""
+
+    def iter_orders(
+        self,
+        start: Optional[datetime] = None,
+        end: Optional[datetime] = None,
+    ) -> Iterator[OrderInfo]:
+        """Iterate over all orders, page by page, from the newest to the oldest.
+
+        Click & Drop filters by the time the order was uploaded (``created_on``),
+        not by ``order_date``.
+        It cuts the times off to whole seconds:
+        ``start`` is inclusive, ``end`` is exclusive.
+        Each page is requested once.  The next page continues after the last
+        order of the previous one, so deleting orders while iterating skips none.
+
+        Parameters:
+            start: Only orders uploaded at or after this time.
+            end: Only orders uploaded before this time.
+                It must be at least one second after ``start``.
+
+        https://api.parcel.royalmail.com/#tag/Orders/operation/GetOrdersAsync
+        """
+        token = None
+        while True:
+            page = self._get_orders_page(self.max_order_count, start, end, token)
+            for order in page.orders or []:
+                yield OrderInfo.from_get_order_info_resource(order)
+            token = page.continuation_token
+            if not token:
+                return
+
+    def iter_recent_orders(
+        self, until: Optional[datetime] = None
+    ) -> Iterator[OrderInfo]:
+        """Iterate over the orders from the newest to the oldest.
+
+        Click & Drop lists the newest orders first, so stopping early saves requests.
+
+        Parameters:
+            until: Stop at orders uploaded before this time.
+                ``None`` iterates over all orders.
+        """
+        return self.iter_orders(start=until)
+
     def get_order(self, order_identifier: Union[str, int]) -> Optional[OrderInfo]:
         """Retrieve a single order.
 
@@ -144,9 +329,27 @@ class AbstractClickAndDrop(ABC):
 
         Returns:
             The order if found, else None.
+
+        Raises:
+            click_and_drop_api.exceptions.BadRequestException: The reference has
+                several orders (error code ``"5"``).
         """
-        orders = self.get_orders(order_identifier)
+        try:
+            orders = self.get_orders(order_identifier)
+        except BadRequestException as error:
+            if self._is_not_found(error):
+                return None
+            raise
         return orders[0] if orders else None
+
+    NOT_FOUND = {"1", "2", "3"}
+    """Error codes of Click & Drop: the order does not exist."""
+
+    def _is_not_found(self, error: BadRequestException) -> bool:
+        """Whether Click & Drop only reports that orders do not exist."""
+        return isinstance(error.data, list) and all(
+            getattr(e, "code", None) in self.NOT_FOUND for e in error.data
+        )
 
     @abstractmethod
     def _get_orders_details(
@@ -210,7 +413,12 @@ class AbstractClickAndDrop(ABC):
             click_and_drop_api.exceptions.ForbiddenException: If the account is not a
                 ChannelShipper account (HTTP 403).
         """
-        results = self.get_orders_details(order_identifier)
+        try:
+            results = self.get_orders_details(order_identifier)
+        except BadRequestException as error:
+            if self._is_not_found(error):
+                return None
+            raise
         return results[0] if results else None
 
     @abstractmethod
@@ -235,18 +443,46 @@ class AbstractClickAndDrop(ABC):
                 Order Identifiers are integer numbers.
                 Order References are strings.
 
+        Returns:
+            The deleted orders and the errors.
+            Click & Drop answers with 400 if no order of a request is deleted,
+            e.g. because none exists.  These errors are in the result, too,
+            so that the result does not depend on how the orders are split
+            into requests.
+
+        Raises:
+            click_and_drop_api.exceptions.BadRequestException: The request is invalid
+                in another way, e.g. a reference has several orders (codes ``"22"``, ``"23"``).
+
         https://api.parcel.royalmail.com/#tag/Orders/operation/DeleteOrdersAsync
         """
         if not isinstance(order_identifiers, list):
             order_identifiers = [order_identifiers]
         result = click_and_drop_api.DeleteOrdersResource(deleted_orders=[], errors=[])
         for i in range(0, len(order_identifiers), self.max_order_count):
-            deleted = self._delete_orders(
-                order_identifiers[i : i + self.max_order_count]
-            )
+            try:
+                deleted = self._delete_orders(
+                    order_identifiers[i : i + self.max_order_count]
+                )
+            except BadRequestException as error:
+                if not self._is_not_deletable(error):
+                    raise
+                result.errors.extend(error.data)
+                continue
             result.deleted_orders.extend(deleted.deleted_orders)
-            result.errors.extend(deleted.errors)
+            result.errors.extend(deleted.errors or [])
         return result
+
+    def _is_not_deletable(self, error: BadRequestException) -> bool:
+        """Whether Click & Drop only reports orders that cannot be deleted one by one."""
+        return isinstance(error.data, list) and all(
+            isinstance(e, click_and_drop_api.OrderErrorInfo)
+            and e.code not in self.AMBIGUOUS_DELETE
+            for e in error.data
+        )
+
+    AMBIGUOUS_DELETE = {"22", "23"}
+    """Error codes of Click & Drop: a reference to delete has several orders."""
 
     def delete_order(
         self, order_identifier: Union[str, int]

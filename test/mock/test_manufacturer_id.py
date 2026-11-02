@@ -61,7 +61,7 @@ def test_eu_item_without_manufacturer_id_fails(api: MockClickAndDrop, country_co
 
 def test_failed_order_is_not_stored(api: MockClickAndDrop):
     api.create_order(make_order("DK", item()))
-    assert api.get_orders("ref-1") == []
+    assert api.lookup_references(["ref-1"]).absent == {"ref-1"}
 
 
 def test_one_error_per_item_without_manufacturer_id(api: MockClickAndDrop):

@@ -1,5 +1,46 @@
 # Changelog
 
+## Unreleased
+
+- Add strategies to check orders before they are created: `create_order_strategy` of `ClickAndDrop` and `MockClickAndDrop`, and `create_orders(orders, strategy=...)`.
+  - `NullStrategy` uploads the orders as given. This is the default.
+  - `RejectDuplicateReferences` does not upload orders whose reference already exists.
+  - `ReplaceDuplicateReferences` deletes all existing orders with the same reference before the upload, including duplicates.
+    It does not delete manifested orders, nor orders with a printed label unless `delete_printed=True`.
+  - Orders rejected by a strategy are in `failed_orders` of the result with a negative error code of `StrategyErrorCode`.
+    The other orders are uploaded.
+- Add `ClickAndDropError` as the base class of `InvalidWeight` and `InvalidDimensions`.
+- Add `lookup_references()` to look up references without listing the orders.
+  It returns a `ReferenceLookup` with the sets `absent`, `unique`, `ambiguous` and the property `existent`.
+- Add `find_orders_by_reference()` to find the orders of references, including duplicates.
+  It searches the newest orders first and stops when two orders of each duplicated reference are found.
+- Add `iter_orders()` and `iter_recent_orders()` to iterate over all orders page by page, from the newest to the oldest.
+- `get_order()` and `get_order_details()` return `None` for a missing reference, as documented.
+  Before, Click & Drop's error was raised.
+- Add `now()` for the current time of the API.
+- `MockClickAndDrop`:
+  - Behaves like Click & Drop, tested against the API:
+    - `get_orders` raises `BadRequestException` with code `"5"` for references with several orders,
+      and with code `"3"` if no reference exists. Each error is followed by an error with code `"1"` for the reference in quotes.
+      Missing references next to existing ones are left out.
+    - `delete_orders` with a reference that has several orders deletes nothing and raises `BadRequestException`
+      with code `"22"`, and code `"23"` for each copy that could be deleted.
+    - Orders are listed from the newest to the oldest. Times are cut off to whole seconds.
+      `end` must be after `start`.
+  - Manifested orders cannot be deleted.
+  - `create_orders` rejects orders with the same reference in one request (error `76`)
+    and service codes the account cannot use (error `31`).
+  - `get_label` raises `ForbiddenException` if the account is not OBA.
+  - New parameter `channel_shipper`: if false, `get_orders_details` raises `ForbiddenException`.
+  - Missing orders: code `"2"` for identifiers, `"3"` for references, and one code `"1"` with all identifiers of the request.
+    `delete_orders` and `get_orders` answer with 400 if nothing is found or deleted.
+- `delete_orders()` returns the errors of orders that do not exist instead of raising,
+  so that the result does not depend on how the orders are split into requests.
+- `lookup_references()` finds duplicated and missing references next to existing ones:
+  Click & Drop leaves them out without an error.
+- Add integration tests in `test/integration` that run against the mock and,
+  with `CI=true` and `API_KEY` set, against the real API.
+
 ## 3.3.0
 
 - Update Click & Drop API v1. (2026-10-29)

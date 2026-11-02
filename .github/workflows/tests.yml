@@ -68,6 +68,10 @@ jobs:
         run: make test-examples
         env:
           API_KEY: ${{ secrets.API_KEY }}
+      - name: Run integration tests against the real API and the mock
+        run: .venv/bin/python -m pytest -v test/integration
+        env:
+          API_KEY: ${{ secrets.API_KEY }}
 
   publish:
     runs-on: ubuntu-24.04

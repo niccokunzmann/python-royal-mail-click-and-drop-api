@@ -109,6 +109,71 @@ Output:
 --8<-- "click_and_drop_api/examples/create_order.py.out"
 ```
 
+## Avoid duplicate order references
+
+Click & Drop accepts several orders with the same reference.
+Afterwards, these orders cannot be retrieved or deleted by their reference:
+the API answers with error code `5`, "Ambiguous reference".
+
+Pass a strategy to the API to check orders before they are created.
+`ReplaceDuplicateReferences` deletes existing orders with the same references before the upload:
+
+```python
+from click_and_drop_api.simple import ClickAndDrop, ReplaceDuplicateReferences
+
+api = ClickAndDrop(key, create_order_strategy=ReplaceDuplicateReferences())
+response = api.create_orders(orders)
+```
+
+- `NullStrategy` uploads the orders as given. This is the default.
+- `RejectDuplicateReferences` does not upload orders whose reference already exists.
+  It does not list the orders.
+- `ReplaceDuplicateReferences` deletes all existing orders with the same reference first, including duplicates.
+  - Manifested orders cannot be deleted, so these orders are not uploaded.
+  - Orders with a printed label are not deleted because that cancels the label.
+    Pass `delete_printed=True` to delete them anyway.
+  - Click & Drop cannot look up a reference that has several orders (error code `5`),
+    and it does not tell how many orders the reference has.
+    So orders are listed with `GET /orders` until two of them are found.
+    Click & Drop lists the newest orders first, and duplicates are usually recent.
+    These are deleted and the reference is looked up again, until all of its orders are deleted.
+    The listing continues where it stopped, so no page is listed twice.
+    Pass `lookback=timedelta(days=...)` to not list orders uploaded before that.
+- You can also pass a strategy to a single call: `api.create_orders(orders, strategy=NullStrategy())`.
+- Write your own strategy by subclassing `CreateOrderStrategy`.
+
+Strategies do not raise errors.
+Orders that are not uploaded are in `response.failed_orders`, next to the orders that Click & Drop rejects.
+All other orders are uploaded.
+The error codes of the strategies are negative, see `StrategyErrorCode`:
+
+| Code | Name | Reason |
+|------|------|--------|
+| -1 | `DUPLICATE_REFERENCE` | The reference exists (`RejectDuplicateReferences`) or appears several times in the upload. |
+| -2 | `ORDER_MANIFESTED` | An existing order with the reference is manifested. |
+| -3 | `LABEL_ALREADY_PRINTED` | An existing order with the reference has a printed label. |
+| -4 | `DELETE_FAILED` | Click & Drop did not delete an existing order with the reference. |
+
+- `lookup_references(references)` looks up references without listing the orders.
+  It returns a `ReferenceLookup` with the sets `absent`, `unique` and `ambiguous` (several orders),
+  the property `existent` (`unique | ambiguous`), and the `orders` of the unique references.
+- `find_orders_by_reference(references)` returns the orders of each reference.
+  For a reference with several orders, it stops listing orders as soon as two are found.
+  Pass `orders=` an iterator of a previous search to continue it.
+- `iter_orders(start, end)` iterates over all orders page by page, from the newest to the oldest.
+  Click & Drop filters by the upload time (`created_on`), not by `order_date`,
+  and cuts the times off to whole seconds: `start` is inclusive, `end` is exclusive
+  and must be at least one second after `start`.
+  There is no limit on the time span.
+- `iter_recent_orders(until)` iterates over the orders uploaded since `until`, from the newest to the oldest.
+- They accept an empty list of references and then do not call Click & Drop.
+
+## Errors
+
+All errors raised by `click_and_drop_api.simple` are subclasses of `ClickAndDropError`.
+`InvalidWeight` and `InvalidDimensions` are also `ValueError`s.
+Errors of the HTTP requests are raised as `click_and_drop_api.exceptions.ApiException`.
+
 ## Package sizes and their shipping options
 
 Several shipping options are available for each package size.

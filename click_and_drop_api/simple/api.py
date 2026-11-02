@@ -1,8 +1,10 @@
 """The simple API interface."""
 
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Literal, Optional, Union
 from .base import AbstractClickAndDrop
+from .strategy import CreateOrderStrategy, NullStrategy
 from .types import CreateOrder
 import click_and_drop_api
 
@@ -47,11 +49,15 @@ class ClickAndDrop(AbstractClickAndDrop):
     There seems to be only one host available.
     """
 
-    def __init__(self, key: str):
+    def __init__(
+        self, key: str, create_order_strategy: Optional[CreateOrderStrategy] = None
+    ):
         """Create a new API object.
 
         Parameters:
             key: The Click & Drop API authorisation key.
+            create_order_strategy: The strategy to check orders before they are created.
+                See :mod:`click_and_drop_api.simple.strategy`.
         """
         if not isinstance(key, str):
             raise TypeError(f"Expected str, got {key}.")
@@ -61,6 +67,9 @@ class ClickAndDrop(AbstractClickAndDrop):
         if "".join(key.split()) != key:
             raise ValueError(f"Expected no whitespace in {key!r}.")
         self._key = key
+        self.create_order_strategy = (
+            NullStrategy() if create_order_strategy is None else create_order_strategy
+        )
         self._configuration = click_and_drop_api.Configuration(host=self.host)
         self._configuration.api_key["Bearer"] = self._key
         self._api_client = click_and_drop_api.ApiClient(self._configuration)
@@ -106,6 +115,20 @@ class ClickAndDrop(AbstractClickAndDrop):
     ) -> list[click_and_drop_api.GetOrderInfoResource]:
         return self._orders_api.get_specific_orders_async(
             order_identifiers=order_identifiers_to_string(order_identifiers)
+        )
+
+    def _get_orders_page(
+        self,
+        page_size: int,
+        start: Optional[datetime],
+        end: Optional[datetime],
+        continuation_token: Optional[str],
+    ) -> click_and_drop_api.GetOrdersResponse:
+        return self._orders_api.get_orders_async(
+            page_size=page_size,
+            start_date_time=start,
+            end_date_time=end,
+            continuation_token=continuation_token,
         )
 
     def _get_orders_details(

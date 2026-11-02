@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import base64
+from collections import Counter
 from importlib.resources import files
 from datetime import datetime, timedelta, timezone
 from typing import Literal, Optional, Union
@@ -10,8 +11,10 @@ from typing import Literal, Optional, Union
 import click_and_drop_api
 
 from .base import AbstractClickAndDrop
+from .strategy import CreateOrderStrategy, NullStrategy
+from .shipping.db import ShippingDB
 from .types import CreateOrder
-from click_and_drop_api.exceptions import BadRequestException
+from click_and_drop_api.exceptions import BadRequestException, ForbiddenException
 from click_and_drop_api.models.error_response import ErrorResponse
 
 _MOCK_KEY = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
@@ -44,13 +47,19 @@ class MockClickAndDrop(AbstractClickAndDrop):
         key: str = _MOCK_KEY,
         is_oba: bool = True,
         despatch_when_manifested: bool = True,
+        create_order_strategy: Optional[CreateOrderStrategy] = None,
+        channel_shipper: bool = True,
     ):
         """Create a new API object.
 
         Parameters:
             key: The Click & Drop API authorisation key.
             is_oba: Whether to treat the API as OBA.
-            despatch_when_manifested: Whether to despatch orders when they are manifested."""
+            despatch_when_manifested: Whether to despatch orders when they are manifested.
+            create_order_strategy: The strategy to check orders before they are created.
+            channel_shipper: Whether the account is a ChannelShipper account.
+                Only these can get order details, others get 403.
+        """
         if not isinstance(key, str):
             raise TypeError(f"Expected str, got {key}.")
         key = key.strip()
@@ -59,13 +68,23 @@ class MockClickAndDrop(AbstractClickAndDrop):
         if "".join(key.split()) != key:
             raise ValueError(f"Expected no whitespace in {key!r}.")
         self._key = key
+        self.create_order_strategy = (
+            NullStrategy() if create_order_strategy is None else create_order_strategy
+        )
         self._is_oba = is_oba
+        self._channel_shipper = channel_shipper
         self._orders: dict[int, click_and_drop_api.GetOrderInfoResource] = {}
         self._order_statuses: dict[int, Optional[str]] = {}
         self._next_id = 1
+        self.page_requests: list[tuple] = []
+        """The (start, end, continuation_token) of each requested page, for tests."""
         self._next_manifest_id = 1
         self.despatch_when_manifested = despatch_when_manifested
         self.__now = datetime(2026, 4, 4, 12, 0, 0, tzinfo=timezone.utc)
+
+    def now(self) -> datetime:
+        """The current time of the mock."""
+        return self.__now
 
     def _now(self):
         """Update the time."""
@@ -115,8 +134,22 @@ class MockClickAndDrop(AbstractClickAndDrop):
         now = self._now()
         created = []
         failed = []
+        counts = Counter(order.order_reference for order in orders)
         for order in orders:
             errors = self._validate_order(order)
+            if counts[order.order_reference] > 1:
+                # Click & Drop rejects all orders with this reference.
+                errors = [
+                    click_and_drop_api.CreateOrderErrorResponse(
+                        error_code=76,
+                        error_message="Property 'OrderReference' must be unique among provided items",
+                        fields=[
+                            click_and_drop_api.OrderFieldResponse(
+                                field_name="OrderReference", value=order.order_reference
+                            )
+                        ],
+                    )
+                ]
             if errors:
                 failed.append(
                     click_and_drop_api.FailedOrderResponse(order=order, errors=errors)
@@ -163,12 +196,29 @@ class MockClickAndDrop(AbstractClickAndDrop):
             failed_orders=failed,
         )
 
-    @staticmethod
     def _validate_order(
-        order: CreateOrder,
+        self, order: CreateOrder
     ) -> list[click_and_drop_api.CreateOrderErrorResponse]:
         """Return the errors Royal Mail would report for this order."""
         errors = []
+        service_code = order.postage_details.service_code if order.postage_details else None
+        # Tested with a non-OBA account: it rejects unknown and OBA service codes.
+        # Not tested with an OBA account, so it accepts all known service codes.
+        codes = (
+            ShippingDB.default() if self._is_oba else self.shipping_options
+        ).service_codes()
+        if service_code and service_code not in codes:
+            errors.append(
+                click_and_drop_api.CreateOrderErrorResponse(
+                    error_code=31,
+                    error_message=f"Service code '{service_code}' could not be found or it's not supported by Royal Mail.",
+                    fields=[
+                        click_and_drop_api.OrderFieldResponse(
+                            field_name="PostageDetails.ServiceCode", value=service_code
+                        )
+                    ],
+                )
+            )
         if order.recipient.address.country_code in EU_COUNTRY_CODES:
             for package in order.packages or []:
                 for item in package.contents or []:
@@ -201,21 +251,121 @@ class MockClickAndDrop(AbstractClickAndDrop):
         if not isinstance(order_identifiers, list):
             order_identifiers = [order_identifiers]
         result = []
+        ambiguous = []
+        missing_ids = []
+        missing_refs = []
         for identifier in order_identifiers:
             if isinstance(identifier, int):
                 order = self._orders.get(identifier)
-                if order is not None:
+                if order is None:
+                    missing_ids.append(identifier)
+                else:
                     result.append(order)
             elif isinstance(identifier, str):
-                for order in self._orders.values():
-                    if order.order_reference == identifier:
-                        result.append(order)
-                        break
+                orders = self._orders_with_reference(identifier)
+                if len(orders) > 1:
+                    ambiguous.append(identifier)
+                elif not orders:
+                    missing_refs.append(identifier)
+                else:
+                    result.extend(orders)
+        # Click & Drop answers with 400 if no order is found.
+        # Missing and ambiguous references next to found orders are left out.
+        if not result and (missing_ids or missing_refs or ambiguous):
+            errors = [
+                click_and_drop_api.OrderErrorResponse(
+                    account_order_number=identifier, code="2", message=self._MISSING_ID
+                )
+                for identifier in missing_ids
+            ]
+            errors.extend(
+                self._order_error(reference, "3", self._MISSING)
+                if reference in missing_refs
+                else self._order_error(reference, self.AMBIGUOUS_REFERENCE, self._AMBIGUOUS)
+                for reference in order_identifiers
+                if reference in missing_refs or reference in ambiguous
+            )
+            errors.append(
+                self._order_error(self._identifier_list(order_identifiers), "1", self._INVALID)
+            )
+            raise BadRequestException(
+                status=400,
+                reason="Bad Request",
+                body="[" + ",".join(e.to_json() for e in errors) + "]",
+                data=errors,
+            )
         return result
+
+    _AMBIGUOUS = "Ambiguous reference: Provided reference has multiple orders associated with it"
+    _MISSING = "Order with provided reference does not exist. Please verify that all references provided are URL encoded"
+    _INVALID = "Some or all of provided ids and references are invalid. Please verify that all provided references are URL encoded"
+    _MISSING_ID = "Order with provided id does not exist"
+
+    @staticmethod
+    def _identifier_list(order_identifiers) -> str:
+        """The identifiers as Click & Drop repeats them in error code 1."""
+        return ";".join(
+            f'"{i}"' if isinstance(i, str) else str(i) for i in order_identifiers
+        )
+
+    @staticmethod
+    def _order_error(reference: str, code: str, message: str):
+        return click_and_drop_api.OrderErrorResponse(
+            channel_order_reference=reference, code=code, message=message
+        )
+
+    def _orders_with_reference(
+        self, reference: str
+    ) -> list[click_and_drop_api.GetOrderInfoResource]:
+        return [o for o in self._orders.values() if o.order_reference == reference]
+
+    def _get_orders_page(
+        self,
+        page_size: int,
+        start: Optional[datetime],
+        end: Optional[datetime],
+        continuation_token: Optional[str],
+    ) -> click_and_drop_api.GetOrdersResponse:
+        self.page_requests.append((start, end, continuation_token))
+        # Click & Drop cuts the times off to whole seconds.
+        start = start.replace(microsecond=0) if start is not None else None
+        end = end.replace(microsecond=0) if end is not None else None
+        if start is not None and end is not None and end <= start:
+            raise BadRequestException(
+                status=400,
+                reason="Bad Request",
+                body='{"code":"REQUEST_VALIDATION_FAILED","message":"\'endDateTime\' should be greater than \'startDateTime\'","details":""}',
+            )
+        # The token is the last identifier of the previous page,
+        # so that deleting orders does not skip any.
+        before = int(continuation_token) if continuation_token else None
+        orders = sorted(
+            (
+                order
+                for order in self._orders.values()
+                if (start is None or order.created_on >= start)
+                and (end is None or order.created_on < end)
+                and (before is None or order.order_identifier < before)
+            ),
+            key=lambda o: o.order_identifier,
+            reverse=True,
+        )
+        page = orders[:page_size]
+        more = len(orders) > page_size
+        return click_and_drop_api.GetOrdersResponse(
+            orders=page,
+            continuation_token=str(page[-1].order_identifier) if more else None,
+        )
 
     def _get_orders_details(
         self, order_identifiers: list[Union[str, int]]
     ) -> list[click_and_drop_api.GetOrderDetailsResource]:
+        if not self._channel_shipper:
+            raise ForbiddenException(
+                status=403,
+                reason="Forbidden",
+                body='{"message":"Forbidden (Feature not available)"}',
+            )
         postal = click_and_drop_api.GetPostalDetailsResult()
         result = []
         for info in self._get_orders(order_identifiers):
@@ -245,12 +395,53 @@ class MockClickAndDrop(AbstractClickAndDrop):
     def _delete_orders(
         self, order_identifiers: list[Union[str, int]]
     ) -> click_and_drop_api.DeleteOrdersResource:
-        # TODO: make sure that manifested orders cannot be deleted.
+        ambiguous = [
+            reference
+            for reference in order_identifiers
+            if isinstance(reference, str) and len(self._orders_with_reference(reference)) > 1
+        ]
+        if ambiguous:
+            # Click & Drop deletes nothing and lists the copies that could be deleted.
+            errors = []
+            for reference in ambiguous:
+                errors.append(
+                    click_and_drop_api.OrderErrorInfo(
+                        order_reference=reference,
+                        code="22",
+                        message="Ambiguous reference: Provided reference has multiple orders associated with it, several of which are eligible",
+                    )
+                )
+                errors.extend(
+                    click_and_drop_api.OrderErrorInfo(
+                        order_identifier=order.order_identifier,
+                        order_reference=reference,
+                        code="23",
+                        message="Order is eligible for deletion, but is not unique for provided reference",
+                    )
+                    for order in self._orders_with_reference(reference)
+                    if order.manifested_on is None
+                )
+            raise BadRequestException(
+                status=400,
+                reason="Bad Request",
+                body="[" + ",".join(e.to_json() for e in errors) + "]",
+                data=errors,
+            )
         deleted = []
-        errors = []
+        missing_ids = []
+        missing_refs = []
+        manifested = []
         for identifier in order_identifiers:
-            order = self.get_order(identifier)
-            if order is not None:
+            if isinstance(identifier, int):
+                order = self._orders.get(identifier)
+            else:
+                orders = self._orders_with_reference(identifier)
+                order = orders[0] if orders else None
+            if order is None:
+                (missing_ids if isinstance(identifier, int) else missing_refs).append(identifier)
+            elif order.manifested_on is not None:
+                manifested.append(order)
+            else:
                 del self._orders[order.order_identifier]
                 self._order_statuses.pop(order.order_identifier, None)
                 deleted.append(
@@ -259,18 +450,43 @@ class MockClickAndDrop(AbstractClickAndDrop):
                         order_reference=order.order_reference,
                     )
                 )
-            else:
-                ref = identifier if isinstance(identifier, str) else None
-                id_ = identifier if isinstance(identifier, int) else None
-                errors.append(
-                    click_and_drop_api.OrderErrorInfo(
-                        order_identifier=id_,
-                        order_reference=ref,
-                        code="NOT_FOUND",
-                        message=f"Order {identifier!r} not found.",
-                    )
+        errors = [
+            click_and_drop_api.OrderErrorInfo(
+                order_identifier=identifier, code="2", message=self._MISSING_ID
+            )
+            for identifier in missing_ids
+        ] + [
+            click_and_drop_api.OrderErrorInfo(
+                order_reference=reference, code="3", message=self._MISSING
+            )
+            for reference in missing_refs
+        ]
+        if errors:
+            errors.append(
+                click_and_drop_api.OrderErrorInfo(
+                    order_reference=self._identifier_list(order_identifiers),
+                    code="1",
+                    message=self._INVALID,
                 )
-
+            )
+        # Not tested against Click & Drop: deleting a manifested order needs postage.
+        errors.extend(
+            click_and_drop_api.OrderErrorInfo(
+                order_identifier=order.order_identifier,
+                order_reference=order.order_reference,
+                code="MANIFESTED",
+                message="Manifested orders cannot be deleted.",
+            )
+            for order in manifested
+        )
+        if errors and not deleted:
+            # Click & Drop answers with 400 if no order is deleted.
+            raise BadRequestException(
+                status=400,
+                reason="Bad Request",
+                body="[" + ",".join(e.to_json() for e in errors) + "]",
+                data=errors,
+            )
         return click_and_drop_api.DeleteOrdersResource(
             deleted_orders=deleted,
             errors=errors,
@@ -283,6 +499,12 @@ class MockClickAndDrop(AbstractClickAndDrop):
         include_returns_label: Optional[bool] = None,
         include_cn: Optional[bool] = None,
     ) -> bytearray:
+        if not self._is_oba:
+            raise ForbiddenException(
+                status=403,
+                reason="Forbidden",
+                body='{"message":"Forbidden (Feature not available)"}',
+            )
         orders = self._get_orders(order_identifiers)
         for order in orders:
             order.printed_on = self._now()

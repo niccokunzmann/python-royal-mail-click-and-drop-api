@@ -1,6 +1,7 @@
 """Renamed types for nicer reading"""
 
 import base64
+from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 
@@ -62,6 +63,34 @@ class ManifestedOrders(ManifestOrdersResponse):
         return bytearray(base64.b64decode(self.document_pdf))
 
 
+@dataclass
+class ReferenceLookup:
+    """The result of looking up order references on Click & Drop.
+
+    Each reference is in exactly one of ``absent``, ``unique`` and ``ambiguous``.
+    """
+
+    absent: set[str] = field(default_factory=set)
+    """References without an order."""
+
+    unique: set[str] = field(default_factory=set)
+    """References with exactly one order."""
+
+    ambiguous: set[str] = field(default_factory=set)
+    """References with several orders.
+
+    Click & Drop cannot look them up by reference.
+    """
+
+    orders: dict[str, "OrderInfo"] = field(default_factory=dict)
+    """The order of each unique reference."""
+
+    @property
+    def existent(self) -> set[str]:
+        """References with at least one order."""
+        return self.unique | self.ambiguous
+
+
 class OrderInfo(GetOrderInfoResource):
     @classmethod
     def from_get_order_info_resource(
@@ -106,6 +135,7 @@ class OrderInfo(GetOrderInfoResource):
 __all__ = [
     "CreateOrder",
     "OrderInfo",
+    "ReferenceLookup",
     "RecipientDetails",
     "ManifestedOrders",
     "Address",
