@@ -41,7 +41,9 @@ def test_shipping_with_service_of_the_account(api):
     assert result.is_success, result.failed_messages
 
 
-@pytest.mark.parametrize("package_size, service_code", [("largeLetter", "TPN24"), ("letter", "XXXX")])
+@pytest.mark.parametrize(
+    "package_size, service_code", [("largeLetter", "TPN24"), ("letter", "XXXX")]
+)
 def test_shipping_with_unknown_service(api, package_size, service_code):
     result = api.test_shipping(package_size, service_code)
     assert result.is_failure
@@ -162,7 +164,9 @@ def test_get_missing_order(api, reference, create):
 def test_get_missing_identifier_next_to_existing_one(api, reference, create):
     existing, deleted = create(reference(), reference())
     api.delete_orders([deleted])
-    assert [o.order_identifier for o in api.get_orders([deleted, existing])] == [existing]
+    assert [o.order_identifier for o in api.get_orders([deleted, existing])] == [
+        existing
+    ]
 
 
 # ── list ───────────────────────────────────────────────────────────────────────
@@ -181,7 +185,9 @@ def test_iter_orders_pages(api, reference, create):
     start = api.now() - timedelta(seconds=1)
     refs = [reference() for _ in range(5)]
     create(*refs)
-    listed = [ref for ref in references(api.iter_recent_orders(until=start)) if ref in refs]
+    listed = [
+        ref for ref in references(api.iter_recent_orders(until=start)) if ref in refs
+    ]
     assert listed == list(reversed(refs))
 
 
@@ -202,7 +208,9 @@ def test_delete_by_identifier(api, reference, create):
     ref = reference()
     [identifier] = create(ref)
     result = api.delete_orders([identifier])
-    assert [(o.order_identifier, o.order_reference) for o in result.deleted_orders] == [(identifier, ref)]
+    assert [(o.order_identifier, o.order_reference) for o in result.deleted_orders] == [
+        (identifier, ref)
+    ]
     assert result.errors == []
     assert api.lookup_references([ref]).absent == {ref}
 
@@ -226,4 +234,16 @@ def test_delete_more_orders_than_one_request_takes(api, reference, create):
     api.max_order_count = 2
     identifiers = create(*[reference() for _ in range(5)])
     result = api.delete_orders(identifiers)
-    assert sorted(o.order_identifier for o in result.deleted_orders) == sorted(identifiers)
+    assert sorted(o.order_identifier for o in result.deleted_orders) == sorted(
+        identifiers
+    )
+
+
+# ── status ─────────────────────────────────────────────────────────────────────
+
+
+def test_set_status_of_new_order_to_new(api, reference, create):
+    [identifier] = create(reference())
+    response = api.set_order_status([identifier], "new")
+    assert [o.order_identifier for o in response.updated_orders] == [identifier]
+    assert not response.errors

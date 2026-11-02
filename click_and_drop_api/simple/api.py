@@ -45,7 +45,7 @@ class ClickAndDrop(AbstractClickAndDrop):
 
     host = "https://api.parcel.royalmail.com/api/v1"
     """The Click & Drop API host.
-    
+
     There seems to be only one host available.
     """
 
@@ -58,6 +58,10 @@ class ClickAndDrop(AbstractClickAndDrop):
             key: The Click & Drop API authorisation key.
             create_order_strategy: The strategy to check orders before they are created.
                 See :mod:`click_and_drop_api.simple.strategy`.
+
+        Raises:
+            TypeError: The key is not a string.
+            ValueError: The key does not have about 36 characters or contains whitespace.
         """
         if not isinstance(key, str):
             raise TypeError(f"Expected str, got {key}.")
@@ -81,6 +85,9 @@ class ClickAndDrop(AbstractClickAndDrop):
     def get_version(self) -> click_and_drop_api.GetVersionResource:
         """Get the version of the Click & Drop API.
 
+        Raises:
+            click_and_drop_api.exceptions.ApiException: The request failed, see :class:`~click_and_drop_api.simple.base.AbstractClickAndDrop`.
+
         https://api.parcel.royalmail.com/#tag/Version
         """
         return self._version_api.get_version_async()
@@ -98,6 +105,9 @@ class ClickAndDrop(AbstractClickAndDrop):
         """Wether this is an OBA account.
 
         Check wether this is an OBA account by trying to create an order service code.
+
+        Raises:
+            click_and_drop_api.exceptions.ApiException: The request failed, see :class:`~click_and_drop_api.simple.base.AbstractClickAndDrop`.
         """
         if self._account_cache.is_oba is not None:
             return self._account_cache.is_oba
@@ -146,10 +156,8 @@ class ClickAndDrop(AbstractClickAndDrop):
         )
 
     def _create_orders(
-        self, orders: Union[list[CreateOrder], CreateOrder]
+        self, orders: list[CreateOrder]
     ) -> click_and_drop_api.CreateOrdersResponse:
-        if not isinstance(orders, list):
-            orders = [orders]
         request = click_and_drop_api.CreateOrdersRequest(items=orders)
         return self._orders_api.create_orders_async(request)
 
@@ -190,6 +198,12 @@ class ClickAndDrop(AbstractClickAndDrop):
         If this occurs the documentType option can be used in a separate call to print missing documents.
 
         Label generation only available for orders with postage applied status.
+
+        Raises:
+            click_and_drop_api.exceptions.ForbiddenException: The account is not an OBA account.
+            click_and_drop_api.exceptions.BadRequestException: An order does not exist
+                or has no postage applied.
+            click_and_drop_api.exceptions.ApiException: The request failed, see :class:`~click_and_drop_api.simple.base.AbstractClickAndDrop`.
 
         https://api.parcel.royalmail.com/#tag/Labels/operation/GetOrdersLabelAsync
         """

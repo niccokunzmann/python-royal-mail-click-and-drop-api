@@ -40,10 +40,30 @@ from .strategy import CreateOrderStrategy, NullStrategy, delete_copies, failed_o
 
 
 class AbstractClickAndDrop(ABC):
-    """Common interface shared by ClickAndDrop and MockClickAndDrop."""
+    """Common interface shared by ClickAndDrop and MockClickAndDrop.
+
+    Every method that sends a request to Click & Drop can raise
+    :class:`click_and_drop_api.exceptions.ApiException` or one of its subclasses:
+
+    - :class:`~click_and_drop_api.exceptions.UnauthorizedException`: The API key is invalid (401).
+    - :class:`~click_and_drop_api.exceptions.ApiException` with ``status`` 429:
+      More than 5 requests per second.
+    - :class:`~click_and_drop_api.exceptions.ServiceException`: Click & Drop has a problem (5xx).
+
+    The ``Raises`` sections of the methods list the other errors and why they are raised.
+    Orders that Click & Drop rejects one by one are not raised:
+    they are in the ``failed_orders`` or ``errors`` of the results.
+    """
 
     @classmethod
     def from_env(cls, api_env_var: str = "API_KEY") -> Self:
+        """Create the API with the key from an environment variable.
+
+        Raises:
+            KeyError: The environment variable is not set.
+            TypeError: The key is not a string.
+            ValueError: The key does not have about 36 characters or contains whitespace.
+        """
         api_key = os.environ[api_env_var]
         return cls(api_key)
 
@@ -57,7 +77,11 @@ class AbstractClickAndDrop(ABC):
 
     @property
     def shipping_options(self) -> ShippingDB:
-        """Return all the shipping options that can be used."""
+        """Return all the shipping options that can be used.
+
+        Raises:
+            click_and_drop_api.exceptions.ApiException: The request failed, see :class:`AbstractClickAndDrop`.
+        """
         return ShippingDB.default().for_oba(self.is_oba())
 
     @property
@@ -67,7 +91,11 @@ class AbstractClickAndDrop(ABC):
 
     @abstractmethod
     def get_version(self) -> click_and_drop_api.GetVersionResource:
-        """Get the API version."""
+        """Get the API version.
+
+        Raises:
+            click_and_drop_api.exceptions.ApiException: The request failed, see :class:`AbstractClickAndDrop`.
+        """
 
     @abstractmethod
     def _create_orders(
@@ -91,6 +119,13 @@ class AbstractClickAndDrop(ABC):
 
             Orders rejected by the strategy are in ``failed_orders``,
             see :class:`~click_and_drop_api.simple.strategy.StrategyErrorCode`.
+
+        Raises:
+            click_and_drop_api.exceptions.BadRequestException: The request is invalid as a whole,
+                e.g. more than one order asks for a label in the response.
+                Orders that Click & Drop rejects one by one are not raised:
+                they are in ``failed_orders`` of the result.
+            click_and_drop_api.exceptions.ApiException: The request failed, see :class:`AbstractClickAndDrop`.
 
         https://api.parcel.royalmail.com/#tag/Orders/operation/CreateOrdersAsync
         """
@@ -143,6 +178,13 @@ class AbstractClickAndDrop(ABC):
 
         Returns:
             The created and the failed orders, like :meth:`create_orders`.
+
+        Raises:
+            click_and_drop_api.exceptions.BadRequestException: The request is invalid as a whole,
+                e.g. more than one order asks for a label in the response.
+                Orders that Click & Drop rejects one by one are not raised:
+                they are in ``failed_orders`` of the result.
+            click_and_drop_api.exceptions.ApiException: The request failed, see :class:`AbstractClickAndDrop`.
         """
         if isinstance(orders, CreateOrder):
             orders = [orders]
@@ -176,7 +218,15 @@ class AbstractClickAndDrop(ABC):
     def create_order(
         self, order: CreateOrder
     ) -> click_and_drop_api.CreateOrdersResponse:
-        """Create a single order."""
+        """Create a single order.
+
+        Raises:
+            click_and_drop_api.exceptions.BadRequestException: The request is invalid as a whole,
+                e.g. more than one order asks for a label in the response.
+                Orders that Click & Drop rejects one by one are not raised:
+                they are in ``failed_orders`` of the result.
+            click_and_drop_api.exceptions.ApiException: The request failed, see :class:`AbstractClickAndDrop`.
+        """
         return self.create_orders(order)
 
     @abstractmethod
@@ -200,9 +250,12 @@ class AbstractClickAndDrop(ABC):
             A list of :class:`~click_and_drop_api.simple.types.OrderInfo` instances.
 
         Raises:
-            click_and_drop_api.exceptions.BadRequestException: A reference does not exist,
-                or it has several orders (error code ``"5"``).
-                Use :meth:`find_orders_by_reference` to find these orders.
+            click_and_drop_api.exceptions.BadRequestException: No order is found:
+                an identifier (code ``"2"``) or reference (code ``"3"``) does not exist,
+                or a reference has several orders (code ``"5"``).
+                Missing and ambiguous orders next to found ones are left out without an error.
+                Use :meth:`lookup_references` and :meth:`find_orders_by_reference` instead.
+            click_and_drop_api.exceptions.ApiException: The request failed, see :class:`AbstractClickAndDrop`.
 
         https://api.parcel.royalmail.com/#tag/Orders/operation/GetSpecificOrdersAsync
         """
@@ -227,6 +280,11 @@ class AbstractClickAndDrop(ABC):
         Returns:
             Which references are absent, unique or ambiguous,
             and the orders of the unique references.
+
+        Raises:
+            click_and_drop_api.exceptions.BadRequestException: Click & Drop rejects the request
+                for another reason than missing or ambiguous references.
+            click_and_drop_api.exceptions.ApiException: The request failed, see :class:`AbstractClickAndDrop`.
         """
         lookup = ReferenceLookup()
         references = list(dict.fromkeys(references))
@@ -303,6 +361,11 @@ class AbstractClickAndDrop(ABC):
             A dictionary mapping each reference to its orders.
             The list is empty if the reference does not exist.
             It has two or more orders if the reference has several orders.
+
+        Raises:
+            click_and_drop_api.exceptions.BadRequestException: Click & Drop rejects the request
+                for another reason than missing or ambiguous references.
+            click_and_drop_api.exceptions.ApiException: The request failed, see :class:`AbstractClickAndDrop`.
         """
         result: dict[str, list[OrderInfo]] = {reference: [] for reference in references}
         lookup = self.lookup_references(references)
@@ -358,6 +421,11 @@ class AbstractClickAndDrop(ABC):
             end: Only orders uploaded before this time.
                 It must be at least one second after ``start``.
 
+        Raises:
+            click_and_drop_api.exceptions.BadRequestException: ``end`` is not at least
+                one second after ``start``: "'endDateTime' should be greater than 'startDateTime'".
+            click_and_drop_api.exceptions.ApiException: The request failed, see :class:`AbstractClickAndDrop`.
+
         https://api.parcel.royalmail.com/#tag/Orders/operation/GetOrdersAsync
         """
         token = None
@@ -379,6 +447,9 @@ class AbstractClickAndDrop(ABC):
         Parameters:
             until: Stop at orders uploaded before this time.
                 ``None`` iterates over all orders.
+
+        Raises:
+            click_and_drop_api.exceptions.ApiException: The request failed, see :class:`AbstractClickAndDrop`.
         """
         return self.iter_orders(start=until)
 
@@ -394,6 +465,7 @@ class AbstractClickAndDrop(ABC):
         Raises:
             click_and_drop_api.exceptions.BadRequestException: The reference has
                 several orders (error code ``"5"``).
+            click_and_drop_api.exceptions.ApiException: The request failed, see :class:`AbstractClickAndDrop`.
         """
         try:
             orders = self.get_orders(order_identifier)
@@ -441,6 +513,9 @@ class AbstractClickAndDrop(ABC):
         Raises:
             click_and_drop_api.exceptions.ForbiddenException: If the account is not a
                 ChannelShipper account (HTTP 403).
+            click_and_drop_api.exceptions.BadRequestException: No order is found,
+                see :meth:`get_orders`.
+            click_and_drop_api.exceptions.ApiException: The request failed, see :class:`AbstractClickAndDrop`.
 
         https://api.parcel.royalmail.com/#tag/Orders/operation/GetSpecificOrdersWithDetailsAsync
         """
@@ -473,6 +548,9 @@ class AbstractClickAndDrop(ABC):
         Raises:
             click_and_drop_api.exceptions.ForbiddenException: If the account is not a
                 ChannelShipper account (HTTP 403).
+            click_and_drop_api.exceptions.BadRequestException: The reference has
+                several orders (error code ``"5"``).
+            click_and_drop_api.exceptions.ApiException: The request failed, see :class:`AbstractClickAndDrop`.
         """
         try:
             results = self.get_orders_details(order_identifier)
@@ -514,6 +592,7 @@ class AbstractClickAndDrop(ABC):
         Raises:
             click_and_drop_api.exceptions.BadRequestException: The request is invalid
                 in another way, e.g. a reference has several orders (codes ``"22"``, ``"23"``).
+            click_and_drop_api.exceptions.ApiException: The request failed, see :class:`AbstractClickAndDrop`.
 
         https://api.parcel.royalmail.com/#tag/Orders/operation/DeleteOrdersAsync
         """
@@ -548,7 +627,14 @@ class AbstractClickAndDrop(ABC):
     def delete_order(
         self, order_identifier: Union[str, int]
     ) -> click_and_drop_api.DeleteOrdersResource:
-        """Delete a single order."""
+        """Delete a single order.
+
+        Raises:
+            click_and_drop_api.exceptions.BadRequestException: The reference has several orders
+                (codes ``"22"``, ``"23"``).  Orders that cannot be deleted one by one
+                are in ``errors`` of the result.
+            click_and_drop_api.exceptions.ApiException: The request failed, see :class:`AbstractClickAndDrop`.
+        """
         return self.delete_orders(order_identifier)
 
     @abstractmethod
@@ -559,7 +645,14 @@ class AbstractClickAndDrop(ABC):
         include_returns_label: Optional[bool] = None,
         include_cn: Optional[bool] = None,
     ) -> bytearray:
-        """Generate a label PDF for one or more orders."""
+        """Generate a label PDF for one or more orders.
+
+        Raises:
+            click_and_drop_api.exceptions.ForbiddenException: The account is not an OBA account.
+            click_and_drop_api.exceptions.BadRequestException: An order does not exist
+                or has no postage applied.
+            click_and_drop_api.exceptions.ApiException: The request failed, see :class:`AbstractClickAndDrop`.
+        """
 
     NON_OBA_TEST_SERVICE_CODE = "OLP1"
 
@@ -567,6 +660,9 @@ class AbstractClickAndDrop(ABC):
         """Wether this is an OBA account.
 
         Check wether this is an OBA account by trying to create an order service code.
+
+        Raises:
+            click_and_drop_api.exceptions.ApiException: The request failed, see :class:`AbstractClickAndDrop`.
         """
         return self.test_shipping("letter", self.NON_OBA_TEST_SERVICE_CODE).is_failure
 
@@ -583,6 +679,9 @@ class AbstractClickAndDrop(ABC):
         Note:
             This method only seems to work for OBA accounts
             to limit the countries.
+
+        Raises:
+            click_and_drop_api.exceptions.ApiException: The request failed, see :class:`AbstractClickAndDrop`.
         """
         countries = get_all_country_codes()
         result = self.test_shipping(
@@ -615,6 +714,12 @@ class AbstractClickAndDrop(ABC):
         Note:
             This method only seems to work for OBA accounts
             to limit the countries.
+
+        Raises:
+            ValueError: No address is given.
+            KeyError: A country code has no test address.
+            click_and_drop_api.exceptions.ApiException: The test orders could not be deleted.
+                Errors while creating them are in the result.
         """
         if not isinstance(address, list):
             address = [address]
@@ -649,19 +754,20 @@ class AbstractClickAndDrop(ABC):
         except Exception as e:
             failed_addresses += [get_order_address(order) for order in orders]
             failed_messages += [f"Unexpected error: {e}"] * len(orders)
-        for co in response.created_orders:
-            successful_addresses.append(get_order_address(co))
-            to_delete.append(co.order_identifier)
-        for fo in response.failed_orders:
-            failed_addresses.append(get_order_address(fo.order))
-            failed_messages.append(
-                ";".join(
-                    f"Error {e.error_code} in "
-                    f"{self.format_fields_for_error_message(e.fields)}: "
-                    f"{e.error_message}"
-                    for e in fo.errors
+        else:
+            for co in response.created_orders:
+                successful_addresses.append(get_order_address(co))
+                to_delete.append(co.order_identifier)
+            for fo in response.failed_orders:
+                failed_addresses.append(get_order_address(fo.order))
+                failed_messages.append(
+                    ";".join(
+                        f"Error {e.error_code} in "
+                        f"{self.format_fields_for_error_message(e.fields)}: "
+                        f"{e.error_message}"
+                        for e in fo.errors
+                    )
                 )
-            )
         self.delete_orders(to_delete)
         return ShippingTestResult(
             successful_addresses, failed_addresses, failed_messages
@@ -713,6 +819,12 @@ class AbstractClickAndDrop(ABC):
 
         Returns:
             A :class:`~click_and_drop_api.models.set_order_status_resource.SetOrderStatusResource` instance containing the updated order information.
+
+        Raises:
+            click_and_drop_api.exceptions.BadRequestException: The update is invalid,
+                e.g. a tracking number without despatch date, carrier and service,
+                or an order does not exist.
+            click_and_drop_api.exceptions.ApiException: The request failed, see :class:`AbstractClickAndDrop`.
         """
         result = UpdateOrderStatusResponse(updated_orders=[], errors=[])
         for i in range(0, len(updates), self.max_order_count):
@@ -733,7 +845,14 @@ class AbstractClickAndDrop(ABC):
         shipping_carrier: str | None = None,
         shipping_service: str | None = None,
     ):
-        """Update the status of multiple orders."""
+        """Update the status of multiple orders.
+
+        Raises:
+            click_and_drop_api.exceptions.BadRequestException: The update is invalid,
+                e.g. a tracking number without despatch date, carrier and service,
+                or an order does not exist.
+            click_and_drop_api.exceptions.ApiException: The request failed, see :class:`AbstractClickAndDrop`.
+        """
         return self.update_order_status(
             self._get_orders_update_request(
                 order_identifiers,
@@ -750,7 +869,14 @@ class AbstractClickAndDrop(ABC):
         order_identifiers: list[Union[str, int]] | str | int,
         status: Literal["new", "despatchedByOtherCourier", "despatched"],
     ) -> UpdateOrderStatusResponse:
-        """Set the status of orders."""
+        """Set the status of orders.
+
+        Raises:
+            click_and_drop_api.exceptions.BadRequestException: The update is invalid,
+                e.g. a tracking number without despatch date, carrier and service,
+                or an order does not exist.
+            click_and_drop_api.exceptions.ApiException: The request failed, see :class:`AbstractClickAndDrop`.
+        """
         return self.update_order_status(
             self._get_orders_update_request(order_identifiers, status=status)
         )
@@ -758,7 +884,14 @@ class AbstractClickAndDrop(ABC):
     def set_order_tracking_number(
         self, order_identifiers: list[Union[str, int]] | str | int, tracking_number: str
     ) -> UpdateOrderStatusResponse:
-        """Set the tracking number of a orders."""
+        """Set the tracking number of a orders.
+
+        Raises:
+            click_and_drop_api.exceptions.BadRequestException: The update is invalid,
+                e.g. a tracking number without despatch date, carrier and service,
+                or an order does not exist.
+            click_and_drop_api.exceptions.ApiException: The request failed, see :class:`AbstractClickAndDrop`.
+        """
         return self.update_order_status(
             self._get_orders_update_request(
                 order_identifiers, tracking_number=tracking_number
@@ -770,7 +903,14 @@ class AbstractClickAndDrop(ABC):
         order_identifiers: list[Union[str, int]] | str | int,
         despatch_date: datetime,
     ) -> UpdateOrderStatusResponse:
-        """Set the despatch date of a orders."""
+        """Set the despatch date of a orders.
+
+        Raises:
+            click_and_drop_api.exceptions.BadRequestException: The update is invalid,
+                e.g. a tracking number without despatch date, carrier and service,
+                or an order does not exist.
+            click_and_drop_api.exceptions.ApiException: The request failed, see :class:`AbstractClickAndDrop`.
+        """
         return self.update_order_status(
             self._get_orders_update_request(
                 order_identifiers, despatch_date=despatch_date
@@ -782,7 +922,14 @@ class AbstractClickAndDrop(ABC):
         order_identifiers: list[Union[str, int]] | str | int,
         shipping_carrier: str,
     ) -> UpdateOrderStatusResponse:
-        """Set the shipping carrier of a orders."""
+        """Set the shipping carrier of a orders.
+
+        Raises:
+            click_and_drop_api.exceptions.BadRequestException: The update is invalid,
+                e.g. a tracking number without despatch date, carrier and service,
+                or an order does not exist.
+            click_and_drop_api.exceptions.ApiException: The request failed, see :class:`AbstractClickAndDrop`.
+        """
         return self.update_order_status(
             self._get_orders_update_request(
                 order_identifiers, shipping_carrier=shipping_carrier
@@ -794,7 +941,14 @@ class AbstractClickAndDrop(ABC):
         order_identifiers: list[Union[str, int]] | str | int,
         shipping_service: str,
     ) -> UpdateOrderStatusResponse:
-        """Set the shipping service of a orders."""
+        """Set the shipping service of a orders.
+
+        Raises:
+            click_and_drop_api.exceptions.BadRequestException: The update is invalid,
+                e.g. a tracking number without despatch date, carrier and service,
+                or an order does not exist.
+            click_and_drop_api.exceptions.ApiException: The request failed, see :class:`AbstractClickAndDrop`.
+        """
         return self.update_order_status(
             self._get_orders_update_request(
                 order_identifiers, shipping_service=shipping_service
@@ -850,10 +1004,13 @@ class AbstractClickAndDrop(ABC):
 
         Returns ``"Royal Mail OBA"`` for OBA accounts and ``"Royal Mail OLP"``
         for standard accounts.  Override to use a custom carrier name.
+
+        Raises:
+            click_and_drop_api.exceptions.ApiException: The request failed, see :class:`AbstractClickAndDrop`.
         """
         return self.CARRIER_NAME_OBA if self.is_oba() else self.CARRIER_NAME_OLP
 
-    def manifest_orders(self, carrier_name: str | None  = ...) -> ManifestedOrders:
+    def manifest_orders(self, carrier_name: str | None = ...) -> ManifestedOrders:
         """Manifest all eligible orders, applying postage.
 
         Manifests all orders in ``Label Generated`` and ``Despatched`` statuses
@@ -871,6 +1028,11 @@ class AbstractClickAndDrop(ABC):
         Returns:
             A :class:`~click_and_drop_api.models.manifest_orders_response.ManifestOrdersResponse`
             containing the manifest number and an optional base64-encoded PDF.
+
+        Raises:
+            click_and_drop_api.exceptions.BadRequestException: The orders cannot be manifested,
+                e.g. the carrier name is required because the account has several carriers.
+            click_and_drop_api.exceptions.ApiException: The request failed, see :class:`AbstractClickAndDrop`.
 
         https://api.parcel.royalmail.com/#tag/Manifests/operation/ManifestEligibleAsync
         """

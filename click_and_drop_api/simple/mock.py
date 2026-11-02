@@ -59,6 +59,10 @@ class MockClickAndDrop(AbstractClickAndDrop):
             create_order_strategy: The strategy to check orders before they are created.
             channel_shipper: Whether the account is a ChannelShipper account.
                 Only these can get order details, others get 403.
+
+        Raises:
+            TypeError: The key is not a string.
+            ValueError: The key does not have about 36 characters or contains whitespace.
         """
         if not isinstance(key, str):
             raise TypeError(f"Expected str, got {key}.")
@@ -201,7 +205,9 @@ class MockClickAndDrop(AbstractClickAndDrop):
     ) -> list[click_and_drop_api.CreateOrderErrorResponse]:
         """Return the errors Royal Mail would report for this order."""
         errors = []
-        service_code = order.postage_details.service_code if order.postage_details else None
+        service_code = (
+            order.postage_details.service_code if order.postage_details else None
+        )
         # Tested with a non-OBA account: it rejects unknown and OBA service codes.
         # Not tested with an OBA account, so it accepts all known service codes.
         codes = (
@@ -281,12 +287,16 @@ class MockClickAndDrop(AbstractClickAndDrop):
             errors.extend(
                 self._order_error(reference, "3", self._MISSING)
                 if reference in missing_refs
-                else self._order_error(reference, self.AMBIGUOUS_REFERENCE, self._AMBIGUOUS)
+                else self._order_error(
+                    reference, self.AMBIGUOUS_REFERENCE, self._AMBIGUOUS
+                )
                 for reference in order_identifiers
                 if reference in missing_refs or reference in ambiguous
             )
             errors.append(
-                self._order_error(self._identifier_list(order_identifiers), "1", self._INVALID)
+                self._order_error(
+                    self._identifier_list(order_identifiers), "1", self._INVALID
+                )
             )
             raise BadRequestException(
                 status=400,
@@ -296,7 +306,9 @@ class MockClickAndDrop(AbstractClickAndDrop):
             )
         return result
 
-    _AMBIGUOUS = "Ambiguous reference: Provided reference has multiple orders associated with it"
+    _AMBIGUOUS = (
+        "Ambiguous reference: Provided reference has multiple orders associated with it"
+    )
     _MISSING = "Order with provided reference does not exist. Please verify that all references provided are URL encoded"
     _INVALID = "Some or all of provided ids and references are invalid. Please verify that all provided references are URL encoded"
     _MISSING_ID = "Order with provided id does not exist"
@@ -398,7 +410,8 @@ class MockClickAndDrop(AbstractClickAndDrop):
         ambiguous = [
             reference
             for reference in order_identifiers
-            if isinstance(reference, str) and len(self._orders_with_reference(reference)) > 1
+            if isinstance(reference, str)
+            and len(self._orders_with_reference(reference)) > 1
         ]
         if ambiguous:
             # Click & Drop deletes nothing and lists the copies that could be deleted.
@@ -438,7 +451,9 @@ class MockClickAndDrop(AbstractClickAndDrop):
                 orders = self._orders_with_reference(identifier)
                 order = orders[0] if orders else None
             if order is None:
-                (missing_ids if isinstance(identifier, int) else missing_refs).append(identifier)
+                (missing_ids if isinstance(identifier, int) else missing_refs).append(
+                    identifier
+                )
             elif order.manifested_on is not None:
                 manifested.append(order)
             else:
@@ -499,6 +514,11 @@ class MockClickAndDrop(AbstractClickAndDrop):
         include_returns_label: Optional[bool] = None,
         include_cn: Optional[bool] = None,
     ) -> bytearray:
+        """Create the API with the key from an environment variable.
+
+        Raises:
+            click_and_drop_api.exceptions.ForbiddenException: The account is not an OBA account.
+        """
         if not self._is_oba:
             raise ForbiddenException(
                 status=403,

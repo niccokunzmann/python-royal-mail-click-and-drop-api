@@ -24,7 +24,6 @@ from enum import IntEnum
 from typing import TYPE_CHECKING, Collection, Iterator, Optional
 
 import click_and_drop_api
-from click_and_drop_api.exceptions import BadRequestException
 
 if TYPE_CHECKING:
     from .base import AbstractClickAndDrop
@@ -253,7 +252,9 @@ def delete_copies(
                     StrategyErrorCode.ORDER_MANIFESTED,
                     "An order with this reference is manifested and cannot be deleted.",
                 )
-            elif not delete_printed and any(info.printed_on is not None for info in infos):
+            elif not delete_printed and any(
+                info.printed_on is not None for info in infos
+            ):
                 rejected[reference] = (
                     StrategyErrorCode.LABEL_ALREADY_PRINTED,
                     "An order with this reference has a printed label."
@@ -267,17 +268,10 @@ def delete_copies(
         }
         if not to_delete:
             break
-        try:
-            error_list = api.delete_orders(list(to_delete)).errors
-        except BadRequestException as error:
-            # Click & Drop answers with 400 if no order is deleted.
-            if not isinstance(error.data, list):
-                raise
-            error_list = error.data
         messages: dict[str, list[str]] = {}
-        for error in error_list:
-            if error.code == "1":
-                continue  # repeats all identifiers of the request
+        for error in api.delete_orders(list(to_delete)).errors:
+            if error.code in api.NOT_FOUND:
+                continue  # deleted at the same time, or code 1 repeating the request
             reference = to_delete.get(error.order_identifier, error.order_reference)
             messages.setdefault(reference, []).append(f"{error.code}: {error.message}")
         for reference, texts in messages.items():
