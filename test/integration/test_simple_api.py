@@ -247,3 +247,34 @@ def test_set_status_of_new_order_to_new(api, reference, create):
     response = api.set_order_status([identifier], "new")
     assert [o.order_identifier for o in response.updated_orders] == [identifier]
     assert not response.errors
+
+
+# ── iterating while orders get deleted ─────────────────────────────────────────
+
+
+def test_deleting_the_listed_orders_while_iterating(api, reference, create):
+    """Each next page starts after the last listed order, so none is skipped."""
+    api.max_order_count = 2
+    start = api.now() - timedelta(seconds=1)
+    refs = [reference() for _ in range(5)]
+    identifiers = create(*refs)
+    listed = []
+    for info in api.iter_recent_orders(until=start):
+        if info.order_identifier in identifiers:
+            listed.append(info.order_identifier)
+            api.delete_orders([info.order_identifier])
+    assert listed == list(reversed(identifiers))
+
+
+def test_orders_deleted_before_they_are_listed_are_left_out(api, reference, create):
+    api.max_order_count = 2
+    start = api.now() - timedelta(seconds=1)
+    identifiers = create(*[reference() for _ in range(5)])
+    oldest, newest = identifiers[0], identifiers[-1]
+    listed = []
+    for info in api.iter_recent_orders(until=start):
+        if info.order_identifier in identifiers:
+            listed.append(info.order_identifier)
+            if info.order_identifier == newest:
+                api.delete_orders([oldest])
+    assert listed == list(reversed(identifiers[1:]))

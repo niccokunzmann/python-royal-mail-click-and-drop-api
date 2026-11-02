@@ -21,13 +21,13 @@ from collections import Counter
 from dataclasses import dataclass, field
 from datetime import timedelta
 from enum import IntEnum
-from typing import TYPE_CHECKING, Collection, Iterator, Optional
+from typing import TYPE_CHECKING, Optional
 
 import click_and_drop_api
 
 if TYPE_CHECKING:
     from .base import AbstractClickAndDrop
-    from .types import CreateOrder, OrderInfo
+    from .types import CreateOrder
 
 
 class StrategyErrorCode(IntEnum):
@@ -202,91 +202,13 @@ class ReplaceDuplicateReferences(_DuplicateReferenceStrategy):
 
     def handle_existing(self, api, prepared):
         since = None if self.lookback is None else api.now() - self.lookback
-        rejected = delete_copies(
-            api,
+        rejected = api.delete_orders_with_references(
             self.references(prepared),
             api.iter_recent_orders(until=since),
             delete_printed=self.delete_printed,
         )
         for reference, (code, message) in rejected.items():
             prepared.reject({reference}, code, message)
-
-
-def delete_copies(
-    api: AbstractClickAndDrop,
-    references: list[str],
-    orders: Iterator[OrderInfo],
-    delete_printed: bool = False,
-    keep: Collection[int] = (),
-) -> dict[str, tuple[StrategyErrorCode, str]]:
-    """Delete all orders with these references, except the ones to keep.
-
-    Click & Drop cannot look up a reference with several orders,
-    so ``orders`` are listed until two of them are found.
-    These are deleted and the reference is looked up again,
-    until all of its orders are deleted.
-    The orders of a reference are only deleted if all of them can be deleted.
-
-    Parameters:
-        api: The API to use.
-        references: The references whose orders to delete.
-        orders: The orders to search, usually :meth:`~AbstractClickAndDrop.iter_recent_orders`.
-            Continue the same iterator so that no orders are listed twice.
-        delete_printed: Also delete orders with a printed label.
-        keep: The identifiers of the orders not to delete.
-
-    Returns:
-        The references whose orders could not be deleted, with the reason.
-    """
-    rejected: dict[str, tuple[StrategyErrorCode, str]] = {}
-    pending = list(references)
-    while pending:
-        existing = api.find_orders_by_reference(pending, orders=orders)
-        copies = {
-            reference: [info for info in infos if info.order_identifier not in keep]
-            for reference, infos in existing.items()
-        }
-        for reference, infos in copies.items():
-            if any(info.manifested_on is not None for info in infos):
-                rejected[reference] = (
-                    StrategyErrorCode.ORDER_MANIFESTED,
-                    "An order with this reference is manifested and cannot be deleted.",
-                )
-            elif not delete_printed and any(
-                info.printed_on is not None for info in infos
-            ):
-                rejected[reference] = (
-                    StrategyErrorCode.LABEL_ALREADY_PRINTED,
-                    "An order with this reference has a printed label."
-                    " Deleting it would cancel the label.",
-                )
-        to_delete = {
-            info.order_identifier: reference
-            for reference, infos in copies.items()
-            if reference not in rejected
-            for info in infos
-        }
-        if not to_delete:
-            break
-        messages: dict[str, list[str]] = {}
-        for error in api.delete_orders(list(to_delete)).errors:
-            if error.code in api.NOT_FOUND:
-                continue  # deleted at the same time, or code 1 repeating the request
-            reference = to_delete.get(error.order_identifier, error.order_reference)
-            messages.setdefault(reference, []).append(f"{error.code}: {error.message}")
-        for reference, texts in messages.items():
-            rejected[reference] = (
-                StrategyErrorCode.DELETE_FAILED,
-                "Could not delete the existing order with this reference: "
-                + "; ".join(texts),
-            )
-        # References with several orders may have more of them.
-        pending = [
-            reference
-            for reference in set(to_delete.values())
-            if reference not in rejected and len(existing[reference]) >= 2
-        ]
-    return rejected
 
 
 __all__ = [
@@ -296,5 +218,4 @@ __all__ = [
     "RejectDuplicateReferences",
     "ReplaceDuplicateReferences",
     "StrategyErrorCode",
-    "delete_copies",
 ]

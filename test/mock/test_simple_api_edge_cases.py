@@ -130,7 +130,7 @@ def test_countries_for_shipping():
     assert list(api.iter_orders()) == [], "the test orders are deleted"
 
 
-# ── delete_copies ──────────────────────────────────────────────────────────────
+# ── delete_orders_with_references ──────────────────────────────────────────────────────────────
 
 
 def test_copy_deleted_at_the_same_time_is_no_failure(api: MockClickAndDrop):

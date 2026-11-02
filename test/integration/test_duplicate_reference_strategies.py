@@ -33,7 +33,9 @@ def created(response) -> list[str]:
 
 
 def failed(response) -> dict[str, int]:
-    return {f.order.order_reference: f.errors[0].error_code for f in response.failed_orders}
+    return {
+        f.order.order_reference: f.errors[0].error_code for f in response.failed_orders
+    }
 
 
 # ── the API ────────────────────────────────────────────────────────────────────
@@ -77,13 +79,17 @@ def test_missing_reference(api, reference):
 def test_missing_reference_next_to_existing_one(api, reference, create):
     missing, existing = reference(), reference()
     create(existing)
-    assert [o.order_reference for o in api.get_orders([missing, existing])] == [existing]
+    assert [o.order_reference for o in api.get_orders([missing, existing])] == [
+        existing
+    ]
 
 
 def test_delete_missing_order(api, reference, create):
     ref = reference()
     [identifier] = create(ref)
-    assert [o.order_identifier for o in api.delete_orders([identifier]).deleted_orders] == [identifier]
+    assert [
+        o.order_identifier for o in api.delete_orders([identifier]).deleted_orders
+    ] == [identifier]
     result = api.delete_orders([identifier, ref])
     assert result.deleted_orders == []
     assert [e.code for e in result.errors] == ["2", "3", "1"]
@@ -95,14 +101,18 @@ def test_delete_ambiguous_reference_deletes_nothing(api, reference, create):
     with pytest.raises(BadRequestException) as error:
         api.delete_orders(ref)
     assert [e.code for e in error.value.data if e.code != "1"] == ["22", "23", "23"]
-    assert sorted(e.order_identifier for e in error.value.data if e.code == "23") == sorted(identifiers)
+    assert sorted(
+        e.order_identifier for e in error.value.data if e.code == "23"
+    ) == sorted(identifiers)
     assert copies(api, ref) == sorted(identifiers)
 
 
 def test_orders_are_listed_newest_first(api, reference, create):
     refs = [reference() for _ in range(3)]
     create(*refs)
-    listed = [o.order_reference for o in api.iter_recent_orders() if o.order_reference in refs]
+    listed = [
+        o.order_reference for o in api.iter_recent_orders() if o.order_reference in refs
+    ]
     assert listed == list(reversed(refs))
 
 
@@ -264,3 +274,30 @@ def test_replace_orders_same_reference_twice(api, reference):
     assert created(response) == [other]
     assert failed(response) == {ref: 76}
     assert api.lookup_references([ref]).absent == {ref}
+
+
+# ── delete_orders_with_references ──────────────────────────────────────────────
+
+
+@pytest.mark.parametrize("number", [1, 2, 3])
+def test_delete_orders_with_references_searches_all_orders(
+    api, reference, create, number
+):
+    ref, other = reference(), reference()
+    old = create(*[ref] * number, other)
+    assert api.delete_orders_with_references([ref]) == {}
+    assert api.lookup_references([ref]).absent == {ref}
+    assert copies(api, other) == [old[-1]], "other orders are not touched"
+
+
+def test_delete_orders_with_references_keeps_orders(api, reference, create):
+    ref = reference()
+    first, second, third = create(ref, ref, ref)
+    assert api.delete_orders_with_references([ref], keep=[second]) == {}
+    assert copies(api, ref) == [second]
+
+
+def test_delete_orders_with_no_references(api):
+    api.requests.clear()
+    assert api.delete_orders_with_references([]) == {}
+    assert api.requests == {}

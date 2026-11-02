@@ -171,6 +171,9 @@ The error codes of the strategies are negative, see `StrategyErrorCode`:
 - `find_orders_by_reference(references)` returns the orders of each reference.
   For a reference with several orders, it stops listing orders as soon as two are found.
   Pass `orders=` an iterator of a previous search to continue it.
+- `delete_orders_with_references(references)` deletes all orders of the references, including duplicates.
+  It does not delete manifested orders, nor orders with a printed label unless `delete_printed=True`,
+  and returns the references that could not be deleted with the reason.
 - `iter_orders(start, end)` iterates over all orders page by page, from the newest to the oldest.
   Click & Drop filters by the upload time (`created_on`), not by `order_date`,
   and cuts the times off to whole seconds: `start` is inclusive, `end` is exclusive

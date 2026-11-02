@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 import os
-from typing import Iterator, Literal, Optional, Union
+from typing import Collection, Iterator, Literal, Optional, Union
 from click_and_drop_api.simple.compatibility import Self
 
 import click_and_drop_api
@@ -36,7 +36,12 @@ from click_and_drop_api.simple.shipping.db import ShippingDB
 from click_and_drop_api.simple.shipping_test_result import ShippingTestResult
 from click_and_drop_api.simple.addresses import get_address, get_all_country_codes
 from .types import ManifestedOrders, OrderInfo, ReferenceLookup, UpdateOrderStatus
-from .strategy import CreateOrderStrategy, NullStrategy, delete_copies, failed_order
+from .strategy import (
+    CreateOrderStrategy,
+    NullStrategy,
+    StrategyErrorCode,
+    failed_order,
+)
 
 
 class AbstractClickAndDrop(ABC):
@@ -194,8 +199,7 @@ class AbstractClickAndDrop(ABC):
         if not ambiguous:
             return response
         since = None if lookback is None else self.now() - lookback
-        rejected = delete_copies(
-            self,
+        rejected = self.delete_orders_with_references(
             sorted(ambiguous),
             self.iter_recent_orders(until=since),
             delete_printed=delete_printed,
@@ -636,6 +640,89 @@ class AbstractClickAndDrop(ABC):
             click_and_drop_api.exceptions.ApiException: The request failed, see :class:`AbstractClickAndDrop`.
         """
         return self.delete_orders(order_identifier)
+
+    def delete_orders_with_references(
+        self,
+        references: list[str],
+        orders: Optional[Iterator[OrderInfo]] = None,
+        delete_printed: bool = False,
+        keep: Collection[int] = (),
+    ) -> dict[str, tuple[StrategyErrorCode, str]]:
+        """Delete all orders with these references, except the ones to keep.
+
+        Click & Drop cannot look up a reference with several orders,
+        so ``orders`` are listed until two of them are found.
+        These are deleted and the reference is looked up again,
+        until all of its orders are deleted.
+        The orders of a reference are only deleted if all of them can be deleted.
+
+        Parameters:
+            references: The references whose orders to delete. May be empty.
+            orders: The orders to search for references with several orders.
+                Defaults to all orders, see :meth:`iter_recent_orders`.
+                Continue the same iterator so that no orders are listed twice.
+            delete_printed: Also delete orders with a printed label.
+            keep: The identifiers of the orders not to delete.
+
+        Returns:
+            The references whose orders could not be deleted, with the reason.
+
+        Raises:
+            click_and_drop_api.exceptions.ApiException: The request failed, see :class:`AbstractClickAndDrop`.
+        """
+        if orders is None:
+            orders = self.iter_recent_orders()
+        rejected: dict[str, tuple[StrategyErrorCode, str]] = {}
+        pending = list(references)
+        while pending:
+            existing = self.find_orders_by_reference(pending, orders=orders)
+            copies = {
+                reference: [info for info in infos if info.order_identifier not in keep]
+                for reference, infos in existing.items()
+            }
+            for reference, infos in copies.items():
+                if any(info.manifested_on is not None for info in infos):
+                    rejected[reference] = (
+                        StrategyErrorCode.ORDER_MANIFESTED,
+                        "An order with this reference is manifested and cannot be deleted.",
+                    )
+                elif not delete_printed and any(
+                    info.printed_on is not None for info in infos
+                ):
+                    rejected[reference] = (
+                        StrategyErrorCode.LABEL_ALREADY_PRINTED,
+                        "An order with this reference has a printed label."
+                        " Deleting it would cancel the label.",
+                    )
+            to_delete = {
+                info.order_identifier: reference
+                for reference, infos in copies.items()
+                if reference not in rejected
+                for info in infos
+            }
+            if not to_delete:
+                break
+            messages: dict[str, list[str]] = {}
+            for error in self.delete_orders(list(to_delete)).errors:
+                if error.code in self.NOT_FOUND:
+                    continue  # deleted at the same time, or code 1 repeating the request
+                reference = to_delete.get(error.order_identifier, error.order_reference)
+                messages.setdefault(reference, []).append(
+                    f"{error.code}: {error.message}"
+                )
+            for reference, texts in messages.items():
+                rejected[reference] = (
+                    StrategyErrorCode.DELETE_FAILED,
+                    "Could not delete the existing order with this reference: "
+                    + "; ".join(texts),
+                )
+            # References with several orders may have more of them.
+            pending = [
+                reference
+                for reference in set(to_delete.values())
+                if reference not in rejected and len(existing[reference]) >= 2
+            ]
+        return rejected
 
     @abstractmethod
     def get_label(
