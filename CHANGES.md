@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 3.4.0
 
 - Add strategies to check orders before they are created: `create_order_strategy` of `ClickAndDrop` and `MockClickAndDrop`, and `create_orders(orders, strategy=...)`.
   - `NullStrategy` uploads the orders as given. This is the default.
