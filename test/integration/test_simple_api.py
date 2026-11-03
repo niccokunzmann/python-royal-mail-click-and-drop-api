@@ -278,3 +278,35 @@ def test_orders_deleted_before_they_are_listed_are_left_out(api, reference, crea
             if info.order_identifier == newest:
                 api.delete_orders([oldest])
     assert listed == list(reversed(identifiers[1:]))
+
+
+# ── server errors in the integration tests ─────────────────────────────────────
+
+
+def test_repeatable_requests_are_retried_after_server_errors(api, reference, create):
+    """Click & Drop sometimes answers with 500. Lookups are tried again and counted once."""
+    from unittest.mock import patch
+
+    from click_and_drop_api.exceptions import ServiceException
+    from click_and_drop_api.simple import ClickAndDrop, MockClickAndDrop
+
+    ref = reference()
+    [identifier] = create(ref)
+    # ClickAndDrop or MockClickAndDrop, below the retrying RecordingMixin
+    client = next(c for c in type(api).__mro__ if c in (ClickAndDrop, MockClickAndDrop))
+    original = client._get_orders
+    calls = []
+
+    def flaky(self, identifiers):
+        calls.append(identifiers)
+        if len(calls) == 1:
+            raise ServiceException(status=500, reason="Internal Server Error")
+        return original(self, identifiers)
+
+    api.requests.clear()
+    with patch.object(client, "_get_orders", flaky), patch("time.sleep"):
+        assert [o.order_identifier for o in api.get_orders([identifier])] == [
+            identifier
+        ]
+    assert len(calls) == 2
+    assert api.requests == {"get": 1}

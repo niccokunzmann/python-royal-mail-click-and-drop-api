@@ -11,6 +11,7 @@ from collections import Counter
 from datetime import datetime, timedelta, timezone
 
 import pytest
+from click_and_drop_api.exceptions import ServiceException
 
 from click_and_drop_api.simple import (
     Address,
@@ -40,29 +41,46 @@ class Throttle:
 
 
 class RecordingMixin:
-    """Remember the created orders to delete them after the test, and count the requests."""
+    """Remember the created orders to delete them after the test, and count the requests.
+
+    Click & Drop sometimes answers with "500 Internal Server Error".
+    Requests that can be repeated are tried again and counted once.
+    Creating orders is not repeated: the orders might have been created.
+    """
+
+    RETRIES = 3
 
     def _create_orders(self, orders):
         self._request("create")
         response = super()._create_orders(orders)
-        self.created_identifiers.extend(o.order_identifier for o in response.created_orders)
+        self.created_identifiers.extend(
+            o.order_identifier for o in response.created_orders
+        )
         return response
 
     def _get_orders(self, order_identifiers):
-        self._request("get")
-        return super()._get_orders(order_identifiers)
+        return self._repeatable("get", super()._get_orders, order_identifiers)
 
     def _get_orders_page(self, *args):
-        self._request("page")
-        return super()._get_orders_page(*args)
+        return self._repeatable("page", super()._get_orders_page, *args)
 
     def _delete_orders(self, order_identifiers):
-        self._request("delete")
-        return super()._delete_orders(order_identifiers)
+        return self._repeatable("delete", super()._delete_orders, order_identifiers)
 
     def _request(self, kind: str):
         self._throttle()
         self.requests[kind] += 1
+
+    def _repeatable(self, kind: str, request, *args):
+        self.requests[kind] += 1
+        for attempt in range(self.RETRIES):
+            self._throttle()
+            try:
+                return request(*args)
+            except ServiceException:
+                if attempt == self.RETRIES - 1:
+                    raise
+                time.sleep(2**attempt)
 
 
 class RealAPI(RecordingMixin, ClickAndDrop):
